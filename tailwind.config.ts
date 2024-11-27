@@ -4,7 +4,12 @@ export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
 
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        sans: ['Pretendard Variable', 'sans-serif'],
+        monasans: ['Mona-Sans', 'sans-serif']
+      }
+    }
   },
 
   plugins: []
