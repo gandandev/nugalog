@@ -18,10 +18,10 @@
     {#each ['김민준', '이서연', '박지훈', '최수아', '정윤서', '강현우'] as name}
       <li class="w-full">
         <a
-          href="/{encodeURIComponent(name)}"
+          href="/student/{encodeURIComponent(name)}"
           class="block rounded-lg px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200"
-          class:bg-stone-100={$page.url.pathname === `/${encodeURIComponent(name)}`}
-          class:hover:bg-stone-200={$page.url.pathname == `/${encodeURIComponent(name)}`}
+          class:bg-stone-100={$page.url.pathname === `/student/${encodeURIComponent(name)}`}
+          class:hover:bg-stone-200={$page.url.pathname == `/student/${encodeURIComponent(name)}`}
         >
           {name}
         </a>
