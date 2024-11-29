@@ -2,15 +2,14 @@
   import { page } from '$app/stores'
 
   import GroupAdd from '~icons/mdi/group-add'
+  import IconButton from './IconButton.svelte'
 </script>
 
 <aside class="flex w-64 flex-col gap-2 border-r border-stone-200 bg-stone-50 p-1">
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-4 pr-2 pt-2">
     <h1 class="font-monasans text-2xl font-bold">nugalog</h1>
-    <button class="rounded-lg p-1.5 hover:bg-stone-100">
-      <GroupAdd class="h-6 w-6" />
-    </button>
+    <IconButton Icon={GroupAdd} />
   </div>
 
   <!-- 이름 목록 -->
