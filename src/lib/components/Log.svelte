@@ -12,7 +12,9 @@
     <span class="text-stone-500"
       >{log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}</span
     >
-    <div class="flex items-center text-stone-500 opacity-0 active:text-stone-600 group-hover:opacity-100 duration-150">
+    <div
+      class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
+    >
       <IconButton Icon={ContentCopy} />
       <IconButton Icon={Edit} />
       <IconButton Icon={Delete} />
