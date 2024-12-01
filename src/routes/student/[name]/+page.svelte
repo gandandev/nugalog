@@ -7,11 +7,23 @@
   import { page } from '$app/stores'
 
   let student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
+
+  function deleteLog(i: number) {
+    $data = $data.map((s) => {
+      if (s.name === student.name) {
+        return {
+          ...s,
+          logs: s.logs.filter((_, index) => index !== i)
+        }
+      }
+      return s
+    })
+  }
 </script>
 
 <div class="mx-auto min-w-[50%] space-y-1 overflow-y-auto p-12">
-  {#each student.logs as log}
-    <Log {log} />
+  {#each student.logs as log, i (log.date.getTime())}
+    <Log {log} deleteLog={() => deleteLog(i)} />
   {/each}
   <div>
     <button

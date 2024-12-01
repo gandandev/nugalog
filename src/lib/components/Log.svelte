@@ -1,5 +1,8 @@
 <script lang="ts">
-  const { log } = $props<{ log: { date: Date; content: string } }>()
+  const { log, deleteLog } = $props<{
+    log: { date: Date; content: string }
+    deleteLog: () => void
+  }>()
 
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
@@ -15,6 +18,8 @@
   let content = $state(log.content)
 
   let copied = $state(false)
+
+  let confirmingDelete = $state(false)
 
   function save() {
     log.date = date
@@ -54,17 +59,20 @@
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
     >
-      {#if !editing}
+      {#if editing}
+        <IconButton Icon={Close} text="취소" onclick={cancel} />
+        <IconButton Icon={Check} text="저장" onclick={save} />
+      {:else if confirmingDelete}
+        <IconButton Icon={Delete} text="삭제" onclick={deleteLog} />
+        <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
+      {:else}
         <IconButton
           Icon={copied ? Check : ContentCopy}
           onclick={copy}
           text={copied ? '복사됨' : undefined}
         />
         <IconButton Icon={Edit} onclick={() => (editing = true)} />
-        <IconButton Icon={Delete} />
-      {:else}
-        <IconButton Icon={Close} text="취소" onclick={cancel} />
-        <IconButton Icon={Check} text="저장" onclick={save} />
+        <IconButton Icon={Delete} onclick={() => (confirmingDelete = true)} />
       {/if}
     </div>
   </div>
