@@ -4,21 +4,66 @@
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
   import Delete from '~icons/mdi/delete'
+  import Check from '~icons/mdi/check'
+  import Close from '~icons/mdi/close'
   import IconButton from './IconButton.svelte'
+
+  import autosize from 'svelte-autosize'
+
+  let editing = $state(false)
+  let date = $state(log.date)
+  let content = $state(log.content)
+
+  function save() {
+    log.date = date
+    log.content = content
+    editing = false
+  }
+
+  function cancel() {
+    date = log.date
+    content = log.content
+    editing = false
+  }
 </script>
 
-<div class="group flex w-full flex-col gap-1 rounded-xl px-3 py-2 duration-150 hover:bg-stone-50">
-  <div class="flex items-center justify-between">
-    <span class="text-stone-500"
-      >{log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}</span
-    >
+<div
+  class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50"
+  class:hover:bg-transparent={editing}
+>
+  <div class="mx-3 mt-2 flex items-center justify-between">
+    {#if editing}
+      <input
+        type="date"
+        value={date.toISOString().slice(0, 10)}
+        oninput={(e) => (date = new Date(e.currentTarget.value))}
+      />
+    {:else}
+      <span class="text-stone-500">
+        {log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
+      </span>
+    {/if}
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
     >
-      <IconButton Icon={ContentCopy} />
-      <IconButton Icon={Edit} />
-      <IconButton Icon={Delete} />
+      {#if !editing}
+        <IconButton Icon={ContentCopy} />
+        <IconButton Icon={Edit} onclick={() => (editing = true)} />
+        <IconButton Icon={Delete} />
+      {:else}
+        <IconButton Icon={Close} text="취소" onclick={cancel} />
+        <IconButton Icon={Check} text="저장" onclick={save} />
+      {/if}
     </div>
   </div>
-  <p class="whitespace-pre-wrap font-sans">{log.content}</p>
+  {#if editing}
+    <textarea
+      class="w-full resize-none rounded-lg p-3 duration-150 focus:outline-none"
+      class:bg-stone-50={editing}
+      bind:value={content}
+      use:autosize
+    ></textarea>
+  {:else}
+    <p class="m-3 mt-0 whitespace-pre-wrap font-sans">{log.content}</p>
+  {/if}
 </div>
