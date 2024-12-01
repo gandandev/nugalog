@@ -14,6 +14,8 @@
   let date = $state(log.date)
   let content = $state(log.content)
 
+  let copied = $state(false)
+
   function save() {
     log.date = date
     log.content = content
@@ -24,6 +26,12 @@
     date = log.date
     content = log.content
     editing = false
+  }
+
+  function copy() {
+    navigator.clipboard.writeText(log.content)
+    copied = true
+    setTimeout(() => (copied = false), 1000)
   }
 </script>
 
@@ -47,7 +55,11 @@
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
     >
       {#if !editing}
-        <IconButton Icon={ContentCopy} />
+        <IconButton
+          Icon={copied ? Check : ContentCopy}
+          onclick={copy}
+          text={copied ? '복사됨' : undefined}
+        />
         <IconButton Icon={Edit} onclick={() => (editing = true)} />
         <IconButton Icon={Delete} />
       {:else}
