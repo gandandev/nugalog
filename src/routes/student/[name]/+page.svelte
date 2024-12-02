@@ -49,7 +49,7 @@
   <div>
     {#if newLog}
       <div class="flex flex-col gap-1">
-        <div class="mx-3 mt-2 flex items-center justify-between">
+        <div class="ml-3 mt-2 flex items-center justify-between">
           <input
             type="date"
             value={newLog.date.toISOString().slice(0, 10)}
@@ -61,7 +61,7 @@
           </div>
         </div>
         <textarea
-          class="w-full resize-none rounded-lg bg-stone-50 p-3 duration-150 focus:outline-none"
+          class="w-full resize-none rounded-lg bg-stone-100 p-3 duration-150 focus:outline-none"
           bind:value={newLog.content}
           use:autosize
         ></textarea>

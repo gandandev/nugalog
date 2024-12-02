@@ -44,7 +44,7 @@
   class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50"
   class:hover:bg-transparent={editing}
 >
-  <div class="mx-3 mt-2 flex items-center justify-between">
+  <div class="mx-3 mt-2 flex items-center justify-between" class:mr-0={editing}>
     {#if editing}
       <input
         type="date"
@@ -79,7 +79,7 @@
   {#if editing}
     <textarea
       class="w-full resize-none rounded-lg p-3 duration-150 focus:outline-none"
-      class:bg-stone-50={editing}
+      class:bg-stone-100={editing}
       bind:value={content}
       use:autosize
     ></textarea>
