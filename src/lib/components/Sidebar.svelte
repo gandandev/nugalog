@@ -5,7 +5,7 @@
   import IconButton from './IconButton.svelte'
 </script>
 
-<aside class="flex w-64 flex-col gap-2 border-r border-stone-200 bg-stone-50 p-1">
+<aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-50 p-1">
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-4 pr-2 pt-2">
     <h1 class="font-monasans text-2xl font-bold">nugalog</h1>
