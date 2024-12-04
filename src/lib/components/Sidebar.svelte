@@ -5,7 +5,7 @@
   import IconButton from './IconButton.svelte'
 </script>
 
-<aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-50 p-1">
+<aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1">
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-4 pr-2 pt-2">
     <h1 class="font-monasans text-2xl font-bold">nugalog</h1>
@@ -18,9 +18,9 @@
       <li class="w-full">
         <a
           href="/student/{encodeURIComponent(name)}"
-          class="block rounded-lg px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200"
-          class:bg-stone-100={$page.url.pathname === `/student/${encodeURIComponent(name)}`}
-          class:hover:bg-stone-200={$page.url.pathname == `/student/${encodeURIComponent(name)}`}
+          class="block rounded-lg px-3 py-1 duration-150 hover:bg-stone-200 active:bg-stone-300"
+          class:bg-stone-200={$page.url.pathname === `/student/${encodeURIComponent(name)}`}
+          class:hover:bg-stone-300={$page.url.pathname == `/student/${encodeURIComponent(name)}`}
         >
           {name}
         </a>
