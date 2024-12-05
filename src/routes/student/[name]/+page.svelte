@@ -25,14 +25,14 @@
     })
   }
 
-  let newLog: LogType | null = $state(null)
+  let newLog: (Omit<LogType, 'date'> & { date: Date | null }) | null = $state(null)
 
   function saveNewLog() {
     $data = $data.map((s) => {
       if (s.name === student.name) {
         return {
           ...s,
-          logs: [...s.logs, newLog!]
+          logs: [...s.logs, newLog as LogType]
         }
       }
       return s
@@ -53,12 +53,18 @@
           <div class="ml-3 mt-2 flex items-center justify-between">
             <input
               type="date"
-              value={newLog.date.toISOString().slice(0, 10)}
-              oninput={(e) => (newLog!.date = new Date(e.currentTarget.value))}
+              value={newLog.date?.toISOString().slice(0, 10)}
+              oninput={(e) =>
+                (newLog!.date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
             />
             <div class="flex items-center text-stone-500 duration-150 active:text-stone-600">
               <IconButton Icon={Close} text="취소" onclick={() => (newLog = null)} />
-              <IconButton Icon={Check} text="저장" onclick={saveNewLog} />
+              <IconButton
+                Icon={Check}
+                text="저장"
+                onclick={saveNewLog}
+                disabled={!newLog.content.trim() || !newLog.date}
+              />
             </div>
           </div>
           <textarea

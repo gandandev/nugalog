@@ -14,7 +14,7 @@
   import autosize from 'svelte-autosize'
 
   let editing = $state(false)
-  let date = $state(log.date)
+  let date: Date | null = $state(log.date)
   let content = $state(log.content)
 
   let copied = $state(false)
@@ -48,8 +48,8 @@
     {#if editing}
       <input
         type="date"
-        value={date.toISOString().slice(0, 10)}
-        oninput={(e) => (date = new Date(e.currentTarget.value))}
+        value={date?.toISOString().slice(0, 10)}
+        oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
       />
     {:else}
       <span class="text-stone-500">
@@ -61,7 +61,7 @@
     >
       {#if editing}
         <IconButton Icon={Close} text="취소" onclick={cancel} />
-        <IconButton Icon={Check} text="저장" onclick={save} />
+        <IconButton Icon={Check} text="저장" onclick={save} disabled={!content.trim() || !date} />
       {:else if confirmingDelete}
         <IconButton Icon={Delete} text="삭제" onclick={deleteLog} />
         <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
