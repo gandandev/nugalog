@@ -21,8 +21,9 @@
         <a
           href="/student/{encodeURIComponent(student.name)}"
           class="block rounded-lg px-3 py-1 duration-150 hover:bg-stone-200 active:bg-stone-300"
-          class:bg-stone-100={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
-          class:hover:bg-stone-200={$page.url.pathname == `/student/${encodeURIComponent(student.name)}`}
+          class:bg-stone-200={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
+          class:hover:bg-stone-300={$page.url.pathname ==
+            `/student/${encodeURIComponent(student.name)}`}
         >
           {student.name}
         </a>
