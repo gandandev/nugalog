@@ -3,12 +3,14 @@
   import Delete from '~icons/mdi/delete'
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
-  import { data, type StudentData } from '$lib/stores'
+  import { type StudentData } from '$lib/stores'
+  import { fade } from 'svelte/transition'
 
-  const { student, isActive, reorder } = $props<{
+  const { student, isActive, reorder, confirmdelete } = $props<{
     student: StudentData
     isActive: boolean
     reorder: () => void
+    confirmdelete: () => void
   }>()
 
   let showOptions = $state(false)
@@ -24,10 +26,6 @@
 
   function rename() {
     console.log('rename')
-  }
-
-  function remove() {
-    $data = $data.filter((s) => s.name !== student.name)
   }
 </script>
 
@@ -59,6 +57,7 @@
     <div
       bind:this={optionsMenu}
       class="absolute right-0 top-full z-10 mt-1 flex w-48 flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
+      transition:fade={{ duration: 200 }}
     >
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100"
@@ -76,7 +75,7 @@
       </button>
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600"
-        onclick={remove}
+        onclick={confirmdelete}
       >
         <Delete class="h-5 w-5" />
         학생 삭제
@@ -84,3 +83,15 @@
     </div>
   {/if}
 </li>
+
+<style lang="postcss">
+  .primary {
+    @apply bg-black text-white hover:bg-stone-800 active:bg-stone-900;
+  }
+  .secondary {
+    @apply bg-stone-100 text-black hover:bg-stone-200 active:bg-stone-300;
+  }
+  .danger {
+    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700;
+  }
+</style>

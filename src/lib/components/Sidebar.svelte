@@ -5,13 +5,15 @@
   import Close from '~icons/mdi/close'
   import IconButton from './IconButton.svelte'
   import SidebarItem from './SidebarItem.svelte'
+  import Dialog from './Dialog.svelte'
 
-  import { data } from '$lib/stores'
+  import { data, type StudentData } from '$lib/stores'
 
   let newStudentName: string | null = $state(null)
   let duplicateStudentName = $derived(
     $data.some((student) => student.name === newStudentName?.trim())
   )
+  let studentToDelete: StudentData | null = $state(null)
 
   function addStudent() {
     if (!newStudentName || duplicateStudentName || !newStudentName.trim()) return
@@ -21,6 +23,19 @@
 
   function reorder() {
     console.log('reorder')
+  }
+
+  function confirmDelete(student: StudentData) {
+    studentToDelete = student
+  }
+
+  function handleCancel() {
+    studentToDelete = null
+  }
+
+  function handleDelete() {
+    $data = $data.filter((s) => s.name !== studentToDelete?.name)
+    studentToDelete = null
   }
 </script>
 
@@ -38,6 +53,7 @@
         {student}
         isActive={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
         {reorder}
+        confirmdelete={() => confirmDelete(student)}
       />
     {/each}
 
@@ -71,3 +87,19 @@
     {/if}
   </ul>
 </aside>
+
+{#if studentToDelete}
+  <Dialog
+    title={`학생 "${studentToDelete.name}"을(를) 삭제할까요?`}
+    description="삭제된 학생은 복구할 수 없습니다."
+    actions={[
+      { label: '취소', onclick: handleCancel, variant: 'secondary' },
+      { label: '삭제', onclick: handleDelete, variant: 'danger' }
+    ]}
+    oncancel={handleCancel}
+  />
+{/if}
+
+<style>
+  /* Your styles here */
+</style>
