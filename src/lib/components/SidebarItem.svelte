@@ -3,7 +3,7 @@
   import Delete from '~icons/mdi/delete'
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
-  import type { StudentData } from '$lib/stores'
+  import { data, type StudentData } from '$lib/stores'
 
   const { student, isActive, reorder } = $props<{
     student: StudentData
@@ -27,7 +27,7 @@
   }
 
   function remove() {
-    console.log('remove')
+    $data = $data.filter((s) => s.name !== student.name)
   }
 </script>
 
