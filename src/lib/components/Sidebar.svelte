@@ -99,7 +99,3 @@
     oncancel={handleCancel}
   />
 {/if}
-
-<style>
-  /* Your styles here */
-</style>
