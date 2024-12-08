@@ -23,6 +23,12 @@
   let optionsMenu: HTMLDivElement | null = $state(null)
   let optionsButton: HTMLButtonElement | null = $state(null)
 
+  $effect(() => {
+    if (reordering) {
+      showOptions = false
+    }
+  })
+
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement
     if (!optionsMenu?.contains(target) && !optionsButton?.contains(target)) {
@@ -68,7 +74,7 @@
     </button>
   {/if}
 
-  {#if showOptions && !reordering}
+  {#if showOptions}
     <div
       bind:this={optionsMenu}
       class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
