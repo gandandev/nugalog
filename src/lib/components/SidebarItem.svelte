@@ -4,9 +4,11 @@
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
   import DragHandle from '~icons/mdi/drag'
-  import { type StudentData } from '$lib/stores'
+  import { data, type StudentData } from '$lib/stores'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
+  import { goto } from '$app/navigation'
+  import { focusOnElement } from '$lib/utils'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{
@@ -37,8 +39,16 @@
     }
   }
 
-  function rename() {
-    console.log('rename')
+  let newName: string | null = $state(null)
+
+  function saveName() {
+    if (newName && newName.trim()) {
+      if (isActive) {
+        goto(`/student/${encodeURIComponent(newName!.trim())}`)
+      }
+      $data = $data.map((s) => (s === student ? { ...s, name: newName!.trim() } : s))
+    }
+    newName = null
   }
 
   function handleDragStart(e: DragEvent) {
@@ -71,22 +81,36 @@
   ondragstart={handleDragStart}
   {ondragend}
 >
-  <a
-    href="/student/{encodeURIComponent(student.name)}"
-    class="peer flex grow items-center rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
-    class:rounded-r-lg={reordering}
-    onclick={(e) => reordering && e.preventDefault()}
-  >
-    {student.name}
-    {#if reordering}
-      <DragHandle class="ml-auto mr-1 h-6 w-6 text-stone-400" />
-    {/if}
-  </a>
-  {#if !reordering}
+  {#if newName !== null}
+    <input
+      type="text"
+      bind:value={newName}
+      class="grow rounded-lg py-1 pl-3"
+      onblur={saveName}
+      onkeydown={(e) => e.key === 'Enter' && saveName()}
+      use:focusOnElement
+    />
+  {:else}
+    <a
+      href="/student/{encodeURIComponent(student.name)}"
+      class="peer flex grow items-center rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
+      class:rounded-r-lg={reordering}
+      onclick={(e) => reordering && e.preventDefault()}
+    >
+      {student.name}
+      {#if reordering}
+        <DragHandle class="ml-auto mr-1 h-6 w-6 text-stone-400" />
+      {/if}
+    </a>
+  {/if}
+  {#if !reordering && newName === null}
     <button
       bind:this={optionsButton}
       class="group/options options-button h-8 rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100 peer-active:bg-stone-300"
-      onclick={() => (showOptions = !showOptions)}
+      onclick={(e) => {
+        e.stopPropagation()
+        showOptions = !showOptions
+      }}
     >
       <div
         class="flex h-6 w-6 items-center justify-center rounded duration-150 group-hover/options:bg-stone-300"
@@ -104,7 +128,10 @@
     >
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100"
-        onclick={rename}
+        onclick={() => {
+          newName = student.name
+          showOptions = false
+        }}
       >
         <Edit class="h-5 w-5" />
         이름 변경
