@@ -8,6 +8,7 @@
   import Dialog from './Dialog.svelte'
   import { josa } from 'es-hangul'
   import { data, type StudentData } from '$lib/stores'
+  import { focusOnElement } from '$lib/utils'
 
   let newStudentName: string | null = $state(null)
   let duplicateStudentName = $derived(
@@ -184,6 +185,12 @@
                 addStudent()
               }
             }}
+            onblur={() => {
+              if (!newStudentName?.trim()) {
+                newStudentName = null
+              }
+            }}
+            use:focusOnElement
           />
           {#if newStudentName.trim()}
             <IconButton
