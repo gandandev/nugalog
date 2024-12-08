@@ -7,12 +7,17 @@
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
 
-  const { student, isActive, reorder, confirmdelete } = $props<{
-    student: StudentData
-    isActive: boolean
-    reorder: () => void
-    confirmdelete: () => void
-  }>()
+  const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
+    $props<{
+      student: StudentData
+      isActive: boolean
+      reorder: () => void
+      reordering: boolean
+      confirmdelete: () => void
+      ondragstart: () => void
+      ondragend: () => void
+      dragged: boolean
+    }>()
 
   let showOptions = $state(false)
   let optionsMenu: HTMLDivElement | null = $state(null)
@@ -30,31 +35,40 @@
   }
 </script>
 
-<svelte:window on:click={handleClickOutside} />
+<svelte:window onclick={handleClickOutside} />
 
 <li
   class="group/item relative flex w-full rounded-lg hover:bg-stone-200"
-  class:bg-stone-200={isActive}
+  class:bg-stone-200={isActive || reordering}
+  class:cursor-grab={reordering}
+  class:opacity-50={dragged}
+  draggable={reordering}
+  {ondragstart}
+  {ondragend}
 >
   <a
     href="/student/{encodeURIComponent(student.name)}"
     class="peer block grow rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
+    class:rounded-r-lg={reordering}
+    onclick={(e) => reordering && e.preventDefault()}
   >
     {student.name}
   </a>
-  <button
-    bind:this={optionsButton}
-    class="group/options options-button h-8 rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100 peer-active:bg-stone-300"
-    onclick={() => (showOptions = !showOptions)}
-  >
-    <div
-      class="flex h-6 w-6 items-center justify-center rounded duration-150 group-hover/options:bg-stone-300"
+  {#if !reordering}
+    <button
+      bind:this={optionsButton}
+      class="group/options options-button h-8 rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100 peer-active:bg-stone-300"
+      onclick={() => (showOptions = !showOptions)}
     >
-      <MoreHoriz class="h-5 w-5" />
-    </div>
-  </button>
+      <div
+        class="flex h-6 w-6 items-center justify-center rounded duration-150 group-hover/options:bg-stone-300"
+      >
+        <MoreHoriz class="h-5 w-5" />
+      </div>
+    </button>
+  {/if}
 
-  {#if showOptions}
+  {#if showOptions && !reordering}
     <div
       bind:this={optionsMenu}
       class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
