@@ -73,7 +73,7 @@
 <svelte:window onclick={handleClickOutside} />
 
 <li
-  class="group/item relative flex w-full items-center rounded-lg hover:bg-stone-200"
+  class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300"
   class:bg-stone-200={isActive || reordering}
   class:cursor-grab={reordering}
   class:opacity-50={dragged}
@@ -93,20 +93,22 @@
   {:else}
     <a
       href="/student/{encodeURIComponent(student.name)}"
-      class="peer flex grow items-center rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
+      class="flex min-w-0 grow items-center rounded-l-lg py-1 pl-3"
       class:rounded-r-lg={reordering}
       onclick={(e) => reordering && e.preventDefault()}
     >
-      {student.name}
+      <span class="truncate">
+        {student.name}
+      </span>
       {#if reordering}
-        <DragHandle class="ml-auto mr-1 h-6 w-6 text-stone-400" />
+        <DragHandle class="ml-auto mr-1 h-6 w-6 shrink-0 text-stone-400" />
       {/if}
     </a>
   {/if}
   {#if !reordering && newName === null}
     <button
       bind:this={optionsButton}
-      class="group/options options-button h-8 rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100 peer-active:bg-stone-300"
+      class="group/options options-button rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100"
       onclick={(e) => {
         e.stopPropagation()
         showOptions = !showOptions
