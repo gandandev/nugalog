@@ -4,7 +4,8 @@
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
   import { type StudentData } from '$lib/stores'
-  import { fade } from 'svelte/transition'
+  import { scale } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
 
   const { student, isActive, reorder, confirmdelete } = $props<{
     student: StudentData
@@ -56,8 +57,8 @@
   {#if showOptions}
     <div
       bind:this={optionsMenu}
-      class="absolute right-0 top-full z-10 mt-1 flex w-48 flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
-      transition:fade={{ duration: 200 }}
+      class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
+      transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
     >
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100"
