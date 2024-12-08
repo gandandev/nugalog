@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores'
-
   import GroupAdd from '~icons/mdi/group-add'
   import Add from '~icons/mdi/add'
   import Close from '~icons/mdi/close'
   import IconButton from './IconButton.svelte'
+  import SidebarItem from './SidebarItem.svelte'
 
   import { data } from '$lib/stores'
 
@@ -18,6 +18,10 @@
     $data = [...$data, { name: newStudentName.trim(), logs: [] }]
     newStudentName = ''
   }
+
+  function reorder() {
+    console.log('reorder')
+  }
 </script>
 
 <aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1">
@@ -28,20 +32,15 @@
   </div>
 
   <!-- 이름 목록 -->
-  <ul class="w-full flex-1 space-y-0.5 overflow-y-auto px-1">
-    {#each $data as student}
-      <li class="w-full">
-        <a
-          href="/student/{encodeURIComponent(student.name)}"
-          class="block rounded-lg px-3 py-1 duration-150 hover:bg-stone-200 active:bg-stone-300"
-          class:bg-stone-200={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
-          class:hover:bg-stone-300={$page.url.pathname ==
-            `/student/${encodeURIComponent(student.name)}`}
-        >
-          {student.name}
-        </a>
-      </li>
+  <ul class="w-full flex-1 space-y-0.5 overflow-y-auto overflow-x-visible px-1">
+    {#each $data as student (student.name)}
+      <SidebarItem
+        {student}
+        isActive={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
+        {reorder}
+      />
     {/each}
+
     {#if newStudentName !== null}
       <li class="pt-1">
         <div class="flex w-full gap-1">
