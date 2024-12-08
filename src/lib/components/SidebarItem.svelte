@@ -14,7 +14,7 @@
       reorder: () => void
       reordering: boolean
       confirmdelete: () => void
-      ondragstart: () => void
+      ondragstart: (e: DragEvent) => void
       ondragend: () => void
       dragged: boolean
     }>()
@@ -39,6 +39,22 @@
   function rename() {
     console.log('rename')
   }
+
+  function handleDragStart(e: DragEvent) {
+    const element = e.currentTarget as HTMLElement
+    const ghost = element.cloneNode(true) as HTMLElement
+    ghost.style.position = 'absolute'
+    ghost.style.top = '-1000px'
+    ghost.style.opacity = '0'
+    document.body.appendChild(ghost)
+    e.dataTransfer?.setDragImage(ghost, 0, 0)
+
+    requestAnimationFrame(() => {
+      document.body.removeChild(ghost)
+    })
+
+    ondragstart(e)
+  }
 </script>
 
 <svelte:window onclick={handleClickOutside} />
@@ -49,7 +65,7 @@
   class:cursor-grab={reordering}
   class:opacity-50={dragged}
   draggable={reordering}
-  {ondragstart}
+  ondragstart={handleDragStart}
   {ondragend}
 >
   <a

@@ -17,6 +17,8 @@
   let studentToDelete: StudentData | null = $state(null)
   let draggedStudent: StudentData | null = $state(null)
   let dropPreviewIndex: number | null = $state(null)
+  let draggedElement: HTMLElement | null = $state(null)
+  let dragOffset = $state({ x: 0, y: 0 })
 
   function addStudent() {
     if (!newStudentName || duplicateStudentName || !newStudentName.trim()) return
@@ -44,13 +46,49 @@
     studentToDelete = null
   }
 
-  function handleDragStart(student: StudentData) {
+  function handleDragStart(e: DragEvent, student: StudentData) {
+    const element = e.currentTarget as HTMLElement
+    if (!element) return
+
+    const rect = element.getBoundingClientRect()
+    dragOffset = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    }
+
+    draggedElement = element.cloneNode(true) as HTMLElement
+    draggedElement.style.position = 'fixed'
+    draggedElement.style.width = `${rect.width}px`
+    draggedElement.style.pointerEvents = 'none'
+    draggedElement.style.transform = 'rotate(2deg)'
+    draggedElement.style.zIndex = '1000'
+    draggedElement.style.opacity = '0.8'
+    draggedElement.style.boxShadow =
+      '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+    document.body.appendChild(draggedElement)
+
+    updateDraggedPosition(e)
     draggedStudent = student
   }
 
+  function updateDraggedPosition(e: DragEvent) {
+    if (!draggedElement) return
+    draggedElement.style.left = `${e.clientX - dragOffset.x}px`
+    draggedElement.style.top = `${e.clientY - dragOffset.y}px`
+  }
+
   function handleDragEnd() {
+    if (draggedElement) {
+      document.body.removeChild(draggedElement)
+      draggedElement = null
+    }
     draggedStudent = null
     dropPreviewIndex = null
+  }
+
+  function handleDrag(e: DragEvent) {
+    if (e.clientX === 0 && e.clientY === 0) return // Ignore invalid drag events
+    updateDraggedPosition(e)
   }
 
   function handleDrop() {
@@ -103,7 +141,11 @@
   </div>
 
   <!-- 이름 목록 -->
-  <ul class="w-full flex-1 space-y-0.5 overflow-y-auto px-1" ondragleave={handleDragLeave}>
+  <ul
+    class="w-full flex-1 space-y-0.5 overflow-y-auto px-1"
+    ondragleave={handleDragLeave}
+    ondragover={(e) => e.preventDefault()}
+  >
     <div></div>
     {#each $data as student, i (student.name)}
       <div
@@ -123,7 +165,7 @@
           {reorder}
           {reordering}
           confirmdelete={() => confirmDelete(student)}
-          ondragstart={() => handleDragStart(student)}
+          ondragstart={(e) => handleDragStart(e, student)}
           ondragend={handleDragEnd}
           dragged={draggedStudent?.name === student.name}
         />
@@ -169,6 +211,8 @@
     </div>
   </ul>
 </aside>
+
+<svelte:window ondrag={handleDrag} />
 
 {#if studentToDelete}
   <Dialog
