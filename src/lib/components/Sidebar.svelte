@@ -109,6 +109,8 @@
   }
 
   function handleDragOver(e: DragEvent, index: number) {
+    if (!reordering) return
+
     e.preventDefault()
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     const midY = rect.top + rect.height / 2

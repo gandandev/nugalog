@@ -41,6 +41,8 @@
   }
 
   function handleDragStart(e: DragEvent) {
+    if (!reordering) return
+
     const element = e.currentTarget as HTMLElement
     const ghost = element.cloneNode(true) as HTMLElement
     ghost.style.position = 'absolute'
