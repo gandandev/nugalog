@@ -28,6 +28,7 @@
 
   function reorder() {
     reordering = true
+    newStudentName = null
   }
 
   function confirmDelete(student: StudentData) {
@@ -128,6 +129,34 @@
         />
       </div>
     {/each}
+    {#if newStudentName !== null}
+      <li class="pt-1">
+        <div class="flex w-full gap-1">
+          <input
+            type="text"
+            bind:value={newStudentName}
+            class="block grow rounded-lg bg-white px-3 py-1 duration-150"
+            onkeydown={(e) => {
+              if (e.key === 'Enter' && !e.isComposing) {
+                addStudent()
+              }
+            }}
+          />
+          {#if newStudentName.trim()}
+            <IconButton
+              Icon={Add}
+              onclick={addStudent}
+              disabled={duplicateStudentName || !newStudentName.trim()}
+            />
+          {:else}
+            <IconButton Icon={Close} onclick={() => (newStudentName = null)} />
+          {/if}
+        </div>
+        {#if duplicateStudentName}
+          <p class="pl-1 pt-1 text-xs text-stone-500 duration-150">학생 이름이 중복되었습니다.</p>
+        {/if}
+      </li>
+    {/if}
     <div
       class="min-h-[50px] flex-1"
       ondragover={(e) => handleDragOver(e, $data.length)}
