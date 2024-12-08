@@ -6,7 +6,6 @@
   import IconButton from './IconButton.svelte'
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
-  import Check from '~icons/mdi/check'
   import { josa } from 'es-hangul'
   import { data, type StudentData } from '$lib/stores'
 
