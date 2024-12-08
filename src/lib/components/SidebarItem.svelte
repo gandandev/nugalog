@@ -3,6 +3,7 @@
   import Delete from '~icons/mdi/delete'
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
+  import DragHandle from '~icons/mdi/drag'
   import { type StudentData } from '$lib/stores'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
@@ -62,7 +63,7 @@
 <svelte:window onclick={handleClickOutside} />
 
 <li
-  class="group/item relative flex w-full rounded-lg hover:bg-stone-200"
+  class="group/item relative flex w-full items-center rounded-lg hover:bg-stone-200"
   class:bg-stone-200={isActive || reordering}
   class:cursor-grab={reordering}
   class:opacity-50={dragged}
@@ -72,11 +73,14 @@
 >
   <a
     href="/student/{encodeURIComponent(student.name)}"
-    class="peer block grow rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
+    class="peer flex grow items-center rounded-l-lg py-1 pl-3 duration-150 active:bg-stone-300"
     class:rounded-r-lg={reordering}
     onclick={(e) => reordering && e.preventDefault()}
   >
     {student.name}
+    {#if reordering}
+      <DragHandle class="ml-auto mr-1 h-6 w-6 text-stone-400" />
+    {/if}
   </a>
   {#if !reordering}
     <button
