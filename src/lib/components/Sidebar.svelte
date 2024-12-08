@@ -75,6 +75,14 @@
     const midY = rect.top + rect.height / 2
     dropPreviewIndex = e.clientY < midY ? index : index + 1
   }
+
+  function handleDragLeave(e: DragEvent) {
+    const relatedTarget = e.relatedTarget as HTMLElement
+    const listContainer = (e.currentTarget as HTMLElement).closest('ul')
+    if (!listContainer?.contains(relatedTarget)) {
+      dropPreviewIndex = null
+    }
+  }
 </script>
 
 <aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1">
@@ -94,7 +102,7 @@
   </div>
 
   <!-- 이름 목록 -->
-  <ul class="w-full flex-1 space-y-0.5 overflow-y-auto overflow-x-visible px-1">
+  <ul class="w-full flex-1 space-y-0.5 overflow-y-auto px-1" ondragleave={handleDragLeave}>
     <div></div>
     {#each $data as student, i (student.name)}
       <div
@@ -120,38 +128,16 @@
         />
       </div>
     {/each}
-    {#if dropPreviewIndex === $data.length}
-      <div class="relative -top-0.5 h-0.5 rounded-full bg-blue-500" role="presentation"></div>
-    {/if}
-
-    {#if newStudentName !== null}
-      <li class="pt-1">
-        <div class="flex w-full gap-1">
-          <input
-            type="text"
-            bind:value={newStudentName}
-            class="block grow rounded-lg bg-white px-3 py-1 duration-150"
-            onkeydown={(e) => {
-              if (e.key === 'Enter' && !e.isComposing) {
-                addStudent()
-              }
-            }}
-          />
-          {#if newStudentName.trim()}
-            <IconButton
-              Icon={Add}
-              onclick={addStudent}
-              disabled={duplicateStudentName || !newStudentName.trim()}
-            />
-          {:else}
-            <IconButton Icon={Close} onclick={() => (newStudentName = null)} />
-          {/if}
-        </div>
-        {#if duplicateStudentName}
-          <p class="pl-1 pt-1 text-xs text-stone-500 duration-150">학생 이름이 중복되었습니다.</p>
-        {/if}
-      </li>
-    {/if}
+    <div
+      class="min-h-[50px] flex-1"
+      ondragover={(e) => handleDragOver(e, $data.length)}
+      ondrop={handleDrop}
+      role="presentation"
+    >
+      {#if dropPreviewIndex === $data.length}
+        <div class="relative -top-0.5 h-0.5 rounded-full bg-blue-500" role="presentation"></div>
+      {/if}
+    </div>
   </ul>
 </aside>
 
