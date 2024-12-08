@@ -6,7 +6,7 @@
   import IconButton from './IconButton.svelte'
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
-
+  import { josa } from 'es-hangul'
   import { data, type StudentData } from '$lib/stores'
 
   let newStudentName: string | null = $state(null)
@@ -90,7 +90,7 @@
 
 {#if studentToDelete}
   <Dialog
-    title={`학생 "${studentToDelete.name}"을(를) 삭제할까요?`}
+    title={`학생 "${studentToDelete.name}"${josa.pick(studentToDelete.name, '을/를')} 삭제할까요?`}
     description="삭제된 학생은 복구할 수 없습니다."
     actions={[
       { label: '취소', onclick: handleCancel, variant: 'secondary' },
