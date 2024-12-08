@@ -83,15 +83,3 @@
     </div>
   {/if}
 </li>
-
-<style lang="postcss">
-  .primary {
-    @apply bg-black text-white hover:bg-stone-800 active:bg-stone-900;
-  }
-  .secondary {
-    @apply bg-stone-100 text-black hover:bg-stone-200 active:bg-stone-300;
-  }
-  .danger {
-    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700;
-  }
-</style>
