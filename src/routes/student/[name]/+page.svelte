@@ -8,7 +8,7 @@
   import autosize from 'svelte-autosize'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
 
-  import { data, type Log as LogType } from '$lib/stores'
+  import { data, type Log as LogType, dataLoaded } from '$lib/stores'
 
   import { page } from '$app/stores'
 
@@ -87,6 +87,8 @@
       </div>
     </div>
   </div>
+{:else if !$dataLoaded}
+  <div></div>
 {:else}
   <InfoDisplay
     Icon={PersonOff}
