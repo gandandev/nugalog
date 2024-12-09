@@ -5,9 +5,8 @@
   import SwapVert from '~icons/mdi/swap-vertical'
   import DragHandle from '~icons/mdi/drag'
   import { data, type StudentData } from '$lib/stores'
-  import { scale } from 'svelte/transition'
-  import { expoOut } from 'svelte/easing'
   import { goto } from '$app/navigation'
+  import OptionsMenu from './OptionsMenu.svelte'
   import { focusOnElement } from '$lib/utils'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
@@ -23,21 +22,12 @@
     }>()
 
   let showOptions = $state(false)
-  let optionsMenu: HTMLDivElement | null = $state(null)
-  let optionsButton: HTMLButtonElement | null = $state(null)
 
   $effect(() => {
     if (reordering) {
       showOptions = false
     }
   })
-
-  function handleClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement
-    if (!optionsMenu?.contains(target) && !optionsButton?.contains(target)) {
-      showOptions = false
-    }
-  }
 
   let newName: string | null = $state(null)
 
@@ -69,8 +59,6 @@
     ondragstart(e)
   }
 </script>
-
-<svelte:window onclick={handleClickOutside} />
 
 <li
   class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300"
@@ -107,7 +95,6 @@
   {/if}
   {#if !reordering && newName === null}
     <button
-      bind:this={optionsButton}
       class="group/options options-button rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100"
       onclick={(e) => {
         e.stopPropagation()
@@ -122,36 +109,22 @@
     </button>
   {/if}
 
-  {#if showOptions}
-    <div
-      bind:this={optionsMenu}
-      class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg"
-      transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-    >
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100"
-        onclick={() => {
+  <OptionsMenu
+    show={showOptions}
+    setShow={(show) => {
+      showOptions = show
+    }}
+    actions={[
+      {
+        Icon: Edit,
+        label: '이름 변경',
+        onclick: () => {
           newName = student.name
           showOptions = false
-        }}
-      >
-        <Edit class="h-5 w-5" />
-        이름 변경
-      </button>
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100"
-        onclick={reorder}
-      >
-        <SwapVert class="h-5 w-5" />
-        순서 변경
-      </button>
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600"
-        onclick={confirmdelete}
-      >
-        <Delete class="h-5 w-5" />
-        학생 삭제
-      </button>
-    </div>
-  {/if}
+        }
+      },
+      { Icon: SwapVert, label: '순서 변경', onclick: reorder },
+      { Icon: Delete, label: '학생 삭제', onclick: confirmdelete, variant: 'danger' }
+    ]}
+  />
 </li>
