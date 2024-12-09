@@ -87,7 +87,7 @@
   }
 
   function handleDrag(e: DragEvent) {
-    if (e.clientX === 0 && e.clientY === 0) return // Ignore invalid drag events
+    if (e.clientX === 0 && e.clientY === 0) return
     updateDraggedPosition(e)
   }
 
