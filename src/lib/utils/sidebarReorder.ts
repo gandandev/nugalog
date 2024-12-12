@@ -3,7 +3,6 @@ import type { StudentData } from '$lib/stores'
 export type DragState = {
   draggedStudent: StudentData | null
   dropPreviewIndex: number | null
-  draggedElement: HTMLElement | null
   dragOffset: { x: number; y: number }
 }
 
@@ -11,7 +10,6 @@ export function createDragState(): DragState {
   return {
     draggedStudent: null,
     dropPreviewIndex: null,
-    draggedElement: null,
     dragOffset: { x: 0, y: 0 }
   }
 }
@@ -30,39 +28,28 @@ export function handleDragStart(
     y: e.clientY - rect.top
   }
 
-  dragState.draggedElement = element.cloneNode(true) as HTMLElement
-  dragState.draggedElement.style.position = 'fixed'
-  dragState.draggedElement.style.width = `${rect.width}px`
-  dragState.draggedElement.style.pointerEvents = 'none'
-  dragState.draggedElement.style.transform = 'rotate(2deg)'
-  dragState.draggedElement.style.zIndex = '1000'
-  dragState.draggedElement.style.opacity = '0.8'
-  dragState.draggedElement.style.boxShadow =
-    '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
-  document.body.appendChild(dragState.draggedElement)
+  // Create an invisible drag image to hide the default one
+  const ghost = element.cloneNode(true) as HTMLElement
+  ghost.style.position = 'absolute'
+  ghost.style.top = '-1000px'
+  ghost.style.opacity = '0'
+  document.body.appendChild(ghost)
+  e.dataTransfer?.setDragImage(ghost, 0, 0)
 
-  updateDraggedPosition(e, dragState)
+  requestAnimationFrame(() => {
+    document.body.removeChild(ghost)
+  })
+
   dragState.draggedStudent = student
 }
 
-export function updateDraggedPosition(e: DragEvent, dragState: DragState): void {
-  if (!dragState.draggedElement) return
-  dragState.draggedElement.style.left = `${e.clientX - dragState.dragOffset.x}px`
-  dragState.draggedElement.style.top = `${e.clientY - dragState.dragOffset.y}px`
-}
-
 export function handleDragEnd(dragState: DragState): void {
-  if (dragState.draggedElement) {
-    document.body.removeChild(dragState.draggedElement)
-    dragState.draggedElement = null
-  }
   dragState.draggedStudent = null
   dragState.dropPreviewIndex = null
 }
 
 export function handleDrag(e: DragEvent, dragState: DragState): void {
   if (e.clientX === 0 && e.clientY === 0) return
-  updateDraggedPosition(e, dragState)
 }
 
 export function handleDragOver(
