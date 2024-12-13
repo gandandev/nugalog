@@ -178,9 +178,9 @@
     title={`학생 "${studentToDelete.name}"${josa.pick(studentToDelete.name, '을/를')} 삭제할까요?`}
     description="삭제된 학생은 복구할 수 없습니다."
     actions={[
-      { label: '취소', onclick: handleCancel, variant: 'secondary' },
+      { label: '취소', variant: 'secondary', cancel: true },
       { label: '삭제', onclick: handleDelete, variant: 'danger' }
     ]}
-    oncancel={handleCancel}
+    cancel={() => (studentToDeleteIndex = null)}
   />
 {/if}
