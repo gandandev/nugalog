@@ -28,7 +28,6 @@ export function handleDragStart(
     y: e.clientY - rect.top
   }
 
-  // Create an invisible drag image to hide the default one
   const ghost = element.cloneNode(true) as HTMLElement
   ghost.style.position = 'absolute'
   ghost.style.top = '-1000px'
