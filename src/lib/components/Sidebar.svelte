@@ -1,13 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import GroupAdd from '~icons/mdi/group-add'
-  import Add from '~icons/mdi/add'
-  import Close from '~icons/mdi/close'
-  import IconButton from './IconButton.svelte'
-  import SidebarItem from './SidebarItem.svelte'
-  import Dialog from './Dialog.svelte'
   import { josa } from 'es-hangul'
-  import { data, type StudentData } from '$lib/stores'
   import { focusOnElement } from '$lib/utils'
   import {
     type DragState,
@@ -20,7 +13,18 @@
     handleDrop as _handleDrop
   } from '$lib/utils/sidebarReorder'
 
-  let newStudentName: string | null = $state(null)
+  import Logo from './Logo.svelte'
+  import IconButton from './IconButton.svelte'
+  import SidebarItem from './SidebarItem.svelte'
+  import Dialog from './Dialog.svelte'
+
+  import GroupAdd from '~icons/mdi/group-add'
+  import Add from '~icons/mdi/add'
+  import Close from '~icons/mdi/close'
+
+  import { data, type StudentData } from '$lib/stores'
+
+  let newStudentName: string | null = $state(null) // null: 추가 중 아님
   let duplicateStudentName = $derived(
     $data.some((student) => student.name === newStudentName?.trim())
   )

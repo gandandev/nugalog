@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { focusOnElement } from '$lib/utils'
+  import { scale } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
+
   import MoreHoriz from '~icons/mdi/more-horiz'
   import Delete from '~icons/mdi/delete'
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
   import DragHandle from '~icons/mdi/drag'
+
   import { data, type StudentData } from '$lib/stores'
-  import { scale } from 'svelte/transition'
-  import { expoOut } from 'svelte/easing'
-  import { goto } from '$app/navigation'
-  import { focusOnElement } from '$lib/utils'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{

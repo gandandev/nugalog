@@ -1,8 +1,5 @@
 <script lang="ts">
-  const { log, deleteLog } = $props<{
-    log: { date: Date; content: string }
-    deleteLog: () => void
-  }>()
+  import autosize from 'svelte-autosize'
 
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
@@ -11,7 +8,10 @@
   import Close from '~icons/mdi/close'
   import IconButton from './IconButton.svelte'
 
-  import autosize from 'svelte-autosize'
+  const { log, deleteLog } = $props<{
+    log: { date: Date; content: string }
+    deleteLog: () => void
+  }>()
 
   let editing = $state(false)
   let date: Date | null = $state(log.date)

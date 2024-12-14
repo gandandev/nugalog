@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fade, scale } from 'svelte/transition'
+
   const { title, description, actions, cancel } = $props<{
     title: string
     description?: string
@@ -17,8 +19,6 @@
     ))[]
     cancel: () => void
   }>()
-
-  import { fade, scale } from 'svelte/transition'
 </script>
 
 <div
