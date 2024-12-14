@@ -13,8 +13,9 @@
 
   import { data, type Log as LogType, dataLoaded } from '$lib/stores'
 
-  let student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
+  const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
 
+  // 로그 삭제
   function deleteLog(i: number) {
     $data = $data.map((s) => {
       if (s.name === student.name) {
@@ -27,8 +28,8 @@
     })
   }
 
+  // 새 기록 추가
   let newLog: (Omit<LogType, 'date'> & { date: Date | null }) | null = $state(null)
-
   function saveNewLog() {
     $data = $data.map((s) => {
       if (s.name === student.name) {

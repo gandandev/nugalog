@@ -13,26 +13,28 @@
     deleteLog: () => void
   }>()
 
+  // 삭제 확인
+  let confirmingDelete = $state(false)
+
+  // 편집
   let editing = $state(false)
   let date: Date | null = $state(log.date)
   let content = $state(log.content)
-
-  let copied = $state(false)
-
-  let confirmingDelete = $state(false)
-
   function save() {
     log.date = date
     log.content = content
     editing = false
   }
 
+  // 취소
   function cancel() {
     date = log.date
     content = log.content
     editing = false
   }
 
+  // 내용 복사
+  let copied = $state(false)
   function copy() {
     navigator.clipboard.writeText(log.content)
     copied = true

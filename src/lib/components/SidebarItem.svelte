@@ -27,7 +27,6 @@
   let showOptions = $state(false)
   let optionsMenu: HTMLDivElement | null = $state(null)
   let optionsButton: HTMLButtonElement | null = $state(null)
-
   $effect(() => {
     if (reordering) {
       showOptions = false
@@ -42,7 +41,6 @@
   }
 
   let newName: string | null = $state(null)
-
   function saveName() {
     if (newName && newName.trim()) {
       if (isActive) {

@@ -24,25 +24,27 @@
 
   import { data } from '$lib/stores'
 
-  let newStudentName: string | null = $state(null) // null: 추가 중 아님
-  let duplicateStudentName = $derived(
+  // 학생 추가
+  let newStudentName: string | null = $state(null)
+  const duplicateStudentName = $derived(
     $data.some((student) => student.name === newStudentName?.trim())
   )
-  let studentToDeleteIndex: number | null = $state(null)
-  let dragState: DragState = $state(createDragState())
-  let reordering = $state(false)
-
   function addStudent() {
     if (!newStudentName || duplicateStudentName || !newStudentName.trim()) return
     $data = [...$data, { name: newStudentName.trim(), logs: [] }]
     newStudentName = ''
   }
 
+  // 순서 변경
+  let reordering = $state(false)
+  let dragState: DragState = $state(createDragState())
   function reorder() {
     reordering = true
     newStudentName = null
   }
 
+  // 학생 삭제
+  let studentToDeleteIndex: number | null = $state(null)
   function handleDelete() {
     $data = $data.filter((_, i) => i !== studentToDeleteIndex)
     studentToDeleteIndex = null
