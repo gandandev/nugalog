@@ -28,7 +28,7 @@
   let duplicateStudentName = $derived(
     $data.some((student) => student.name === newStudentName?.trim())
   )
-  let studentToDelete: StudentData | null = $state(null)
+  let studentToDeleteIndex: number | null = $state(null)
   let dragState: DragState = $state(createDragState())
   let reordering = $state(false)
 
@@ -43,17 +43,9 @@
     newStudentName = null
   }
 
-  function confirmDelete(student: StudentData) {
-    studentToDelete = student
-  }
-
-  function handleCancel() {
-    studentToDelete = null
-  }
-
   function handleDelete() {
-    $data = $data.filter((s) => s.name !== studentToDelete?.name)
-    studentToDelete = null
+    $data = $data.filter((_, i) => i !== studentToDeleteIndex)
+    studentToDeleteIndex = null
   }
 
   function handleDragStart(e: DragEvent, student: StudentData) {
@@ -84,7 +76,7 @@
 <aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1">
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-4 pr-2 pt-2">
-    <h1 class="font-monasans text-2xl font-bold">nugalog</h1>
+    <Logo />
     {#if reordering}
       <button
         class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300"
@@ -121,7 +113,8 @@
           isActive={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
           {reorder}
           {reordering}
-          confirmdelete={() => confirmDelete(student)}
+          confirmdelete={() =>
+            (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
           ondragstart={(e) => handleDragStart(e, student)}
           ondragend={handleDragEnd}
           dragged={dragState.draggedStudent?.name === student.name}
@@ -177,9 +170,10 @@
 
 <svelte:window ondrag={handleDrag} />
 
-{#if studentToDelete}
+{#if studentToDeleteIndex !== null}
+  {@const student = $data[studentToDeleteIndex]}
   <Dialog
-    title={`학생 "${studentToDelete.name}"${josa.pick(studentToDelete.name, '을/를')} 삭제할까요?`}
+    title={`학생 "${student.name}"${josa.pick(student.name, '을/를')} 삭제할까요?`}
     description="삭제된 학생은 복구할 수 없습니다."
     actions={[
       { label: '취소', variant: 'secondary', cancel: true },
