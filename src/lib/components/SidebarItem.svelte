@@ -54,6 +54,7 @@
   function handleDragStart(e: DragEvent) {
     if (!reordering) return
 
+    // 기본 링크 드래그 모양 숨기기
     const element = e.currentTarget as HTMLElement
     const ghost = element.cloneNode(true) as HTMLElement
     ghost.style.position = 'absolute'
