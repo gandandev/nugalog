@@ -45,6 +45,7 @@
   class:hover:bg-transparent={editing}
 >
   <div class="mx-3 mt-2 flex items-center justify-between" class:mr-0={editing}>
+    <!-- 날짜 -->
     {#if editing}
       <input
         type="date"
@@ -56,6 +57,8 @@
         {log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
       </span>
     {/if}
+
+    <!-- 액션 버튼 -->
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
     >
@@ -63,9 +66,11 @@
         <IconButton Icon={Close} text="취소" onclick={cancel} />
         <IconButton Icon={Check} text="저장" onclick={save} disabled={!content.trim() || !date} />
       {:else if confirmingDelete}
+        <!-- 삭제 확인 -->
         <IconButton Icon={Delete} text="삭제" onclick={deleteLog} />
         <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
       {:else}
+        <!-- 내용 복사, 편집, 삭제 -->
         <IconButton
           Icon={copied ? Check : ContentCopy}
           onclick={copy}
@@ -76,6 +81,8 @@
       {/if}
     </div>
   </div>
+
+  <!-- 내용 -->
   {#if editing}
     <textarea
       class="w-full resize-none rounded-lg p-3 duration-150 focus:outline-none"
