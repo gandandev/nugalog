@@ -91,11 +91,10 @@
 
   <!-- 이름 목록 -->
   <ul
-    class="w-full flex-1 space-y-0.5 overflow-y-auto px-1"
+    class="w-full flex-1 space-y-0.5 overflow-y-auto px-1 pt-1"
     ondragleave={handleDragLeave}
     ondragover={(e) => e.preventDefault()}
   >
-    <div></div>
     {#each $data as student, i (student.name)}
       <div
         class="relative"
@@ -103,11 +102,14 @@
         ondrop={handleDrop}
         role="listitem"
       >
+        <!-- 순서 변경 위치 미리보기 -->
         <div
           class="absolute -top-0.5 left-0 right-0 z-50 h-0.5 rounded-full bg-blue-500 opacity-0"
           class:opacity-100={dragState.dropPreviewIndex === i}
           role="presentation"
         ></div>
+
+        <!-- 학생 목록 아이템 -->
         <SidebarItem
           {student}
           isActive={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
@@ -155,6 +157,8 @@
         {/if}
       </li>
     {/if}
+
+    <!-- 맨 아래 드래그 공간 -->
     <div
       class="min-h-[50px] flex-1"
       ondragover={(e) => handleDragOver(e, $data.length)}
@@ -171,6 +175,7 @@
 <svelte:window ondrag={handleDrag} />
 
 {#if studentToDeleteIndex !== null}
+  <!-- 학생 삭제 확인 -->
   {@const student = $data[studentToDeleteIndex]}
   <Dialog
     title={`학생 "${student.name}"${josa.pick(student.name, '을/를')} 삭제할까요?`}
