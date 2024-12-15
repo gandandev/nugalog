@@ -1,26 +1,34 @@
 <script lang="ts">
-  const { title, description, actions, oncancel } = $props<{
+  import { fade, scale } from 'svelte/transition'
+
+  const { title, description, actions, cancel } = $props<{
     title: string
     description?: string
-    actions: {
+    actions: ({
       label: string
-      onclick: () => void
       variant: 'primary' | 'secondary' | 'danger'
-    }[]
-    oncancel: () => void
+    } & (
+      | {
+          onclick: () => void
+          cancel?: false
+        }
+      | {
+          onclick?: never
+          cancel: true
+        }
+    ))[]
+    cancel: () => void
   }>()
-
-  import { fade, scale } from 'svelte/transition'
 </script>
 
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
   transition:fade={{ duration: 100 }}
   onclick={(e) => {
-    if (e.target === e.currentTarget) oncancel()
+    if (e.target === e.currentTarget) cancel()
   }}
   onkeydown={(e) => {
-    if (e.key === 'Escape') oncancel()
+    if (e.key === 'Escape') cancel()
   }}
   role="presentation"
 >
@@ -31,7 +39,7 @@
       {#each actions as action}
         <button
           class="rounded-full px-4 py-2 duration-150 {action.variant}"
-          onclick={action.onclick}
+          onclick={action.cancel ? cancel : action.onclick}
         >
           {action.label}
         </button>

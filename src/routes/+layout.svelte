@@ -1,8 +1,9 @@
 <script lang="ts">
   import '../app.css'
-  let { children } = $props()
 
   import Sidebar from '$lib/components/Sidebar.svelte'
+
+  let { children } = $props()
 </script>
 
 <div class="flex h-screen font-sans">

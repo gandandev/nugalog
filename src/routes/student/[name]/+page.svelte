@@ -1,19 +1,21 @@
 <script lang="ts">
+  import { page } from '$app/stores'
+  import autosize from 'svelte-autosize'
+
   import Log from '$lib/components/Log.svelte'
+  import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import IconButton from '$lib/components/IconButton.svelte'
+
   import Add from '~icons/mdi/add'
   import Close from '~icons/mdi/close'
   import Check from '~icons/mdi/check'
   import PersonOff from '~icons/mdi/person-off'
-  import autosize from 'svelte-autosize'
-  import InfoDisplay from '$lib/components/InfoDisplay.svelte'
 
   import { data, type Log as LogType, dataLoaded } from '$lib/stores'
 
-  import { page } from '$app/stores'
+  const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
 
-  let student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
-
+  // 로그 삭제
   function deleteLog(i: number) {
     $data = $data.map((s) => {
       if (s.name === student.name) {
@@ -26,8 +28,8 @@
     })
   }
 
+  // 새 기록 추가
   let newLog: (Omit<LogType, 'date'> & { date: Date | null }) | null = $state(null)
-
   function saveNewLog() {
     $data = $data.map((s) => {
       if (s.name === student.name) {
