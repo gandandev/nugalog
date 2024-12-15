@@ -56,7 +56,8 @@
     <input
       type="text"
       bind:value={newName}
-      class="grow rounded-lg py-1 pl-3"
+      class="grow rounded-lg py-1 pl-3 placeholder:text-stone-400"
+      placeholder="변경할 이름"
       class:outline-red-500={duplicateStudentName || !newName?.trim()}
       onblur={() => {
         if (duplicateStudentName || !newName?.trim()) newName = null
