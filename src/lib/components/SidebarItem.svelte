@@ -62,7 +62,10 @@
         if (duplicateStudentName || !newName?.trim()) newName = null
         saveName()
       }}
-      onkeydown={(e) => e.key === 'Enter' && saveName()}
+      onkeydown={(e) => {
+        if (e.key === 'Enter') saveName()
+        if (e.key === 'Escape') newName = null
+      }}
       use:focusOnElement
     />
   {:else}
