@@ -87,7 +87,7 @@
   <!-- 내용 -->
   {#if editing}
     <textarea
-      class="w-full resize-none rounded-lg p-3 duration-150 focus:outline-none"
+      class="w-full resize-none rounded-lg p-3 outline-none duration-150"
       class:bg-stone-100={editing}
       bind:value={content}
       use:autosize

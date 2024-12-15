@@ -72,7 +72,7 @@
               </div>
             </div>
             <textarea
-              class="w-full resize-none rounded-lg bg-stone-100 p-3 duration-150 focus:outline-none"
+              class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150"
               bind:value={newLog.content}
               use:autosize
             ></textarea>
