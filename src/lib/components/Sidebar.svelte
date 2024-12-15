@@ -30,7 +30,7 @@
     $data.some((student) => student.name === newStudentName?.trim())
   )
   function addStudent() {
-    if (!newStudentName || duplicateStudentName || !newStudentName.trim()) return
+    if (duplicateStudentName || !newStudentName?.trim()) return
     $data = [...$data, { name: newStudentName.trim(), logs: [] }]
     newStudentName = ''
   }
