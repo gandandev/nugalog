@@ -8,7 +8,7 @@
 </script>
 
 <button
-  class="flex h-8 w-8 items-center justify-center gap-1 rounded-lg duration-150 hover:bg-stone-200 active:bg-stone-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+  class="flex h-8 w-8 items-center justify-center gap-1 rounded-lg duration-150 hover:bg-stone-200 active:scale-90 active:bg-stone-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
   class:w-auto={text}
   class:px-2={text}
   {onclick}

@@ -57,7 +57,7 @@
     <Logo />
     {#if reordering}
       <button
-        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300"
+        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95"
         onclick={() => (reordering = false)}
       >
         완료
