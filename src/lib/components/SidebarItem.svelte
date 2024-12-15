@@ -50,11 +50,6 @@
     }
     newName = null
   }
-
-  function handleDragStart(e: DragEvent) {
-    if (!reordering) return
-    ondragstart(e)
-  }
 </script>
 
 <svelte:window onclick={handleClickOutside} />
@@ -65,7 +60,7 @@
   class:cursor-grab={reordering}
   class:opacity-50={dragged}
   draggable={reordering}
-  ondragstart={handleDragStart}
+  ondragstart={(e) => reordering && ondragstart(e)}
   {ondragend}
 >
   {#if newName !== null}
