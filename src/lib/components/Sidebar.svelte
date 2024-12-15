@@ -13,7 +13,7 @@
     handleDragLeave,
     handleDrop
   } from '$lib/utils/sidebarReorder'
-  import { fly } from 'svelte/transition'
+  import { fly, slide } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
   import IconButton from './IconButton.svelte'
@@ -79,6 +79,7 @@
         ondragover={(e) => handleDragOver(e, i, reordering, dragState)}
         ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
         role="listitem"
+        transition:slide={{ duration: 150 }}
       >
         <!-- 순서 변경 위치 미리보기 -->
         <div
