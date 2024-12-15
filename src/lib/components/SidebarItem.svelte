@@ -58,7 +58,10 @@
       bind:value={newName}
       class="grow rounded-lg py-1 pl-3"
       class:outline-red-500={duplicateStudentName || !newName?.trim()}
-      onblur={saveName}
+      onblur={() => {
+        if (duplicateStudentName || !newName?.trim()) newName = null
+        saveName()
+      }}
       onkeydown={(e) => e.key === 'Enter' && saveName()}
       use:focusOnElement
     />
