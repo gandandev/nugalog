@@ -111,6 +111,8 @@
             onkeydown={(e) => {
               if (e.key === 'Enter' && !e.isComposing) {
                 addStudent()
+              } else if (e.key === 'Escape') {
+                newStudentName = null
               }
             }}
             onblur={() => {
