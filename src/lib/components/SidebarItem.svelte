@@ -3,14 +3,13 @@
   import { focusOnElement } from '$lib/utils'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
+  import { data, type StudentData } from '$lib/stores'
 
   import MoreHoriz from '~icons/mdi/more-horiz'
   import Delete from '~icons/mdi/delete'
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
   import DragHandle from '~icons/mdi/drag'
-
-  import { data, type StudentData } from '$lib/stores'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{
@@ -27,7 +26,11 @@
   let showOptions = $state(false)
 
   let newName: string | null = $state(null)
+  const duplicateStudentName = $derived(
+    $data.some((s) => s !== student && s.name === newName?.trim())
+  )
   function saveName() {
+    if (duplicateStudentName) return
     if (newName && newName.trim()) {
       if (isActive) {
         goto(`/student/${encodeURIComponent(newName!.trim())}`)
@@ -54,8 +57,15 @@
       type="text"
       bind:value={newName}
       class="grow rounded-lg py-1 pl-3"
-      onblur={saveName}
-      onkeydown={(e) => e.key === 'Enter' && saveName()}
+      class:outline-red-500={duplicateStudentName || !newName?.trim()}
+      onblur={() => {
+        if (duplicateStudentName || !newName?.trim()) newName = null
+        saveName()
+      }}
+      onkeydown={(e) => {
+        if (e.key === 'Enter') saveName()
+        if (e.key === 'Escape') newName = null
+      }}
       use:focusOnElement
     />
   {:else}
@@ -120,3 +130,7 @@
     </div>
   {/if}
 </li>
+
+{#if duplicateStudentName}
+  <p class="pl-1 pt-1 text-xs text-stone-500 duration-150">학생 이름이 중복되었습니다.</p>
+{/if}
