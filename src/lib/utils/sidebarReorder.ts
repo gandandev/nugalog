@@ -28,6 +28,7 @@ export function handleDragStart(
     y: e.clientY - rect.top
   }
 
+  // 기본 링크 드래그 모양 숨기기
   const ghost = element.cloneNode(true) as HTMLElement
   ghost.style.position = 'absolute'
   ghost.style.top = '-1000px'

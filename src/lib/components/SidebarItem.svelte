@@ -53,20 +53,6 @@
 
   function handleDragStart(e: DragEvent) {
     if (!reordering) return
-
-    // 기본 링크 드래그 모양 숨기기
-    const element = e.currentTarget as HTMLElement
-    const ghost = element.cloneNode(true) as HTMLElement
-    ghost.style.position = 'absolute'
-    ghost.style.top = '-1000px'
-    ghost.style.opacity = '0'
-    document.body.appendChild(ghost)
-    e.dataTransfer?.setDragImage(ghost, 0, 0)
-
-    requestAnimationFrame(() => {
-      document.body.removeChild(ghost)
-    })
-
     ondragstart(e)
   }
 </script>
