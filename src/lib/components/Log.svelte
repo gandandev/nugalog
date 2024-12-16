@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
   import ContentCopy from '~icons/mdi/content-copy'
@@ -72,22 +74,51 @@
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
     >
+      {#if !editing && !confirmingDelete}
+        <div
+          class="flex items-center"
+          transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+        >
+          <IconButton
+            Icon={copied ? Check : ContentCopy}
+            text={copied ? '복사됨' : undefined}
+            onclick={copy}
+          />
+        </div>
+      {/if}
+      {#if !confirmingDelete}
+        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <IconButton
+            Icon={editing ? Check : Edit}
+            text={editing ? '저장' : undefined}
+            onclick={() => {
+              if (editing) save()
+              else editing = true
+            }}
+            disabled={editing && (!content.trim() || !date)}
+          />
+        </div>
+      {/if}
       {#if editing}
-        <IconButton Icon={Close} text="취소" onclick={cancel} />
-        <IconButton Icon={Check} text="저장" onclick={save} disabled={!content.trim() || !date} />
-      {:else if confirmingDelete}
-        <!-- 삭제 확인 -->
-        <IconButton Icon={Delete} text="삭제" onclick={deleteLog} />
-        <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
+        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <IconButton Icon={Close} text="취소" onclick={cancel} />
+        </div>
       {:else}
-        <!-- 내용 복사, 편집, 삭제 -->
-        <IconButton
-          Icon={copied ? Check : ContentCopy}
-          onclick={copy}
-          text={copied ? '복사됨' : undefined}
-        />
-        <IconButton Icon={Edit} onclick={() => (editing = true)} />
-        <IconButton Icon={Delete} onclick={() => (confirmingDelete = true)} />
+        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <IconButton
+            Icon={Delete}
+            text={confirmingDelete ? '삭제' : undefined}
+            onclick={() => {
+              if (confirmingDelete) deleteLog()
+              else confirmingDelete = true
+            }}
+          />
+        </div>
+      {/if}
+      {#if confirmingDelete}
+        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
+        </div>
       {/if}
     </div>
   </div>
