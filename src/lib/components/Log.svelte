@@ -34,11 +34,19 @@
   }
 
   // 내용 복사
+  let lastCopied = $state(0)
   let copied = $state(false)
   function copy() {
     navigator.clipboard.writeText(log.content)
+    const now = new Date().getTime()
+    lastCopied = now
     copied = true
-    setTimeout(() => (copied = false), 1000)
+    setTimeout(() => {
+      // lastCopied가 바뀌지 않았다면 그 사이 복사된 것이 아니므로 초기화
+      if (lastCopied === now) {
+        copied = false
+      }
+    }, 1000)
   }
 </script>
 
