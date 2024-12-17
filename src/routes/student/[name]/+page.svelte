@@ -1,5 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { scale, fade, fly } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
   import Log from '$lib/components/Log.svelte'
@@ -51,9 +53,12 @@
       {#each student.logs as log, i (log.date.getTime())}
         <Log {log} deleteLog={() => deleteLog(i)} />
       {/each}
-      <div>
+      <div class="relative w-full">
         {#if newLog}
-          <div class="flex flex-col gap-1">
+          <div
+            class="absolute top-0 flex w-full origin-[50%_25%] flex-col gap-1"
+            transition:scale={{ duration: 300, start: 0.3, easing: expoOut }}
+          >
             <div class="ml-3 mt-2 flex items-center justify-between">
               <input
                 type="date"
@@ -78,13 +83,19 @@
             ></textarea>
           </div>
         {:else}
-          <button
-            class="mx-auto mt-5 flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200"
-            onclick={() => (newLog = { date: new Date(), content: '' })}
+          <div
+            class="absolute top-0 mt-5 flex w-full justify-center"
+            in:fly={{ duration: 300, y: 10 }}
+            out:fade={{ duration: 100, easing: expoOut }}
           >
-            <Add class="h-6 w-6" />
-            새 기록
-          </button>
+            <button
+              class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200"
+              onclick={() => (newLog = { date: new Date(), content: '' })}
+            >
+              <Add class="h-6 w-6" />
+              새 기록
+            </button>
+          </div>
         {/if}
       </div>
     </div>
