@@ -14,11 +14,7 @@ export function createDragState(): DragState {
   }
 }
 
-export function handleDragStart(
-  e: DragEvent,
-  student: StudentData,
-  dragState: DragState
-): void {
+export function handleDragStart(e: DragEvent, student: StudentData, dragState: DragState): void {
   const element = e.currentTarget as HTMLElement
   if (!element) return
 
