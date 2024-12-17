@@ -32,6 +32,7 @@
 
   // 새 기록 추가
   let newLog: (Omit<LogType, 'date'> & { date: Date | null }) | null = $state(null)
+  let addedNewLog = $state(false)
   function saveNewLog() {
     $data = $data.map((s) => {
       if (s.name === student.name) {
@@ -44,6 +45,9 @@
     })
 
     newLog = null
+
+    addedNewLog = true
+    setTimeout(() => (addedNewLog = false), 300) // 더 나은 방법 필요
   }
 </script>
 
@@ -57,7 +61,8 @@
         {#if newLog}
           <div
             class="absolute top-0 flex w-full origin-[50%_25%] flex-col gap-1"
-            transition:scale={{ duration: 300, start: 0.3, easing: expoOut }}
+            in:scale={{ duration: 300, start: 0.3, easing: expoOut }}
+            out:scale={{ duration: addedNewLog ? 0 : 300, start: 0.3, easing: expoOut }}
           >
             <div class="ml-3 mt-2 flex items-center justify-between">
               <input
@@ -85,7 +90,7 @@
         {:else}
           <div
             class="absolute top-0 mt-5 flex w-full justify-center"
-            in:fly={{ duration: 300, y: 10 }}
+            in:fly={{ duration: 300, y: addedNewLog ? -20 : 10 }}
             out:fade={{ duration: 100, easing: expoOut }}
           >
             <button
