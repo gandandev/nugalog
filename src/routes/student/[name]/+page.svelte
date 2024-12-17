@@ -1,5 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { scale, fade, fly } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
   import Log from '$lib/components/Log.svelte'
@@ -30,6 +32,7 @@
 
   // 새 기록 추가
   let newLog: (Omit<LogType, 'date'> & { date: Date | null }) | null = $state(null)
+  let addedNewLog = $state(false)
   function saveNewLog() {
     $data = $data.map((s) => {
       if (s.name === student.name) {
@@ -42,6 +45,9 @@
     })
 
     newLog = null
+
+    addedNewLog = true
+    setTimeout(() => (addedNewLog = false), 300) // 더 나은 방법 필요
   }
 </script>
 
@@ -51,9 +57,13 @@
       {#each student.logs as log, i (log.date.getTime())}
         <Log {log} deleteLog={() => deleteLog(i)} />
       {/each}
-      <div>
+      <div class="relative w-full">
         {#if newLog}
-          <div class="flex flex-col gap-1">
+          <div
+            class="absolute top-0 flex w-full origin-[50%_25%] flex-col gap-1"
+            in:scale={{ duration: 300, start: 0.3, easing: expoOut }}
+            out:scale={{ duration: addedNewLog ? 0 : 300, start: 0.3, easing: expoOut }}
+          >
             <div class="ml-3 mt-2 flex items-center justify-between">
               <input
                 type="date"
@@ -72,19 +82,25 @@
               </div>
             </div>
             <textarea
-              class="w-full resize-none rounded-lg bg-stone-100 p-3 duration-150 focus:outline-none"
+              class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150"
               bind:value={newLog.content}
               use:autosize
             ></textarea>
           </div>
         {:else}
-          <button
-            class="mx-auto mt-5 flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:bg-stone-200"
-            onclick={() => (newLog = { date: new Date(), content: '' })}
+          <div
+            class="absolute top-0 mt-5 flex w-full justify-center"
+            in:fly={{ duration: 300, y: addedNewLog ? -20 : 10 }}
+            out:fade={{ duration: 100, easing: expoOut }}
           >
-            <Add class="h-6 w-6" />
-            새 기록
-          </button>
+            <button
+              class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200"
+              onclick={() => (newLog = { date: new Date(), content: '' })}
+            >
+              <Add class="h-6 w-6" />
+              새 기록
+            </button>
+          </div>
         {/if}
       </div>
     </div>

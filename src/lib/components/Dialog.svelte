@@ -38,7 +38,7 @@
     <div class="mt-2 flex justify-end gap-2">
       {#each actions as action}
         <button
-          class="rounded-full px-4 py-2 duration-150 {action.variant}"
+          class="rounded-full px-4 py-2 duration-150 active:scale-95 {action.variant}"
           onclick={action.cancel ? cancel : action.onclick}
         >
           {action.label}

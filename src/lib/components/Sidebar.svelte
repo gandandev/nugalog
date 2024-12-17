@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { josa } from 'es-hangul'
+  import { data } from '$lib/stores'
   import { focusOnElement } from '$lib/utils'
   import {
     type DragState,
@@ -12,6 +13,7 @@
     handleDragLeave,
     handleDrop
   } from '$lib/utils/sidebarReorder'
+  import { fly, slide } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
   import IconButton from './IconButton.svelte'
@@ -21,8 +23,6 @@
   import GroupAdd from '~icons/mdi/group-add'
   import Add from '~icons/mdi/add'
   import Close from '~icons/mdi/close'
-
-  import { data } from '$lib/stores'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -57,7 +57,7 @@
     <Logo />
     {#if reordering}
       <button
-        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300"
+        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95"
         onclick={() => (reordering = false)}
       >
         완료
@@ -79,6 +79,7 @@
         ondragover={(e) => handleDragOver(e, i, reordering, dragState)}
         ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
         role="listitem"
+        transition:slide={{ duration: 150 }}
       >
         <!-- 순서 변경 위치 미리보기 -->
         <div
@@ -102,7 +103,7 @@
       </div>
     {/each}
     {#if newStudentName !== null}
-      <li class="pt-1">
+      <li class="pt-1" transition:fly={{ duration: 150, y: -10 }}>
         <div class="flex w-full gap-1">
           <input
             type="text"
