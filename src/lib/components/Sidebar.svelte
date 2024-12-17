@@ -108,7 +108,7 @@
           <input
             type="text"
             bind:value={newStudentName}
-            class="block grow rounded-lg bg-white px-3 py-1 duration-150 placeholder:text-stone-400"
+            class="block w-full grow rounded-lg bg-white px-3 py-1 duration-150 placeholder:text-stone-400"
             placeholder="추가할 학생 이름"
             onkeydown={(e) => {
               if (e.key === 'Enter' && !e.isComposing) {
