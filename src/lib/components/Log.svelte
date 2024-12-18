@@ -4,6 +4,7 @@
   import autosize from 'svelte-autosize'
 
   import IconButton from './IconButton.svelte'
+  import EditorPanel from './EditorPanel.svelte'
 
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
@@ -43,6 +44,7 @@
       log.date = date
       log.content = content
       editing = false
+      editorExpanded = false
     }
   }
 
@@ -54,6 +56,7 @@
       date = log.date
       content = log.content
       editing = false
+      editorExpanded = false
     }
   }
 
@@ -151,7 +154,7 @@
   </div>
 
   <!-- 내용 -->
-  {#if editing}
+  {#if editing && !editorExpanded}
     <textarea
       class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150"
       bind:value={content}
@@ -161,3 +164,14 @@
     <p class="m-3 mt-0 whitespace-pre-wrap font-sans">{log.content}</p>
   {/if}
 </div>
+
+{#if editorExpanded}
+  <EditorPanel
+    {content}
+    close={cancel}
+    save={(newContent) => {
+      content = newContent
+      save()
+    }}
+  />
+{/if}
