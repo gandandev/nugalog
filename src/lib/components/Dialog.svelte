@@ -1,34 +1,40 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition'
 
+  type DialogAction = {
+    label: string
+    variant: 'primary' | 'secondary' | 'danger'
+    onenter?: boolean
+  } & (
+    | {
+        onclick: () => void
+        cancel?: false
+      }
+    | {
+        onclick?: never
+        cancel: true
+      }
+  )
   const { title, description, actions, cancel } = $props<{
     title: string
     description?: string
-    actions: ({
-      label: string
-      variant: 'primary' | 'secondary' | 'danger'
-    } & (
-      | {
-          onclick: () => void
-          cancel?: false
-        }
-      | {
-          onclick?: never
-          cancel: true
-        }
-    ))[]
+    actions: DialogAction[]
     cancel: () => void
   }>()
 </script>
+
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === 'Escape') cancel()
+    if (e.key == 'Enter') actions.find((action: DialogAction) => action.onenter)?.onclick()
+  }}
+/>
 
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
   transition:fade={{ duration: 100 }}
   onclick={(e) => {
     if (e.target === e.currentTarget) cancel()
-  }}
-  onkeydown={(e) => {
-    if (e.key === 'Escape') cancel()
   }}
   role="presentation"
 >
