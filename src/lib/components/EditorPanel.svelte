@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { fade, fly } from 'svelte/transition'
-  import { expoOut, expoIn } from 'svelte/easing'
+  import { fly } from 'svelte/transition'
+  import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
   import IconButton from './IconButton.svelte'
+  import PillButton from './PillButton.svelte'
+
   import Close from '~icons/mdi/close'
 
   const { content, close, save } = $props<{
@@ -38,19 +40,13 @@
     ></textarea>
 
     <div class="mt-4 flex justify-end gap-2">
-      <button
-        class="rounded-full bg-stone-100 px-4 py-2 duration-150 hover:bg-stone-200 active:scale-95"
-        onclick={close}
-      >
-        취소
-      </button>
-      <button
-        class="rounded-full bg-black px-4 py-2 text-white duration-150 hover:bg-stone-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+      <PillButton text="취소" onclick={close} variant="secondary" />
+      <PillButton
+        text="저장"
         onclick={() => save(editedContent)}
+        variant="primary"
         disabled={!editedContent.trim()}
-      >
-        저장
-      </button>
+      />
     </div>
   </div>
 </div>

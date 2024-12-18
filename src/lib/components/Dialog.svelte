@@ -1,6 +1,8 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition'
 
+  import PillButton from './PillButton.svelte'
+
   type DialogAction = {
     label: string
     variant: 'primary' | 'secondary' | 'danger'
@@ -43,25 +45,12 @@
     <p class="mt-1 text-sm text-stone-500">{description}</p>
     <div class="mt-2 flex justify-end gap-2">
       {#each actions as action}
-        <button
-          class="rounded-full px-4 py-2 duration-150 active:scale-95 {action.variant}"
+        <PillButton
+          text={action.label}
           onclick={action.cancel ? cancel : action.onclick}
-        >
-          {action.label}
-        </button>
+          variant={action.variant}
+        />
       {/each}
     </div>
   </div>
 </div>
-
-<style lang="postcss">
-  .primary {
-    @apply bg-black text-white hover:bg-stone-800 active:bg-stone-900;
-  }
-  .secondary {
-    @apply bg-stone-100 text-black hover:bg-stone-200 active:bg-stone-300;
-  }
-  .danger {
-    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700;
-  }
-</style>
