@@ -3,12 +3,14 @@
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
+  import IconButton from './IconButton.svelte'
+
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
   import Delete from '~icons/mdi/delete'
   import Check from '~icons/mdi/check'
   import Close from '~icons/mdi/close'
-  import IconButton from './IconButton.svelte'
+  import Fullscreen from '~icons/mdi/fullscreen'
 
   const {
     log,
@@ -31,6 +33,8 @@
   let editing = $state(isNew)
   let date = $state(log.date ?? new Date())
   let content = $state(log.content)
+
+  let editorExpanded = $state(false)
 
   function save() {
     if (isNew) {
@@ -104,6 +108,15 @@
           />
         </div>
       {/if}
+      {#if editing}
+        <div
+          class="flex items-center"
+          transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+        >
+          <IconButton Icon={Close} text="취소" onclick={cancel} />
+          <IconButton Icon={Fullscreen} text="확장" onclick={() => (editorExpanded = true)} />
+        </div>
+      {/if}
       {#if !confirmingDelete}
         <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
           <IconButton
@@ -117,11 +130,7 @@
           />
         </div>
       {/if}
-      {#if editing}
-        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
-          <IconButton Icon={Close} text="취소" onclick={cancel} />
-        </div>
-      {:else}
+      {#if !editing}
         <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
           <IconButton
             Icon={Delete}
