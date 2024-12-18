@@ -10,29 +10,47 @@
   import Close from '~icons/mdi/close'
   import IconButton from './IconButton.svelte'
 
-  const { log, deleteLog } = $props<{
-    log: { date: Date; content: string }
-    deleteLog: () => void
+  const {
+    log,
+    deleteLog,
+    isNew = false,
+    onSave,
+    onCancel
+  } = $props<{
+    log: { date: Date | null; content: string }
+    deleteLog?: () => void
+    isNew?: boolean
+    onSave?: (log: { date: Date; content: string }) => void
+    onCancel?: () => void
   }>()
 
   // 삭제 확인
   let confirmingDelete = $state(false)
 
   // 편집
-  let editing = $state(false)
-  let date: Date | null = $state(log.date)
+  let editing = $state(isNew)
+  let date = $state(log.date ?? new Date())
   let content = $state(log.content)
+
   function save() {
-    log.date = date
-    log.content = content
-    editing = false
+    if (isNew) {
+      onSave?.({ date, content })
+    } else {
+      log.date = date
+      log.content = content
+      editing = false
+    }
   }
 
   // 취소
   function cancel() {
-    date = log.date
-    content = log.content
-    editing = false
+    if (isNew) {
+      onCancel?.()
+    } else {
+      date = log.date
+      content = log.content
+      editing = false
+    }
   }
 
   // 내용 복사
