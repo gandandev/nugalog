@@ -23,8 +23,8 @@
     log: { date: Date | null; content: string }
     deleteLog?: () => void
     isNew?: boolean
-    onSave?: (log: { date: Date; content: string }) => void
-    onCancel?: () => void
+    save?: (log: { date: Date; content: string }) => void
+    cancel?: () => void
   }>()
 
   // 삭제 확인
@@ -51,7 +51,7 @@
   // 취소
   function cancel() {
     if (isNew) {
-      onCancel?.()
+      cancel()
     } else {
       date = log.date
       content = log.content

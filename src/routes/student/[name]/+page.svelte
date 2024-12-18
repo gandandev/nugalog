@@ -64,7 +64,7 @@
             in:scale={{ duration: 300, start: 0.3, easing: expoOut }}
             out:scale={{ duration: addedNewLog ? 0 : 300, start: 0.3, easing: expoOut }}
           >
-            <Log log={newLog} isNew={true} onSave={saveNewLog} onCancel={() => (newLog = null)} />
+            <Log log={newLog} isNew={true} save={saveNewLog} cancel={() => (newLog = null)} />
           </div>
         {:else}
           <div
