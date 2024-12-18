@@ -164,7 +164,7 @@
     description="삭제된 학생은 복구할 수 없습니다."
     actions={[
       { label: '취소', variant: 'secondary', cancel: true },
-      { label: '삭제', onclick: handleDelete, variant: 'danger' }
+      { label: '삭제', onclick: handleDelete, variant: 'danger', onenter: true }
     ]}
     cancel={() => (studentToDeleteIndex = null)}
   />
