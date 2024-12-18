@@ -63,7 +63,11 @@
         완료
       </button>
     {:else}
-      <IconButton Icon={GroupAdd} onclick={() => (newStudentName = '')} />
+      <IconButton
+        Icon={GroupAdd}
+        onclick={() => (newStudentName = '')}
+        emphasized={!$data.length}
+      />
     {/if}
   </div>
 
