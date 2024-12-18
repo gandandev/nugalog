@@ -3,6 +3,7 @@
   import { scale, fade, fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
+  import { josa } from 'es-hangul'
 
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
@@ -108,9 +109,10 @@
 {:else if !$dataLoaded}
   <div></div>
 {:else}
+  {@const selectedStudentName = decodeURIComponent($page.params.name)}
   <InfoDisplay
     Icon={PersonOff}
-    title="학생을 찾을 수 없습니다"
-    description="학생 목록에서 원하는 학생을 선택해주세요."
+    title={`학생 "${selectedStudentName}"${josa.pick(selectedStudentName, '을/를')} 찾을 수 없습니다`}
+    description="학생이 삭제되었는지, 또는 링크가 올바른지 확인해주세요."
   />
 {/if}
