@@ -88,13 +88,13 @@
   class:hover:bg-transparent={editing}
   class:dark:hover:bg-transparent={editing}
 >
-  <div class="mx-3 mt-2 flex items-center justify-between" class:mr-0={editing}>
+  <div class="mt-2 flex items-center justify-between" class:pl-3={!editing} class:pr-2={!editing}>
     <!-- 날짜 -->
     {#if editing}
       <input
         type="date"
         value={date?.toISOString().slice(0, 10)}
-        class="bg-transparent"
+        class="rounded-lg bg-stone-100 px-2 py-1 dark:bg-stone-900"
         oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
       />
     {:else}
