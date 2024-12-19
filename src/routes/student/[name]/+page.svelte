@@ -2,19 +2,15 @@
   import { page } from '$app/stores'
   import { scale, fade, fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import autosize from 'svelte-autosize'
   import { josa } from 'es-hangul'
 
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
-  import IconButton from '$lib/components/IconButton.svelte'
 
   import Add from '~icons/mdi/add'
-  import Close from '~icons/mdi/close'
-  import Check from '~icons/mdi/check'
   import PersonOff from '~icons/mdi/person-off'
 
-  import { data, type Log as LogType, dataLoaded } from '$lib/stores'
+  import { data, dataLoaded } from '$lib/stores'
 
   const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
 
@@ -64,7 +60,7 @@
             in:scale={{ duration: 300, start: 0.3, easing: expoOut }}
             out:scale={{ duration: addedNewLog ? 0 : 300, start: 0.3, easing: expoOut }}
           >
-            <Log log={newLog} isNew={true} save={saveNewLog} cancel={() => (newLog = null)} />
+            <Log log={newLog} isNew={true} {saveNewLog} cancelNewLog={() => (newLog = null)} />
           </div>
         {:else}
           <div

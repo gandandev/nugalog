@@ -15,17 +15,23 @@
 
   const {
     log,
-    deleteLog,
     isNew = false,
-    onSave,
-    onCancel
-  } = $props<{
-    log: { date: Date | null; content: string }
-    deleteLog?: () => void
-    isNew?: boolean
-    save?: (log: { date: Date; content: string }) => void
-    cancel?: () => void
-  }>()
+    saveNewLog,
+    cancelNewLog,
+    deleteLog
+  } = $props<
+    | {
+        log: { date: Date | null; content: string }
+        isNew?: false
+        deleteLog: () => void
+      }
+    | {
+        log: { date: Date | null; content: string }
+        isNew: true
+        saveNewLog: (log: { date: Date; content: string }) => void
+        cancelNewLog: () => void
+      }
+  >()
 
   // 삭제 확인
   let confirmingDelete = $state(false)
@@ -39,7 +45,7 @@
 
   function save() {
     if (isNew) {
-      onSave?.({ date, content })
+      saveNewLog({ date, content })
     } else {
       log.date = date
       log.content = content
@@ -51,7 +57,7 @@
   // 취소
   function cancel() {
     if (isNew) {
-      cancel()
+      cancelNewLog()
     } else {
       date = log.date
       content = log.content
