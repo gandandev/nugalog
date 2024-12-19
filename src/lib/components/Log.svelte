@@ -154,7 +154,7 @@
   </div>
 
   <!-- 내용 -->
-  {#if editing && !editorExpanded}
+  {#if editing}
     <textarea
       class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150"
       bind:value={content}
@@ -167,8 +167,10 @@
 
 {#if editorExpanded}
   <EditorPanel
+    title={isNew ? '새 기록' : '기록 편집'}
     {content}
     close={cancel}
+    minimizeEditor={() => (editorExpanded = false)}
     save={(newContent) => {
       content = newContent
       save()
