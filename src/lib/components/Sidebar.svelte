@@ -51,13 +51,15 @@
   }
 </script>
 
-<aside class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1">
+<aside
+  class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-stone-900"
+>
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-4 pr-2 pt-2">
     <Logo />
     {#if reordering}
       <button
-        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95"
+        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700 dark:active:scale-95"
         onclick={() => (reordering = false)}
       >
         완료
@@ -112,7 +114,7 @@
           <input
             type="text"
             bind:value={newStudentName}
-            class="block w-full grow rounded-lg bg-white px-3 py-1 duration-150 placeholder:text-stone-400"
+            class="block w-full grow rounded-lg bg-transparent px-3 py-1 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
             placeholder="추가할 학생 이름"
             onkeydown={(e) => {
               if (e.key === 'Enter' && !e.isComposing) {
