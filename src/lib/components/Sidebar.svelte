@@ -87,7 +87,7 @@
       >
         <!-- 순서 변경 위치 미리보기 -->
         <div
-          class="absolute -top-0.5 left-0 right-0 z-50 h-0.5 rounded-full bg-blue-500 opacity-0"
+          class="absolute -top-0.5 left-0 right-0 h-0.5 rounded-full bg-blue-500 opacity-0"
           class:opacity-100={dragState.dropPreviewIndex === i}
           role="presentation"
         ></div>
