@@ -48,7 +48,7 @@
 </script>
 
 {#if student}
-  <div class="w-full space-y-1 overflow-y-auto p-12 pb-24">
+  <div class="w-full space-y-1 overflow-y-auto p-12 pb-64">
     <div class="mx-auto w-1/2">
       {#each student.logs as log, i (log.date.getTime())}
         <Log {log} deleteLog={() => deleteLog(i)} />
@@ -56,7 +56,7 @@
       <div class="relative w-full">
         {#if newLog}
           <div
-            class="absolute top-0 w-full origin-[50%_25%]"
+            class="absolute top-0 w-full origin-[50%_25%] pb-12"
             in:scale={{ duration: 300, start: 0.3, easing: expoOut }}
             out:scale={{ duration: addedNewLog ? 0 : 300, start: 0.3, easing: expoOut }}
           >
