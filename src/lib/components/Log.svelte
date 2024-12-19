@@ -3,36 +3,67 @@
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
 
+  import IconButton from './IconButton.svelte'
+  import EditorPanel from './EditorPanel.svelte'
+
   import ContentCopy from '~icons/mdi/content-copy'
   import Edit from '~icons/mdi/edit'
   import Delete from '~icons/mdi/delete'
   import Check from '~icons/mdi/check'
   import Close from '~icons/mdi/close'
-  import IconButton from './IconButton.svelte'
+  import Fullscreen from '~icons/mdi/fullscreen'
 
-  const { log, deleteLog } = $props<{
-    log: { date: Date; content: string }
-    deleteLog: () => void
-  }>()
+  const {
+    log,
+    isNew = false,
+    saveNewLog,
+    cancelNewLog,
+    deleteLog
+  } = $props<
+    | {
+        log: { date: Date | null; content: string }
+        isNew?: false
+        deleteLog: () => void
+      }
+    | {
+        log: { date: Date | null; content: string }
+        isNew: true
+        saveNewLog: (log: { date: Date; content: string }) => void
+        cancelNewLog: () => void
+      }
+  >()
 
   // 삭제 확인
   let confirmingDelete = $state(false)
 
   // 편집
-  let editing = $state(false)
-  let date: Date | null = $state(log.date)
+  let editing = $state(isNew)
+  let date = $state(log.date ?? new Date())
   let content = $state(log.content)
+
+  let editorExpanded = $state(false)
+
   function save() {
-    log.date = date
-    log.content = content
-    editing = false
+    if (isNew) {
+      saveNewLog({ date, content })
+    } else {
+      log.date = date
+      log.content = content
+      editing = false
+      editorExpanded = false
+    }
   }
 
   // 취소
   function cancel() {
-    date = log.date
-    content = log.content
-    editing = false
+    if (isNew) {
+      cancelNewLog()
+    } else {
+      date = log.date
+      content = log.content
+      editing = false
+      editorExpanded = false
+    }
   }
 
   // 내용 복사
@@ -86,6 +117,15 @@
           />
         </div>
       {/if}
+      {#if editing}
+        <div
+          class="flex items-center"
+          transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+        >
+          <IconButton Icon={Close} text="취소" onclick={cancel} />
+          <IconButton Icon={Fullscreen} text="크게 보기" onclick={() => (editorExpanded = true)} />
+        </div>
+      {/if}
       {#if !confirmingDelete}
         <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
           <IconButton
@@ -99,11 +139,7 @@
           />
         </div>
       {/if}
-      {#if editing}
-        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
-          <IconButton Icon={Close} text="취소" onclick={cancel} />
-        </div>
-      {:else}
+      {#if !editing}
         <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
           <IconButton
             Icon={Delete}
@@ -134,3 +170,18 @@
     <p class="m-3 mt-0 whitespace-pre-wrap font-sans">{log.content}</p>
   {/if}
 </div>
+
+{#if editorExpanded}
+  <EditorPanel
+    title={isNew ? '새 기록' : '기록 편집'}
+    {content}
+    {date}
+    close={cancel}
+    minimizeEditor={() => (editorExpanded = false)}
+    save={(newContent, newDate) => {
+      content = newContent
+      date = newDate
+      save()
+    }}
+  />
+{/if}

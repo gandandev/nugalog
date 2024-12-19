@@ -12,7 +12,7 @@
 </script>
 
 <button
-  class="flex h-8 items-center justify-center rounded-lg ring-neutral-500 ring-offset-2 duration-150 hover:bg-stone-200 active:scale-90 active:bg-stone-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+  class="flex h-8 items-center justify-center rounded-lg ring-neutral-500 ring-offset-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-90 enabled:active:bg-stone-300 disabled:cursor-not-allowed disabled:opacity-50"
   class:w-auto={text}
   class:pr-2={text}
   class:ring-2={emphasized}
