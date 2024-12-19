@@ -175,10 +175,12 @@
   <EditorPanel
     title={isNew ? '새 기록' : '기록 편집'}
     {content}
+    {date}
     close={cancel}
     minimizeEditor={() => (editorExpanded = false)}
-    save={(newContent) => {
+    save={(newContent, newDate) => {
       content = newContent
+      date = newDate
       save()
     }}
   />

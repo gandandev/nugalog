@@ -5,15 +5,17 @@
 
   import PillButton from './PillButton.svelte'
 
-  const { title, content, close, save, minimizeEditor } = $props<{
+  const { title, content, date, close, save, minimizeEditor } = $props<{
     title: string
     content: string
+    date: Date
     close: () => void
     minimizeEditor: () => void
-    save: (content: string) => void
+    save: (content: string, date: Date) => void
   }>()
 
   let editedContent = $state(content)
+  let editedDate = $state(date)
 </script>
 
 <svelte:window
@@ -27,17 +29,26 @@
   transition:fly={{ y: 100, duration: 400, easing: expoOut }}
 >
   <div class="flex max-h-full min-h-[50%] w-1/2 flex-col justify-between p-5">
-    <div class="mb-4 flex items-center justify-between">
+    <div class="mb-3 flex flex-col gap-4">
       <h2 class="flex items-center text-2xl font-semibold">{title}</h2>
-      <div class="flex justify-end gap-2">
-        <PillButton text="취소" onclick={close} variant="secondary" />
-        <PillButton text="작게 보기" onclick={minimizeEditor} variant="secondary" />
-        <PillButton
-          text="저장"
-          onclick={() => save(editedContent)}
-          variant="primary"
-          disabled={!editedContent.trim()}
+      <div class="flex items-center justify-between">
+        <input
+          type="date"
+          class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none"
+          value={editedDate?.toISOString().slice(0, 10)}
+          oninput={(e) =>
+            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
+        <div class="flex justify-end gap-2">
+          <PillButton text="취소" onclick={close} variant="secondary" />
+          <PillButton text="작게 보기" onclick={minimizeEditor} variant="secondary" />
+          <PillButton
+            text="저장"
+            onclick={() => save(editedContent, editedDate)}
+            variant="primary"
+            disabled={!editedContent.trim() || !editedDate}
+          />
+        </div>
       </div>
     </div>
 
