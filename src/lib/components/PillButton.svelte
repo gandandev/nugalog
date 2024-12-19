@@ -8,7 +8,8 @@
 </script>
 
 <button
-  class="rounded-full bg-black px-4 py-2 text-white duration-150 hover:bg-stone-800 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 {variant}"
+  class="rounded-full px-4 py-2 duration-150 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 {variant ??
+    'primary'}"
   {onclick}
   {disabled}
 >
@@ -17,12 +18,12 @@
 
 <style lang="postcss">
   .primary {
-    @apply bg-black text-white hover:bg-stone-800 active:bg-stone-900;
+    @apply bg-black text-white enabled:hover:bg-stone-800 enabled:active:bg-stone-900;
   }
   .secondary {
-    @apply bg-stone-100 text-black hover:bg-stone-200 active:bg-stone-300;
+    @apply bg-stone-100 text-black enabled:hover:bg-stone-200 enabled:active:bg-stone-300;
   }
   .danger {
-    @apply bg-red-500 text-white hover:bg-red-600 active:bg-red-700;
+    @apply bg-red-500 text-white enabled:hover:bg-red-600 enabled:active:bg-red-700;
   }
 </style>
