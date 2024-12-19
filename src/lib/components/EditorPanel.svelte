@@ -23,7 +23,7 @@
 />
 
 <div
-  class="fixed inset-y-0 left-64 right-0 z-50 flex items-center justify-center bg-white"
+  class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white"
   transition:fly={{ y: 100, duration: 400, easing: expoOut }}
 >
   <div class="flex max-h-full min-h-[50%] w-1/2 flex-col justify-between p-5">
