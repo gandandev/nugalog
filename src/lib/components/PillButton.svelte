@@ -18,10 +18,10 @@
 
 <style lang="postcss">
   .primary {
-    @apply bg-black text-white enabled:hover:bg-stone-800 enabled:active:bg-stone-900;
+    @apply bg-black text-white enabled:hover:bg-stone-800 enabled:active:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400;
   }
   .secondary {
-    @apply bg-stone-100 text-black enabled:hover:bg-stone-200 enabled:active:bg-stone-300;
+    @apply bg-stone-100 text-black enabled:hover:bg-stone-200 enabled:active:bg-stone-300 dark:bg-stone-800 dark:text-white dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600;
   }
   .danger {
     @apply bg-red-500 text-white enabled:hover:bg-red-600 enabled:active:bg-red-700;

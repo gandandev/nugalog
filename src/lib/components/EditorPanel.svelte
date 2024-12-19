@@ -25,7 +25,7 @@
 />
 
 <div
-  class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white"
+  class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white dark:bg-stone-950"
   transition:fly={{ y: 100, duration: 400, easing: expoOut }}
 >
   <div class="flex max-h-full min-h-[50%] w-1/2 flex-col justify-between p-5">
@@ -34,7 +34,7 @@
       <div class="flex items-center justify-between">
         <input
           type="date"
-          class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none"
+          class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none dark:bg-stone-900"
           value={editedDate?.toISOString().slice(0, 10)}
           oninput={(e) =>
             (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
@@ -53,7 +53,7 @@
     </div>
 
     <textarea
-      class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none"
+      class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none dark:bg-stone-900"
       bind:value={editedContent}
       use:autosize
     ></textarea>

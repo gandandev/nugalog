@@ -84,8 +84,9 @@
 </script>
 
 <div
-  class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50"
+  class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50 dark:hover:bg-stone-900"
   class:hover:bg-transparent={editing}
+  class:dark:hover:bg-transparent={editing}
 >
   <div class="mx-3 mt-2 flex items-center justify-between" class:mr-0={editing}>
     <!-- 날짜 -->
@@ -93,6 +94,7 @@
       <input
         type="date"
         value={date?.toISOString().slice(0, 10)}
+        class="bg-transparent"
         oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
       />
     {:else}
@@ -103,7 +105,7 @@
 
     <!-- 액션 버튼 -->
     <div
-      class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100"
+      class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
     >
       {#if !editing && !confirmingDelete}
         <div
@@ -162,7 +164,7 @@
   <!-- 내용 -->
   {#if editing}
     <textarea
-      class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150"
+      class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150 dark:bg-stone-900"
       bind:value={content}
       use:autosize
     ></textarea>

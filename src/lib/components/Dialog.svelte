@@ -40,7 +40,10 @@
   }}
   role="presentation"
 >
-  <div class="w-96 rounded-2xl bg-white p-5" transition:scale={{ start: 0.9, duration: 200 }}>
+  <div
+    class="w-96 rounded-2xl bg-white p-5 dark:bg-stone-800"
+    transition:scale={{ start: 0.9, duration: 200 }}
+  >
     <h2 class="text-xl font-semibold">{title}</h2>
     <p class="mt-1 text-sm text-stone-500">{description}</p>
     <div class="mt-2 flex justify-end gap-2">

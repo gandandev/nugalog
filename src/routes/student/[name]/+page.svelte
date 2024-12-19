@@ -69,7 +69,7 @@
             out:fade={{ duration: 100, easing: expoOut }}
           >
             <button
-              class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200"
+              class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
               onclick={() => (newLog = { date: new Date(), content: '' })}
             >
               <Add class="h-6 w-6" />
