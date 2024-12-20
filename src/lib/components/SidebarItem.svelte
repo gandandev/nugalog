@@ -44,7 +44,7 @@
 <svelte:window onclick={() => (showOptions = false)} />
 
 <li
-  class="group/item relative flex w-full items-center rounded-lg bg-transparent duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300 dark:hover:bg-stone-800 dark:has-[a:active]:bg-stone-700"
+  class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300 dark:hover:bg-stone-800 dark:has-[a:active]:bg-stone-700"
   class:bg-stone-200={isActive || reordering}
   class:dark:bg-stone-800={isActive || reordering}
   class:cursor-grab={reordering}
