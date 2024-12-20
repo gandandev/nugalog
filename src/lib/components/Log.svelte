@@ -12,6 +12,7 @@
   import Check from '~icons/mdi/check'
   import Close from '~icons/mdi/close'
   import Fullscreen from '~icons/mdi/fullscreen'
+  import Calendar from '~icons/mdi/calendar'
 
   const {
     log,
@@ -88,15 +89,20 @@
   class:hover:bg-transparent={editing}
   class:dark:hover:bg-transparent={editing}
 >
-  <div class="mx-3 mt-2 flex items-center justify-between" class:mr-0={editing}>
+  <div class="mt-2 flex items-center justify-between" class:pl-3={!editing} class:pr-2={!editing}>
     <!-- 날짜 -->
     {#if editing}
-      <input
-        type="date"
-        value={date?.toISOString().slice(0, 10)}
-        class="bg-transparent"
-        oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
-      />
+      <div class="relative">
+        <input
+          type="date"
+          value={date?.toISOString().slice(0, 10)}
+          class="rounded-lg bg-stone-100 px-2 py-1 dark:bg-stone-900 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+          oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+        />
+        {#if navigator.userAgent.includes('Chrome')}
+          <Calendar class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2 text-stone-500" />
+        {/if}
+      </div>
     {:else}
       <span class="text-stone-500">
         {log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
