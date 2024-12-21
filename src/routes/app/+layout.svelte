@@ -28,7 +28,10 @@
   let accountButton: HTMLButtonElement | null = $state(null)
   let accountOptions: HTMLDivElement | null = $state(null)
   function handleWindowClick(event: MouseEvent) {
-    if (!accountButton?.contains(event.target as Node)) {
+    if (
+      !accountButton?.contains(event.target as Node) &&
+      !accountOptions?.contains(event.target as Node)
+    ) {
       showAccountOptions = false
     }
   }
