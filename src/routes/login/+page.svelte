@@ -10,7 +10,7 @@
     data.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${$page.url.origin}/auth/callback?next=/app`
+        redirectTo: `${window.location.origin}/auth/callback?next=/app`
       }
     })
   }
