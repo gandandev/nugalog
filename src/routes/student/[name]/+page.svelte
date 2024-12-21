@@ -48,7 +48,7 @@
 </script>
 
 {#if student}
-  <div class="w-full space-y-1 overflow-y-auto p-12 pb-64">
+  <div class="w-full space-y-1 overflow-y-auto px-12 pb-64">
     <div class="mx-auto w-1/2">
       {#each student.logs as log, i (log.date.getTime())}
         <Log {log} deleteLog={() => deleteLog(i)} />
