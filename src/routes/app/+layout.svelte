@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type { PageData } from './$types'
+
   import Sidebar from '$lib/components/Sidebar.svelte'
 
-  let { children } = $props()
+  let { data, children }: { data: PageData; children: any } = $props()
 
-  let loggedIn = false
+  let loggedIn = $derived(data.session !== null)
 </script>
 
 <div class="flex h-full">
@@ -14,7 +16,11 @@
         <button
           class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-900"
         >
-          <img src="https://picsum.photos/200/400" alt="" class="h-8 w-8 rounded-full" />
+          <img
+            src={data.session!.user.user_metadata.avatar_url}
+            alt=""
+            class="h-8 w-8 rounded-full"
+          />
         </button>
       {:else}
         <a
