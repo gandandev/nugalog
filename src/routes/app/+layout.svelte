@@ -119,7 +119,7 @@
 
   <div class="flex-1">
     <div class="flex justify-end p-4">
-      <div class="relative">
+      <div class="relative z-50 h-8">
         {#if loggedIn}
           <button
             bind:this={accountButton}
@@ -148,7 +148,7 @@
         {#if showAccountOptions}
           <div
             bind:this={accountOptions}
-            class="absolute top-12 z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
+            class="z-5 0 absolute top-12 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
             transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
           >
             <div class="h-14 px-3 pt-2 leading-tight">
