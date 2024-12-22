@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
-  import { scale, fade } from 'svelte/transition'
+  import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data as dataStore, dataLoaded, type Log, type StudentData } from '$lib/stores'
+  import { data as dataStore, dataLoaded } from '$lib/stores'
+  import { loadDataFromDb, saveDataToDb, loadDataFromLocalStorage } from '$lib/utils/db'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Logout from '~icons/mdi/logout'
@@ -32,76 +33,22 @@
     }
   }
 
-  // localStorage에서 데이터 불러오기
-  if (typeof localStorage !== 'undefined') {
-    const storedData = JSON.parse(localStorage.getItem('data') || '[]') as StudentData[]
-    const parsedData = storedData.map((student) => ({
-      ...student,
-      logs: student.logs.map((log) => ({ ...log, date: new Date(log.date) }))
-    }))
-    dataStore.set(parsedData)
-    dataLoaded.set(true)
-  }
-
-  // DB에서 데이터 가져오기
-  async function loadDataFromDb() {
-    const { data: userData } = await data.supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) return // 로그인 안 된 상태라면 스킵
-
-    const { data: dbResult, error } = await data.supabase
-      .from('classes')
-      .select('id, created_at, students, user_id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (error) {
-      console.error('가져오는 중 오류:', error)
-      return
-    }
-
-    if (dbResult?.students) {
-      const parsed = dbResult.students.map((student: StudentData) => ({
-        ...student,
-        logs: student.logs.map((log: Log) => ({
-          ...log,
-          date: new Date(log.date)
-        }))
-      }))
-      dataStore.set(parsed)
-    }
-
-    dataLoaded.set(true)
-  }
-
-  // DB에 데이터 저장하기
-  async function saveDataToDb(dataToSave: StudentData[]) {
-    const { data: userData } = await data.supabase.auth.getUser()
-    const user = userData?.user
-    if (!user) return
-
-    const { error } = await data.supabase.from('classes').upsert(
-      {
-        students: dataToSave,
-        user_id: user.id
-      },
-      { onConflict: 'user_id' }
-    )
-    if (error) {
-      console.error('저장 중 오류:', error)
-    }
-  }
-
   onMount(async () => {
-    // 컴포넌트가 마운트되면 DB에서 먼저 불러오기
-    await loadDataFromDb()
+    const dbData = await loadDataFromDb(data.supabase)
+    const localData = loadDataFromLocalStorage()
 
-    // dataStore가 바뀔 때마다 localStorage & DB에 저장
+    if (dbData === null) {
+      await saveDataToDb(data.supabase, localData)
+    }
+    $dataStore = dbData ?? localData
+
+    $dataLoaded = true
+
     dataStore.subscribe(async (value) => {
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('data', JSON.stringify(value))
       }
-      await saveDataToDb(value)
+      await saveDataToDb(data.supabase, value)
     })
   })
 
