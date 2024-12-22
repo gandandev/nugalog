@@ -7,6 +7,7 @@
   import { loadDataFromDb, saveDataToDb, loadDataFromLocalStorage } from '$lib/utils/db'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
+
   import Logout from '~icons/mdi/logout'
 
   let { data, children }: { data: PageData; children: any } = $props()
