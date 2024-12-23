@@ -12,7 +12,7 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
     .from('classes')
     .select('id, created_at, students, user_id')
     .eq('user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (error) throw error
 
