@@ -13,9 +13,6 @@
 
   let { data, children }: { data: PageData; children: any } = $props()
 
-  // 로그인 여부
-  let loggedIn = $state(data.session !== null)
-
   function signInWithGoogle() {
     data.supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -25,8 +22,9 @@
     })
   }
 
+  // 로그인 여부
+  let loggedIn = $state(data.session !== null)
   data.supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log(event, session)
     if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
       loggedIn = session !== null
     } else if (event === 'SIGNED_OUT') {

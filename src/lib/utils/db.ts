@@ -55,4 +55,4 @@ export function loadDataFromLocalStorage(): StudentData[] {
     ...student,
     logs: student.logs.map((log) => ({ ...log, date: new Date(log.date) }))
   }))
-} 
+}
