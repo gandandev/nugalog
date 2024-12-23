@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
@@ -14,6 +15,15 @@
 
   // 로그인 여부
   let loggedIn = $state(data.session !== null)
+
+  function signInWithGoogle() {
+    data.supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${$page.url.origin}/auth/callback?next=/app`
+      }
+    })
+  }
 
   data.supabase.auth.onAuthStateChange(async (event, session) => {
     console.log(event, session)
@@ -83,12 +93,19 @@
             {/await}
           </button>
         {:else}
-          <a
-            href="/login"
-            class="rounded-full border border-stone-200 px-3 py-1 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:border-stone-800 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
+          <button
+            class="flex items-center rounded-full border border-stone-200 pr-2.5 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:border-stone-800 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
+            onclick={signInWithGoogle}
           >
-            로그인
-          </a>
+            <div class="flex h-8 w-8 items-center justify-center">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                alt="Google 로고"
+                class="h-5 w-5"
+              />
+            </div>
+            Google로 로그인
+          </button>
         {/if}
       </div>
 
@@ -96,7 +113,7 @@
         {#if showAccountOptions}
           <div
             bind:this={accountOptions}
-            class="z-5 0 absolute top-12 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
+            class="z-5 absolute top-12 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
             transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
           >
             <div class="h-14 px-3 pt-2 leading-tight">
