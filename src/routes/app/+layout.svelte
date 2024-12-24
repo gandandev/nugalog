@@ -42,10 +42,10 @@
     const dbData = await loadDataFromDb(data.supabase)
     const localData = loadDataFromLocalStorage()
 
+    $dataStore = dbData ?? localData
     if (dbData === null) {
       await saveDataToDb(data.supabase, localData)
     }
-    $dataStore = dbData ?? localData
 
     $dataLoaded = true
 

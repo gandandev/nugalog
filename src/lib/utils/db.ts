@@ -6,7 +6,7 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
   // 로그인 여부 확인
   const { data: userData } = await supabase.auth.getUser()
   const user = userData?.user
-  if (!user) throw new Error('Not logged in')
+  if (!user) return null
 
   const { data: dbResult, error } = await supabase
     .from('classes')
