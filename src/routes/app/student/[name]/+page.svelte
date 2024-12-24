@@ -47,9 +47,9 @@
   }
 </script>
 
-{#if student}
-  <div class="h-full space-y-1 overflow-y-auto px-12 py-16 pb-64">
-    <div class="mx-auto w-1/2">
+<div class="h-full space-y-1 overflow-y-auto py-16">
+  {#if student}
+    <div class="mx-auto w-1/2 px-12 pb-64">
       {#each student.logs as log, i (log.date.getTime())}
         <Log {log} deleteLog={() => deleteLog(i)} />
       {/each}
@@ -79,14 +79,14 @@
         {/if}
       </div>
     </div>
-  </div>
-{:else if !$dataLoaded}
-  <div></div>
-{:else}
-  {@const selectedStudentName = decodeURIComponent($page.params.name)}
-  <InfoDisplay
-    Icon={PersonOff}
-    title={`학생 "${selectedStudentName}"${josa.pick(selectedStudentName, '을/를')} 찾을 수 없습니다`}
-    description="학생이 삭제되었는지, 또는 링크가 올바른지 확인해주세요."
-  />
-{/if}
+  {:else if !$dataLoaded}
+    <div></div>
+  {:else}
+    {@const selectedStudentName = decodeURIComponent($page.params.name)}
+    <InfoDisplay
+      Icon={PersonOff}
+      title={`학생 "${selectedStudentName}"${josa.pick(selectedStudentName, '을/를')} 찾을 수 없습니다`}
+      description="학생이 삭제되었는지, 또는 링크가 올바른지 확인해주세요."
+    />
+  {/if}
+</div>
