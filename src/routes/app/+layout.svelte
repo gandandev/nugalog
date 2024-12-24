@@ -66,11 +66,11 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<div class="flex h-full">
+<div class="flex h-screen overflow-hidden">
   <Sidebar />
 
-  <div class="flex-1">
-    <div class="flex justify-end p-4">
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <div class="fixed inset-x-0 top-0 flex justify-end p-4 pr-6">
       <div class="relative z-50 h-8">
         {#if loggedIn}
           <button
@@ -129,6 +129,8 @@
         {/if}
       {/await}
     </div>
-    {@render children()}
+    <div class="flex-1 overflow-hidden">
+      {@render children()}
+    </div>
   </div>
 </div>
