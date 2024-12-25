@@ -70,7 +70,7 @@
   <Sidebar />
 
   <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="fixed inset-x-0 top-0 flex justify-end p-4">
+    <div class="sticky inset-x-0 top-0 flex justify-end p-4">
       <div class="relative z-50 h-8">
         {#if loggedIn}
           <button

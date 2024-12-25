@@ -47,7 +47,7 @@
   }
 </script>
 
-<div class="h-full space-y-1 overflow-y-auto py-16">
+<div class="h-full space-y-1 overflow-y-auto">
   {#if student}
     <div class="mx-auto w-1/2 px-12 pb-32">
       {#each student.logs as log, i (log.date.getTime())}
