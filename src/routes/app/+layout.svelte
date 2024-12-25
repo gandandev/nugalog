@@ -5,16 +5,28 @@
   import { type User } from '@supabase/supabase-js'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data as dataStore, dataLoaded } from '$lib/stores'
+  import { data as dataStore, dataLoaded, type StudentData } from '$lib/stores'
   import { loadDataFromDb, saveDataToDb, loadDataFromLocalStorage } from '$lib/utils/db'
+  import {
+    type ConflictData,
+    handleCancelChanges,
+    handleOverwrite,
+    handleMerge,
+    checkForConflicts as checkForDataConflicts
+  } from '$lib/utils/handleConflict'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
 
   import Logout from '~icons/mdi/logout'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
   let currentUser: User | null = $state(null)
+
+  // 충돌 감지 및 해결에 사용
+  let showConflictDialog = $state(false)
+  let conflictData = $state<ConflictData | null>(null)
 
   onMount(async () => {
     const {
@@ -33,11 +45,38 @@
     $dataLoaded = true
 
     dataStore.subscribe(async (value) => {
+      if (currentUser) {
+        const dbData = await loadDataFromDb(data.supabase)
+        const localData = loadDataFromLocalStorage() // 저장되기 전 데이터
+
+        // 다른 곳에서 DB가 변경되었는지 확인
+        if (dbData) {
+          const hasConflicts = checkForDataConflicts(localData, dbData, value)
+          if (hasConflicts) {
+            console.warn('데이터 충돌이 감지되었습니다:', {
+              previousLocal: localData,
+              database: dbData,
+              newLocal: value
+            })
+
+            showConflictDialog = true
+            conflictData = {
+              previousLocal: localData,
+              database: dbData,
+              newLocal: value
+            }
+          }
+        }
+
+        // 실제로 변경되었을 때만 DB에 저장
+        if (JSON.stringify(dbData) !== JSON.stringify(value)) {
+          await saveDataToDb(data.supabase, value)
+        }
+      }
+
+      // 데이터 변경 후 localStorage에 저장
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('data', JSON.stringify(value))
-      }
-      if (currentUser) {
-        await saveDataToDb(data.supabase, value)
       }
     })
   })
@@ -59,6 +98,12 @@
     })
   }
 
+  function signOut() {
+    data.supabase.auth.signOut()
+    currentUser = null
+    showAccountOptions = false
+  }
+
   // 계정 옵션
   let showAccountOptions = $state(false)
   let accountButton: HTMLButtonElement | null = $state(null)
@@ -67,12 +112,6 @@
     if (!accountButton?.contains(e.target as Node) && !accountOptions?.contains(e.target as Node)) {
       showAccountOptions = false
     }
-  }
-
-  function signOut() {
-    data.supabase.auth.signOut()
-    currentUser = null
-    showAccountOptions = false
   }
 </script>
 
@@ -142,3 +181,42 @@
     </div>
   </div>
 </div>
+
+{#if showConflictDialog && conflictData}
+  <Dialog
+    title="충돌 감지"
+    description="다른 곳에서 데이터가 변경되었습니다. 어떻게 처리하시겠습니까?"
+    actions={[
+      {
+        label: '내 변경 사항 취소',
+        variant: 'secondary',
+        onclick: async () => {
+          if (!conflictData) return
+          await handleCancelChanges(conflictData, (data) => ($dataStore = data))
+          showConflictDialog = false
+          conflictData = null
+        }
+      },
+      {
+        label: '덮어쓰기',
+        variant: 'danger',
+        onclick: async () => {
+          if (!conflictData) return
+          await handleOverwrite(data.supabase, conflictData)
+          showConflictDialog = false
+          conflictData = null
+        }
+      },
+      {
+        label: '병합 시도',
+        variant: 'primary',
+        onclick: async () => {
+          if (!conflictData) return
+          await handleMerge(conflictData, (data) => ($dataStore = data))
+          showConflictDialog = false
+          conflictData = null
+        }
+      }
+    ]}
+  />
+{/if}

@@ -1,5 +1,10 @@
 <script lang="ts">
-  const { text, variant, onclick, disabled } = $props<{
+  const {
+    text,
+    variant = 'primary',
+    onclick,
+    disabled
+  } = $props<{
     text: string
     onclick: () => void
     variant?: 'primary' | 'secondary' | 'danger'
