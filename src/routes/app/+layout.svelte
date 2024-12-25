@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { page } from '$app/stores'
   import type { PageData } from './$types'
+  import { type User } from '@supabase/supabase-js'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { data as dataStore, dataLoaded } from '$lib/stores'
@@ -13,6 +14,42 @@
 
   let { data, children }: { data: PageData; children: any } = $props()
 
+  let currentUser: User | null = $state(null)
+
+  onMount(async () => {
+    const {
+      data: { session }
+    } = await data.supabase.auth.getSession()
+    currentUser = session?.user || null
+
+    const dbData = await loadDataFromDb(data.supabase)
+    const localData = loadDataFromLocalStorage()
+
+    $dataStore = dbData ?? localData
+    if (dbData === null && currentUser) {
+      await saveDataToDb(data.supabase, localData)
+    }
+
+    $dataLoaded = true
+
+    dataStore.subscribe(async (value) => {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('data', JSON.stringify(value))
+      }
+      if (currentUser) {
+        await saveDataToDb(data.supabase, value)
+      }
+    })
+  })
+
+  data.supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT') {
+      currentUser = null
+    } else if (session?.user) {
+      currentUser = session.user
+    }
+  })
+
   function signInWithGoogle() {
     data.supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -21,12 +58,6 @@
       }
     })
   }
-
-  // 로그인 여부
-  let loggedIn = $state(data.session !== null)
-  data.supabase.auth.onAuthStateChange(async () => {
-    loggedIn = (await data.supabase.auth.getUser()).data.user !== null
-  })
 
   // 계정 옵션
   let showAccountOptions = $state(false)
@@ -38,28 +69,9 @@
     }
   }
 
-  onMount(async () => {
-    const dbData = await loadDataFromDb(data.supabase)
-    const localData = loadDataFromLocalStorage()
-
-    $dataStore = dbData ?? localData
-    if (dbData === null) {
-      await saveDataToDb(data.supabase, localData)
-    }
-
-    $dataLoaded = true
-
-    dataStore.subscribe(async (value) => {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('data', JSON.stringify(value))
-      }
-      await saveDataToDb(data.supabase, value)
-    })
-  })
-
   function signOut() {
     data.supabase.auth.signOut()
-    loggedIn = false
+    currentUser = null
     showAccountOptions = false
   }
 </script>
@@ -72,19 +84,17 @@
   <div class="flex flex-1 flex-col overflow-hidden">
     <div class="sticky inset-x-0 top-0 flex justify-end p-4">
       <div class="relative z-50 h-8">
-        {#if loggedIn}
+        {#if currentUser}
           <button
             bind:this={accountButton}
             class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-900"
             onclick={() => (showAccountOptions = !showAccountOptions)}
           >
-            {#await data.supabase.auth.getUser() then user}
-              <img
-                src={user.data.user!.user_metadata.avatar_url}
-                alt="프로필 사진"
-                class="h-8 w-8 rounded-full"
-              />
-            {/await}
+            <img
+              src={currentUser.user_metadata.avatar_url}
+              alt="프로필 사진"
+              class="h-8 w-8 rounded-full"
+            />
           </button>
         {:else}
           <button
@@ -103,31 +113,29 @@
         {/if}
       </div>
 
-      {#await data.supabase.auth.getUser() then user}
-        {#if showAccountOptions}
-          <div
-            bind:this={accountOptions}
-            class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
-            transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-          >
-            <div class="h-14 px-3 pt-2 leading-tight">
-              <span class="font-medium">
-                {user.data.user!.identities![0].identity_data!.full_name}
-              </span>
-              <span class="text-sm text-stone-500">
-                {user.data.user!.email}
-              </span>
-            </div>
-            <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
-              onclick={signOut}
-            >
-              <Logout class="h-5 w-5" />
-              로그아웃
-            </button>
+      {#if showAccountOptions && currentUser}
+        <div
+          bind:this={accountOptions}
+          class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
+          transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
+        >
+          <div class="h-14 px-3 pt-2 leading-tight">
+            <span class="font-medium">
+              {currentUser.identities?.[0]?.identity_data?.full_name}
+            </span>
+            <span class="text-sm text-stone-500">
+              {currentUser.email}
+            </span>
           </div>
-        {/if}
-      {/await}
+          <button
+            class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+            onclick={signOut}
+          >
+            <Logout class="h-5 w-5" />
+            로그아웃
+          </button>
+        </div>
+      {/if}
     </div>
     <div class="flex-1 overflow-hidden">
       {@render children()}

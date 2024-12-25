@@ -3,7 +3,6 @@ import type { StudentData, Log } from '$lib/stores'
 
 // DB에서 데이터 가져오기
 export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentData[] | null> {
-  // 로그인 여부 확인
   const { data: userData } = await supabase.auth.getUser()
   const user = userData?.user
   if (!user) return null
@@ -30,19 +29,22 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
 
 // DB에 데이터 저장하기
 export async function saveDataToDb(supabase: SupabaseClient, dataToSave: StudentData[]) {
-  const { data: userData } = await supabase.auth.getUser()
-  const user = userData?.user
-  if (!user) return
+  try {
+    const { data: userData } = await supabase.auth.getUser()
+    if (!userData?.user) return
 
-  const { error } = await supabase.from('classes').upsert(
-    {
-      students: dataToSave,
-      user_id: user.id
-    },
-    { onConflict: 'user_id' }
-  )
-  if (error) {
-    console.error('저장 중 오류:', error)
+    const { error } = await supabase.from('classes').upsert(
+      {
+        students: dataToSave,
+        user_id: userData.user.id
+      },
+      { onConflict: 'user_id' }
+    )
+    if (error) {
+      console.error('Error while saving data to DB:', error)
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error)
   }
 }
 
