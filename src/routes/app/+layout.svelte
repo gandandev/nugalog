@@ -53,12 +53,6 @@
         if (dbData) {
           const hasConflicts = checkForDataConflicts(localData, dbData, value)
           if (hasConflicts) {
-            console.warn('데이터 충돌이 감지되었습니다:', {
-              previousLocal: localData,
-              database: dbData,
-              newLocal: value
-            })
-
             showConflictDialog = true
             conflictData = {
               previousLocal: localData,
