@@ -126,7 +126,7 @@
         {#if currentUser}
           <button
             bind:this={accountButton}
-            class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-900"
+            class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
             onclick={() => (showAccountOptions = !showAccountOptions)}
           >
             <img
