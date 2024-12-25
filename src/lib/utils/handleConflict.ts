@@ -30,10 +30,7 @@ export async function handleCancelChanges(
   setData(conflictData.database)
 }
 
-export async function handleOverwrite(
-  supabase: SupabaseClient,
-  conflictData: ConflictData,
-) {
+export async function handleOverwrite(supabase: SupabaseClient, conflictData: ConflictData) {
   await saveDataToDb(supabase, conflictData.newLocal)
 }
 
@@ -47,19 +44,23 @@ export async function handleMerge(
   const mergedMap = new Map<string, StudentData>()
 
   // DB 데이터를 먼저 추가
-  database.forEach(student => {
+  database.forEach((student) => {
     mergedMap.set(student.name, { ...student })
   })
 
   // 로컬 데이터를 병합
-  newLocal.forEach(localStudent => {
+  newLocal.forEach((localStudent) => {
     if (mergedMap.has(localStudent.name)) {
       const dbStudent = mergedMap.get(localStudent.name)
       // 로그 병합 (중복 제거 및 날짜 순 정렬)
       const mergedLogs = [
         ...(dbStudent?.logs || []),
         ...localStudent.logs.filter(
-          log => !dbStudent?.logs.some(dbLog => dbLog.date.getTime() === log.date.getTime() && dbLog.content === log.content)
+          (log) =>
+            !dbStudent?.logs.some(
+              (dbLog) =>
+                dbLog.date.getTime() === log.date.getTime() && dbLog.content === log.content
+            )
         )
       ].sort((a, b) => a.date.getTime() - b.date.getTime())
 
