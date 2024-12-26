@@ -34,7 +34,7 @@
 
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
-  transition:fade={{ duration: 100 }}
+  transition:fade|global={{ duration: 100 }}
   onclick={(e) => {
     if (e.target === e.currentTarget) cancel?.()
   }}
@@ -42,7 +42,7 @@
 >
   <div
     class="min-w-96 rounded-2xl bg-white p-5 dark:bg-stone-800"
-    transition:scale={{ start: 0.9, duration: 200 }}
+    transition:scale|global={{ start: 0.9, duration: 200 }}
   >
     <h2 class="text-xl font-semibold">{title}</h2>
     <p class="mt-1 text-sm text-stone-500">{description}</p>

@@ -35,6 +35,7 @@
 
   let showInitialConflictDialog = $state(false)
   let initialConflictData = $state<{ dbData: StudentData[]; localData: StudentData[] } | null>(null)
+  let selectedInitialOption = $state<'useLocal' | 'useDB' | null>(null)
 
   onMount(async () => {
     const {
@@ -257,37 +258,63 @@
 {/if}
 
 {#if showInitialConflictDialog && initialConflictData}
-  <Dialog
-    title="서버에 이미 저장된 데이터가 있습니다."
-    description="어떤 데이터를 사용하시겠습니까?"
-    actions={[
-      {
-        label: '로그인 전 데이터 사용',
-        variant: 'secondary',
-        onclick: () => {
-          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useLocal' }))
-          showInitialConflictDialog = false
-          initialConflictData = null
+  {#if !selectedInitialOption}
+    <Dialog
+      title="서버에 이미 저장된 데이터가 있습니다."
+      description="어떤 데이터를 사용하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+      actions={[
+        {
+          label: '로그인 전 데이터 사용',
+          variant: 'secondary',
+          onclick: () => {
+            selectedInitialOption = 'useLocal'
+          }
+        },
+        {
+          label: '서버에 저장된 데이터 사용',
+          variant: 'secondary',
+          onclick: () => {
+            selectedInitialOption = 'useDB'
+          }
+        },
+        {
+          label: '데이터 병합',
+          variant: 'primary',
+          onclick: () => {
+            window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
+            showInitialConflictDialog = false
+            initialConflictData = null
+          }
         }
-      },
-      {
-        label: '서버에 저장된 데이터 사용',
-        variant: 'secondary',
-        onclick: () => {
-          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useDB' }))
-          showInitialConflictDialog = false
-          initialConflictData = null
+      ]}
+    />
+  {:else}
+    <Dialog
+      title="계속하시겠습니까?"
+      description={selectedInitialOption === 'useLocal'
+        ? '서버에 저장된 데이터가 로그인 전 작성한 데이터로 대체됩니다.'
+        : '로그인 전 작성한 데이터가 삭제되고 서버에 저장된 데이터를 사용합니다.'}
+      actions={[
+        {
+          label: '취소',
+          variant: 'secondary',
+          onclick: () => {
+            selectedInitialOption = null
+          }
+        },
+        {
+          label: '계속',
+          variant: 'primary',
+          onclick: () => {
+            window.dispatchEvent(
+              new CustomEvent('initialDataConflict', { detail: selectedInitialOption })
+            )
+            showInitialConflictDialog = false
+            initialConflictData = null
+            selectedInitialOption = null
+          }
         }
-      },
-      {
-        label: '데이터 병합',
-        variant: 'primary',
-        onclick: () => {
-          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
-          showInitialConflictDialog = false
-          initialConflictData = null
-        }
-      }
-    ]}
-  />
+      ]}
+    />
+  {/if}
 {/if}
