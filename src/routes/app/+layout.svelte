@@ -123,7 +123,6 @@
   async function signOut() {
     if (currentUser) {
       const dbData = await loadDataFromDb(data.supabase)
-      alert(JSON.stringify(dbData))
       if (dbData) $dataStore = dbData
     }
     data.supabase.auth.signOut()
