@@ -220,8 +220,8 @@
 
 {#if showConflictDialog && conflictData}
   <Dialog
-    title="충돌 감지"
-    description="다른 곳에서 데이터가 변경되었습니다. 어떻게 처리하시겠습니까?"
+    title="다른 곳에서 데이터가 변경되었습니다."
+    description="어떻게 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다."
     actions={[
       {
         label: '내 변경 사항 취소',
