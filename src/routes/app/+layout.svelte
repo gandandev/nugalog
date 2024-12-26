@@ -48,7 +48,8 @@
 
       // DB와 로컬에 데이터가 모두 있을 때
       if (dbData && localData.length > 0) {
-        const hasConflicts = JSON.stringify(dbData) !== JSON.stringify(localData)
+        const hasConflicts =
+          dbData.length > 0 && JSON.stringify(dbData) !== JSON.stringify(localData)
         if (hasConflicts) {
           showInitialConflictDialog = true
           initialConflictData = { dbData, localData }
