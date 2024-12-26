@@ -243,7 +243,7 @@
         }
       },
       {
-        label: '병합 시도',
+        label: '병합',
         variant: 'primary',
         onclick: async () => {
           if (!conflictData) return
@@ -258,11 +258,11 @@
 
 {#if showInitialConflictDialog && initialConflictData}
   <Dialog
-    title="데이터 충돌"
-    description="서버에 이미 저장된 데이터가 있습니다. 어떤 데이터를 사용하시겠습니까?"
+    title="서버에 이미 저장된 데이터가 있습니다."
+    description="어떤 데이터를 사용하시겠습니까?"
     actions={[
       {
-        label: '현재 데이터 사용',
+        label: '로그인 전 데이터 사용',
         variant: 'secondary',
         onclick: () => {
           window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useLocal' }))
@@ -271,7 +271,7 @@
         }
       },
       {
-        label: '이전에 저장된 데이터 사용',
+        label: '서버에 저장된 데이터 사용',
         variant: 'secondary',
         onclick: () => {
           window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useDB' }))
@@ -280,7 +280,7 @@
         }
       },
       {
-        label: '병합 시도',
+        label: '데이터 병합',
         variant: 'primary',
         onclick: () => {
           window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
