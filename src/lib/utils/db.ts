@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { StudentData, Log } from '$lib/stores'
+import { StudentDataArraySchema, type StudentData } from '$lib/stores'
 
 // DB에서 데이터 가져오기
 export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentData[] | null> {
@@ -16,47 +16,75 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
   if (error) throw error
 
   if (dbResult?.students) {
-    return dbResult.students.map((student: StudentData) => ({
-      ...student,
-      logs: student.logs.map((log: Log) => ({
-        ...log,
-        date: new Date(log.date)
-      }))
-    }))
+    const parseResult = StudentDataArraySchema.safeParse(dbResult.students)
+    if (!parseResult.success) {
+      console.error('Invalid data format in DB:', parseResult.error)
+      return null
+    }
+    return parseResult.data
   }
   return null // 데이터 없음
 }
 
 // DB에 데이터 저장하기
-export async function saveDataToDb(supabase: SupabaseClient, dataToSave: StudentData[]) {
+export async function saveDataToDb(
+  supabase: SupabaseClient,
+  dataToSave: StudentData[]
+): Promise<{ success: boolean; error?: string }> {
   try {
-    const { data: userData } = await supabase.auth.getUser()
-    if (!userData?.user) return
+    const { data: userData, error: authError } = await supabase.auth.getUser()
+    if (authError) return { success: false, error: 'Authentication failed: ' + authError.message }
+    if (!userData?.user) return { success: false, error: 'User not authenticated' }
 
-    const { error } = await supabase.from('classes').upsert(
+    // Validate data before saving
+    const parseResult = StudentDataArraySchema.safeParse(dataToSave)
+    if (!parseResult.success) {
+      return { success: false, error: 'Invalid data format: ' + parseResult.error.message }
+    }
+
+    const { error: saveError } = await supabase.from('classes').upsert(
       {
-        students: dataToSave,
+        students: parseResult.data,
         user_id: userData.user.id
       },
       { onConflict: 'user_id' }
     )
-    if (error) {
-      console.error('Error while saving data to DB:', error)
+
+    if (saveError) {
+      console.error('Error while saving data to DB:', saveError)
+      return { success: false, error: 'Failed to save to database: ' + saveError.message }
     }
+
+    return { success: true }
   } catch (error) {
-    console.error('Auth check failed:', error)
+    console.error('Unexpected error:', error)
+    return { success: false, error: 'Unexpected error occurred' }
   }
 }
 
 // localStorage에서 데이터 불러오기
-export function loadDataFromLocalStorage(): StudentData[] {
-  if (typeof localStorage === 'undefined') throw new Error('localStorage is not available')
+export function loadDataFromLocalStorage(): { data: StudentData[] | null; error?: string } {
+  if (typeof localStorage === 'undefined') {
+    return { data: null, error: 'localStorage is not available' }
+  }
 
-  const storedData = JSON.parse(localStorage.getItem('data') || '[]') as StudentData[]
-  return storedData.map((student) => ({
-    ...student,
-    logs: student.logs.map((log) => ({ ...log, date: new Date(log.date) }))
-  }))
+  try {
+    const rawData = localStorage.getItem('data')
+    if (!rawData) return { data: [] }
+
+    const parseResult = StudentDataArraySchema.safeParse(JSON.parse(rawData))
+    if (!parseResult.success) {
+      return {
+        data: null,
+        error: 'Invalid data format in localStorage: ' + parseResult.error.message
+      }
+    }
+
+    return { data: parseResult.data }
+  } catch (error) {
+    console.error('Error loading data from localStorage:', error)
+    return { data: null, error: 'Failed to load data from localStorage' }
+  }
 }
 
 export async function handleInitialDataConflict(
@@ -101,33 +129,30 @@ export async function handleInitialDataConflict(
 function mergeData(dbData: StudentData[], localData: StudentData[]): StudentData[] {
   const mergedMap = new Map<string, StudentData>()
 
-  // Add DB data first
+  // DB 데이터를 먼저 추가
   dbData.forEach((student) => {
     mergedMap.set(student.name, { ...student })
   })
 
-  // Merge local data
+  // 로컬 데이터를 병합
   localData.forEach((localStudent) => {
     if (mergedMap.has(localStudent.name)) {
       const dbStudent = mergedMap.get(localStudent.name)!
-      const mergedLogs = [...dbStudent.logs]
-
-      // Add new logs from local that don't exist in DB
-      localStudent.logs.forEach((localLog) => {
-        const exists = dbStudent.logs.some(
-          (dbLog) =>
-            dbLog.date.getTime() === localLog.date.getTime() &&
-            dbLog.content === localLog.content
+      // 로그 병합 (중복 제거 및 날짜 순 정렬)
+      const mergedLogs = [
+        ...dbStudent.logs,
+        ...localStudent.logs.filter(
+          (log) =>
+            !dbStudent.logs.some(
+              (dbLog) =>
+                dbLog.date.getTime() === log.date.getTime() && dbLog.content === log.content
+            )
         )
-        if (!exists) mergedLogs.push(localLog)
-      })
+      ].sort((a, b) => a.date.getTime() - b.date.getTime())
 
-      mergedMap.set(localStudent.name, {
-        ...localStudent,
-        logs: mergedLogs.sort((a, b) => a.date.getTime() - b.date.getTime())
-      })
+      mergedMap.set(localStudent.name, { ...localStudent, logs: mergedLogs })
     } else {
-      mergedMap.set(localStudent.name, localStudent)
+      mergedMap.set(localStudent.name, { ...localStudent })
     }
   })
 

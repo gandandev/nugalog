@@ -1,4 +1,4 @@
-import type { StudentData } from '$lib/stores'
+import type { StudentData, Log } from '$lib/stores'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { saveDataToDb } from './db'
 
@@ -6,6 +6,30 @@ export type ConflictData = {
   previousLocal: StudentData[]
   database: StudentData[]
   newLocal: StudentData[]
+}
+
+function areLogsEqual(log1: Log, log2: Log): boolean {
+  return log1.date.getTime() === log2.date.getTime() && log1.content === log2.content
+}
+
+function areStudentsEqual(student1: StudentData, student2: StudentData): boolean {
+  if (student1.name !== student2.name || student1.logs.length !== student2.logs.length) {
+    return false
+  }
+
+  return student1.logs.every((log1, index) => {
+    const log2 = student2.logs[index]
+    return areLogsEqual(log1, log2)
+  })
+}
+
+function areStudentArraysEqual(arr1: StudentData[], arr2: StudentData[]): boolean {
+  if (arr1.length !== arr2.length) return false
+
+  return arr1.every((student1, index) => {
+    const student2 = arr2[index]
+    return areStudentsEqual(student1, student2)
+  })
 }
 
 export function checkForConflicts(
@@ -17,9 +41,9 @@ export function checkForConflicts(
   // 현재 데이터가 이전 데이터 및 DB와 모두 다르다면
   // 충돌이 발생한 것으로 간주
   return (
-    JSON.stringify(database) !== JSON.stringify(previous) &&
-    JSON.stringify(current) !== JSON.stringify(database) &&
-    JSON.stringify(current) !== JSON.stringify(previous)
+    !areStudentArraysEqual(database, previous) &&
+    !areStudentArraysEqual(current, database) &&
+    !areStudentArraysEqual(current, previous)
   )
 }
 

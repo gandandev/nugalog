@@ -26,6 +26,9 @@ importers:
       unplugin-icons:
         specifier: ^0.20.1
         version: 0.20.1(svelte@5.2.7)
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^3.0.0
@@ -1629,6 +1632,9 @@ packages:
   zimmerframe@1.1.2:
     resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
 
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -3034,3 +3040,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zimmerframe@1.1.2: {}
+
+  zod@3.24.1: {}

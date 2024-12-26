@@ -43,12 +43,19 @@
     } = await data.supabase.auth.getSession()
     currentUser = session?.user || null
 
-    const localData = loadDataFromLocalStorage()
+    const { data: localData, error: localError } = loadDataFromLocalStorage()
+    if (localError) {
+      console.error('Failed to load local data:', localError)
+      $dataStore = []
+      $dataLoaded = true
+      return
+    }
+
     if (currentUser) {
       const dbData = await loadDataFromDb(data.supabase)
 
       // DB와 로컬에 데이터가 모두 있을 때
-      if (dbData && localData.length > 0) {
+      if (dbData && localData && localData.length > 0) {
         const hasConflicts =
           dbData.length > 0 && JSON.stringify(dbData) !== JSON.stringify(localData)
         if (hasConflicts) {
@@ -61,13 +68,13 @@
           $dataStore = dbData
         }
       } else {
-        $dataStore = dbData ? dbData : localData
-        if (dbData === null) {
+        $dataStore = dbData || localData || []
+        if (dbData === null && localData) {
           await saveDataToDb(data.supabase, localData)
         }
       }
     } else {
-      $dataStore = localData
+      $dataStore = localData || []
     }
 
     $dataLoaded = true
@@ -75,10 +82,10 @@
     dataStore.subscribe(async (value) => {
       if (currentUser) {
         const dbData = await loadDataFromDb(data.supabase)
-        const localData = loadDataFromLocalStorage() // 저장되기 전 데이터
+        const { data: localData } = loadDataFromLocalStorage() // 저장되기 전 데이터
 
         // 다른 곳에서 DB가 변경되었는지 확인
-        if (dbData) {
+        if (dbData && localData) {
           const hasConflicts = checkForDataConflicts(localData, dbData, value)
           if (hasConflicts) {
             showConflictDialog = true
