@@ -58,3 +58,78 @@ export function loadDataFromLocalStorage(): StudentData[] {
     logs: student.logs.map((log) => ({ ...log, date: new Date(log.date) }))
   }))
 }
+
+export async function handleInitialDataConflict(
+  supabase: SupabaseClient,
+  dbData: StudentData[],
+  localData: StudentData[]
+): Promise<StudentData[]> {
+  return new Promise((resolve) => {
+    // Create a custom event to handle the user's choice
+    const handler = (e: CustomEvent<string>) => {
+      window.removeEventListener('initialDataConflict' as any, handler)
+
+      switch (e.detail) {
+        case 'useLocal':
+          saveDataToDb(supabase, localData)
+          resolve(localData)
+          break
+        case 'useDB':
+          localStorage.setItem('data', JSON.stringify(dbData))
+          resolve(dbData)
+          break
+        case 'merge':
+          const mergedData = mergeData(dbData, localData)
+          saveDataToDb(supabase, mergedData)
+          localStorage.setItem('data', JSON.stringify(mergedData))
+          resolve(mergedData)
+          break
+      }
+    }
+
+    window.addEventListener('initialDataConflict' as any, handler)
+
+    // Dispatch event to show dialog
+    window.dispatchEvent(
+      new CustomEvent('showInitialDataConflict', {
+        detail: { dbData, localData }
+      })
+    )
+  })
+}
+
+function mergeData(dbData: StudentData[], localData: StudentData[]): StudentData[] {
+  const mergedMap = new Map<string, StudentData>()
+
+  // Add DB data first
+  dbData.forEach((student) => {
+    mergedMap.set(student.name, { ...student })
+  })
+
+  // Merge local data
+  localData.forEach((localStudent) => {
+    if (mergedMap.has(localStudent.name)) {
+      const dbStudent = mergedMap.get(localStudent.name)!
+      const mergedLogs = [...dbStudent.logs]
+
+      // Add new logs from local that don't exist in DB
+      localStudent.logs.forEach((localLog) => {
+        const exists = dbStudent.logs.some(
+          (dbLog) =>
+            dbLog.date.getTime() === localLog.date.getTime() &&
+            dbLog.content === localLog.content
+        )
+        if (!exists) mergedLogs.push(localLog)
+      })
+
+      mergedMap.set(localStudent.name, {
+        ...localStudent,
+        logs: mergedLogs.sort((a, b) => a.date.getTime() - b.date.getTime())
+      })
+    } else {
+      mergedMap.set(localStudent.name, localStudent)
+    }
+  })
+
+  return Array.from(mergedMap.values())
+}

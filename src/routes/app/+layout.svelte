@@ -6,7 +6,12 @@
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { data as dataStore, dataLoaded, type StudentData } from '$lib/stores'
-  import { loadDataFromDb, saveDataToDb, loadDataFromLocalStorage } from '$lib/utils/db'
+  import {
+    loadDataFromDb,
+    saveDataToDb,
+    loadDataFromLocalStorage,
+    handleInitialDataConflict
+  } from '$lib/utils/db'
   import {
     type ConflictData,
     handleCancelChanges,
@@ -28,18 +33,37 @@
   let showConflictDialog = $state(false)
   let conflictData = $state<ConflictData | null>(null)
 
+  let showInitialConflictDialog = $state(false)
+  let initialConflictData = $state<{ dbData: StudentData[]; localData: StudentData[] } | null>(null)
+
   onMount(async () => {
     const {
       data: { session }
     } = await data.supabase.auth.getSession()
     currentUser = session?.user || null
 
-    const dbData = await loadDataFromDb(data.supabase)
-    const localData = loadDataFromLocalStorage()
+    if (currentUser) {
+      const dbData = await loadDataFromDb(data.supabase)
+      const localData = loadDataFromLocalStorage()
 
-    $dataStore = dbData ?? localData
-    if (dbData === null && currentUser) {
-      await saveDataToDb(data.supabase, localData)
+      // DB와 로컬에 데이터가 모두 있을 때
+      if (dbData && localData.length > 0) {
+        const hasConflicts = JSON.stringify(dbData) !== JSON.stringify(localData)
+        if (hasConflicts) {
+          showInitialConflictDialog = true
+          initialConflictData = { dbData, localData }
+
+          const resolvedData = await handleInitialDataConflict(data.supabase, dbData, localData)
+          $dataStore = resolvedData
+        } else {
+          $dataStore = dbData
+        }
+      } else {
+        $dataStore = dbData ? dbData : localData
+        if (dbData === null) {
+          await saveDataToDb(data.supabase, localData)
+        }
+      }
     }
 
     $dataLoaded = true
@@ -92,7 +116,12 @@
     })
   }
 
-  function signOut() {
+  async function signOut() {
+    if (currentUser) {
+      const dbData = await loadDataFromDb(data.supabase)
+      alert(JSON.stringify(dbData))
+      if (dbData) $dataStore = dbData
+    }
     data.supabase.auth.signOut()
     currentUser = null
     showAccountOptions = false
@@ -107,6 +136,15 @@
       showAccountOptions = false
     }
   }
+
+  onMount(() => {
+    const handler = (e: CustomEvent<{ dbData: StudentData[]; localData: StudentData[] }>) => {
+      showInitialConflictDialog = true
+      initialConflictData = e.detail
+    }
+    window.addEventListener('showInitialDataConflict' as any, handler)
+    return () => window.removeEventListener('showInitialDataConflict' as any, handler)
+  })
 </script>
 
 <svelte:window onclick={handleWindowClick} />
@@ -209,6 +247,42 @@
           await handleMerge(conflictData, (data) => ($dataStore = data))
           showConflictDialog = false
           conflictData = null
+        }
+      }
+    ]}
+  />
+{/if}
+
+{#if showInitialConflictDialog && initialConflictData}
+  <Dialog
+    title="데이터 충돌"
+    description="서버에 이미 저장된 데이터가 있습니다. 어떤 데이터를 사용하시겠습니까?"
+    actions={[
+      {
+        label: '현재 데이터 사용',
+        variant: 'secondary',
+        onclick: () => {
+          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useLocal' }))
+          showInitialConflictDialog = false
+          initialConflictData = null
+        }
+      },
+      {
+        label: '이전에 저장된 데이터 사용',
+        variant: 'secondary',
+        onclick: () => {
+          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'useDB' }))
+          showInitialConflictDialog = false
+          initialConflictData = null
+        }
+      },
+      {
+        label: '병합 시도',
+        variant: 'primary',
+        onclick: () => {
+          window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
+          showInitialConflictDialog = false
+          initialConflictData = null
         }
       }
     ]}
