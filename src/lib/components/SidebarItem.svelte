@@ -72,7 +72,7 @@
     />
   {:else}
     <a
-      href="/student/{encodeURIComponent(student.name)}"
+      href="/app/student/{encodeURIComponent(student.name)}"
       class="flex min-w-0 grow items-center rounded-l-lg py-1 pl-3"
       class:rounded-r-lg={reordering}
       onclick={(e) => reordering && e.preventDefault()}

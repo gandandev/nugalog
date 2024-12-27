@@ -5,6 +5,19 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 @import url('https://fonts.cdnfonts.com/css/mona-sans');
 
+@layer base {
+  * {
+    scrollbar-width: none;
+    /* scrollbar-color: theme('colors.stone.200') transparent; */
+  }
+
+  /* @media (prefers-color-scheme: dark) {
+    * {
+      scrollbar-color: theme('colors.stone.800') transparent;
+    }
+  } */
+}
+
 body {
   @apply dark:bg-stone-950 dark:text-stone-200;
 }

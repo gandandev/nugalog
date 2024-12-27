@@ -8,6 +8,12 @@ export default {
       fontFamily: {
         sans: ['Pretendard Variable', 'sans-serif'],
         monasans: ['Mona-Sans', 'sans-serif']
+      },
+      width: {
+        screen: '100dvw'
+      },
+      height: {
+        screen: '100dvh'
       }
     }
   },

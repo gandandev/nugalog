@@ -1,33 +1,34 @@
 import { writable } from 'svelte/store'
+import { z } from 'zod'
 
-export interface StudentData {
-  name: string
-  logs: Log[]
-}
+export const LogSchema = z.object({
+  date: z.coerce.date(),
+  content: z.string().min(1).trim()
+})
 
-export interface Log {
-  date: Date
-  content: string
-}
+export const StudentDataSchema = z.object({
+  name: z.string().min(1).trim(),
+  logs: z.array(LogSchema)
+})
+
+export const StudentDataArraySchema = z.array(StudentDataSchema)
+
+export type Log = z.infer<typeof LogSchema>
+export type StudentData = z.infer<typeof StudentDataSchema>
 
 export const dataLoaded = writable(false)
 export const data = writable<StudentData[]>([])
 
-if (typeof localStorage !== 'undefined') {
-  const storedData = JSON.parse(localStorage.getItem('data') || '[]')
-  const parsedData = storedData.map((student: StudentData) => ({
-    ...student,
-    logs: student.logs.map((log: Log) => ({
-      ...log,
-      date: new Date(log.date) // 문자열 (2024-01-01T00:00:00.000Z)로 저장된 날짜를 Date 객체로 변환
-    }))
-  }))
-  data.set(parsedData)
-  dataLoaded.set(true)
+export function parseLog(data: unknown): z.SafeParseReturnType<unknown, Log> {
+  return LogSchema.safeParse(data)
 }
 
-data.subscribe((value) => {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem('data', JSON.stringify(value))
-  }
-})
+export function parseStudentData(data: unknown): z.SafeParseReturnType<unknown, StudentData> {
+  return StudentDataSchema.safeParse(data)
+}
+
+export function parseStudentDataArray(
+  data: unknown
+): z.SafeParseReturnType<unknown, StudentData[]> {
+  return StudentDataArraySchema.safeParse(data)
+}
