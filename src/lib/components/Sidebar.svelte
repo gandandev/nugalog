@@ -116,7 +116,7 @@
             bind:this={newStudentNameInput}
             type="text"
             bind:value={newStudentName}
-            class="block w-full grow rounded-lg bg-transparent px-3 py-1 outline-none ring-2 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
+            class="block w-full grow rounded-lg bg-white px-3 py-1 outline-none ring-2 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
             class:ring-blue-500={!duplicateStudentName}
             class:ring-red-500={duplicateStudentName}
             placeholder="추가할 학생 이름"
