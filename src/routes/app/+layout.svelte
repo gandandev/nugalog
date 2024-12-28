@@ -6,6 +6,7 @@
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { data as dataStore, dataLoaded, type StudentData } from '$lib/stores'
+  import { onClickOutside } from '$lib/utils'
   import {
     loadDataFromDb,
     saveDataToDb,
@@ -141,10 +142,10 @@
   let showAccountOptions = $state(false)
   let accountButton: HTMLButtonElement | null = $state(null)
   let accountOptions: HTMLDivElement | null = $state(null)
-  function handleWindowClick(e: MouseEvent) {
-    if (!accountButton?.contains(e.target as Node) && !accountOptions?.contains(e.target as Node)) {
-      showAccountOptions = false
-    }
+  let logoutButton: HTMLButtonElement | null = $state(null)
+
+  function closeAccountOptions() {
+    showAccountOptions = false
   }
 
   onMount(() => {
@@ -157,8 +158,6 @@
   })
 </script>
 
-<svelte:window onclick={handleWindowClick} />
-
 <div class="flex h-screen overflow-hidden">
   <Sidebar />
 
@@ -170,6 +169,15 @@
             bind:this={accountButton}
             class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
             onclick={() => (showAccountOptions = !showAccountOptions)}
+            onkeydown={(e) => {
+              if (e.key === 'ArrowDown' && !showAccountOptions) {
+                e.preventDefault()
+                showAccountOptions = true
+                logoutButton?.focus()
+              }
+            }}
+            aria-expanded={showAccountOptions}
+            aria-haspopup="true"
           >
             <img
               src={currentUser.user_metadata.avatar_url}
@@ -199,6 +207,13 @@
           bind:this={accountOptions}
           class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
           transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
+          use:onClickOutside={{
+            callback: closeAccountOptions,
+            exclude: accountButton ? [accountButton] : []
+          }}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="account-menu-button"
         >
           <div class="h-14 px-3 pt-2 leading-tight">
             <span class="font-medium">
@@ -209,8 +224,17 @@
             </span>
           </div>
           <button
+            bind:this={logoutButton}
             class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
             onclick={signOut}
+            onkeydown={(e) => {
+              if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
+                e.preventDefault()
+                closeAccountOptions()
+                accountButton?.focus()
+              }
+            }}
+            role="menuitem"
           >
             <Logout class="h-5 w-5" />
             로그아웃
