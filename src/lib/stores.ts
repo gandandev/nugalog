@@ -19,16 +19,11 @@ export type Student = z.infer<typeof StudentSchema>
 export const dataLoaded = writable(false)
 export const data = writable<Student[]>([])
 
-export function parseLog(data: unknown): z.SafeParseReturnType<unknown, Log> {
-  return LogSchema.safeParse(data)
+export function parseData<T>(schema: z.ZodSchema<T>, data: unknown): z.SafeParseReturnType<unknown, T> {
+  return schema.safeParse(data)
 }
 
-export function parseStudent(data: unknown): z.SafeParseReturnType<unknown, Student> {
-  return StudentSchema.safeParse(data)
-}
-
-export function parseStudentArray(
-  data: unknown
-): z.SafeParseReturnType<unknown, Student[]> {
-  return StudentArraySchema.safeParse(data)
-}
+// 편의를 위한 타입별 파서 함수들
+export const parseLog = (data: unknown) => parseData(LogSchema, data)
+export const parseStudent = (data: unknown) => parseData(StudentSchema, data)
+export const parseStudentArray = (data: unknown) => parseData(StudentArraySchema, data)
