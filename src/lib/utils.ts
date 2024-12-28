@@ -59,11 +59,12 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
     if (hideTimeout) clearTimeout(hideTimeout)
 
     showTimeout = setTimeout(() => {
+      // 툴팁 생성
       tooltipElement = document.createElement('div')
       tooltipElement.textContent = text
       tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-95 transition-all duration-150'
 
-      // Set transform origin based on position
+      // 방향에 맞춰 기준점 설정
       const origins = {
         top: 'bottom',
         bottom: 'top',
