@@ -43,32 +43,42 @@ export function onClickOutside(node: HTMLElement, options: OnClickOutsideOptions
 type TooltipOptions = {
   text: string
   position?: 'top' | 'bottom' | 'left' | 'right'
+  delay?: number
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
   if (!options) return { destroy() { } }
 
   let tooltipElement: HTMLDivElement | null = null
-  const { text, position = 'top' } = options
+  let showTimeout: NodeJS.Timeout | null = null
+  let hideTimeout: NodeJS.Timeout | null = null
+  const { text, position = 'top', delay = 500 } = options
 
   function createTooltip() {
-    tooltipElement = document.createElement('div')
-    tooltipElement.textContent = text
-    tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-95 transition-all duration-150'
+    if (showTimeout) clearTimeout(showTimeout)
+    if (hideTimeout) clearTimeout(hideTimeout)
 
-    // Set transform origin based on position
-    const origins = {
-      top: 'bottom',
-      bottom: 'top',
-      left: 'right',
-      right: 'left'
-    }
-    tooltipElement.style.transformOrigin = origins[position] ?? 'bottom'
+    showTimeout = setTimeout(() => {
+      tooltipElement = document.createElement('div')
+      tooltipElement.textContent = text
+      tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-95 transition-all duration-150'
 
-    document.body.appendChild(tooltipElement)
-    tooltipElement.getBoundingClientRect()
-    tooltipElement.style.opacity = '1'
-    tooltipElement.style.transform = 'scale(1)'
+      // Set transform origin based on position
+      const origins = {
+        top: 'bottom',
+        bottom: 'top',
+        left: 'right',
+        right: 'left'
+      }
+      tooltipElement.style.transformOrigin = origins[position] ?? 'bottom'
+
+      document.body.appendChild(tooltipElement)
+      tooltipElement.getBoundingClientRect()
+      tooltipElement.style.opacity = '1'
+      tooltipElement.style.transform = 'scale(1)'
+
+      positionTooltip()
+    }, delay)
   }
 
   function positionTooltip() {
@@ -101,10 +111,13 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
   }
 
   function removeTooltip() {
+    if (showTimeout) clearTimeout(showTimeout)
+    if (hideTimeout) clearTimeout(hideTimeout)
+
     if (tooltipElement) {
       tooltipElement.style.opacity = '0'
       tooltipElement.style.transform = 'scale(0.95)'
-      setTimeout(() => {
+      hideTimeout = setTimeout(() => {
         if (tooltipElement) {
           document.body.removeChild(tooltipElement)
           tooltipElement = null
@@ -134,6 +147,8 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
       }
     },
     destroy() {
+      if (showTimeout) clearTimeout(showTimeout)
+      if (hideTimeout) clearTimeout(hideTimeout)
       removeTooltip()
       node.removeEventListener('mouseenter', onMouseEnter)
       node.removeEventListener('mouseleave', removeTooltip)
