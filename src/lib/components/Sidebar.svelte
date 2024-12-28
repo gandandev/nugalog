@@ -49,6 +49,8 @@
     $data = $data.filter((_, i) => i !== studentToDeleteIndex)
     studentToDeleteIndex = null
   }
+
+  let newStudentNameInput: HTMLInputElement | null = $state(null)
 </script>
 
 <aside
@@ -112,6 +114,7 @@
       <li class="pt-1" transition:fly={{ duration: 150, y: -10 }}>
         <div class="flex w-full gap-1">
           <input
+            bind:this={newStudentNameInput}
             type="text"
             bind:value={newStudentName}
             class="block w-full grow rounded-lg bg-transparent px-3 py-1 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
@@ -133,7 +136,10 @@
           {#if newStudentName.trim()}
             <IconButton
               Icon={Add}
-              onclick={addStudent}
+              onclick={() => {
+                addStudent()
+                newStudentNameInput?.focus()
+              }}
               disabled={duplicateStudentName || !newStudentName.trim()}
             />
           {:else}
