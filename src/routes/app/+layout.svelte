@@ -197,7 +197,7 @@
       {#if showAccountOptions && currentUser}
         <div
           bind:this={accountOptions}
-          class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-800 dark:bg-stone-800"
+          class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
           transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
         >
           <div class="h-14 px-3 pt-2 leading-tight">
