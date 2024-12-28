@@ -118,6 +118,7 @@
             type="text"
             bind:value={newStudentName}
             class="block w-full grow rounded-lg bg-transparent px-3 py-1 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
+            class:outline-red-500={duplicateStudentName}
             placeholder="추가할 학생 이름"
             onkeydown={(e) => {
               if (e.key === 'Enter' && !e.isComposing) {
