@@ -124,7 +124,7 @@
       </button>
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
-        onclick={reorder}
+        onclick={() => (reorder(), (showOptions = false))}
       >
         <SwapVert class="h-5 w-5" />
         순서 변경
