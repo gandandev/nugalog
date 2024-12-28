@@ -24,6 +24,7 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
+  import Settings from '~icons/mdi/settings'
   import Logout from '~icons/mdi/logout'
 
   let { data, children }: { data: PageData; children: any } = $props()
@@ -166,6 +167,13 @@
       {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3}
         <p class="text-stone-500">로그인 후 여러 기기에서 작업해보세요</p>
       {/if}
+
+      <button
+        class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 dark:hover:bg-stone-800"
+      >
+        <Settings class="h-5 w-5" />
+      </button>
+
       <div class="relative z-50 h-8">
         {#if currentUser}
           <button
