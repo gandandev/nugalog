@@ -175,6 +175,10 @@
       bind:value={content}
       use:autosize
       use:focusOnElement
+      onkeydown={(e) => {
+        if (e.key === 'Enter' && e.metaKey && content.trim()) save()
+        else if (e.key === 'Escape') cancel()
+      }}
     ></textarea>
   {:else}
     <p class="m-3 mt-0 whitespace-pre-wrap font-sans">{log.content}</p>

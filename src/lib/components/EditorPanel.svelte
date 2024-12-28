@@ -58,6 +58,10 @@
       bind:value={editedContent}
       use:autosize
       use:focusOnElement
+      onkeydown={(e) => {
+        if (e.key === 'Enter' && e.metaKey && editedContent.trim()) save(editedContent, editedDate)
+        else if (e.key === 'Escape') close()
+      }}
     ></textarea>
   </div>
 </div>
