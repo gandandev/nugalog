@@ -118,7 +118,7 @@
           oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
         {#if navigator.userAgent.includes('Chrome')}
-          <Calendar class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2 text-stone-500" />
+          <Calendar class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
         {/if}
       </div>
     {:else}
