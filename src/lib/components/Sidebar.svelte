@@ -30,9 +30,17 @@
   )
   function addStudent() {
     if (duplicateStudentName || !newStudentName?.trim()) return
-    $data = [...$data, { name: newStudentName.trim(), logs: [] }]
+    $data = [...$data, { name: newStudentName.trim(), logs: [], pinned: false }]
     newStudentName = ''
   }
+
+  // 정렬된 학생 목록
+  const sortedStudents = $derived(
+    $data.slice().sort((a, b) => {
+      if (a.pinned === b.pinned) return 0
+      return a.pinned ? -1 : 1
+    })
+  )
 
   // 순서 변경
   let reordering = $state(false)
@@ -82,7 +90,7 @@
     ondragleave={(e) => handleDragLeave(e, dragState)}
     ondragover={(e) => e.preventDefault()}
   >
-    {#each $data as student, i (student.name)}
+    {#each sortedStudents as student, i (student.name)}
       <div
         class="relative"
         ondragover={(e) => handleDragOver(e, i, reordering, dragState)}
