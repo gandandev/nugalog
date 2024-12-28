@@ -1,16 +1,21 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
+  import { tooltip as useTooltip } from '$lib/utils'
 
   const {
     Icon,
     text,
+    tooltip,
+    tooltipPosition = 'top',
     onclick,
     emphasized,
     disabled
   }: {
     Icon: any
     text?: string
+    tooltip?: string
+    tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
     onclick?: () => void
     emphasized?: boolean
     disabled?: boolean
@@ -24,6 +29,7 @@
   class:ring-2={emphasized}
   {onclick}
   {disabled}
+  use:useTooltip={tooltip ? { text: tooltip, position: tooltipPosition } : null}
 >
   <Icon class="m-1.5 h-5 w-5" />
   {#if text}
