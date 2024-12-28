@@ -163,7 +163,7 @@
           <IconButton
             Icon={editing ? Check : Edit}
             text={editing ? '저장' : undefined}
-            tooltip="저장"
+            tooltip={!editing ? '편집' : undefined}
             onclick={() => {
               if (editing) save()
               else editing = true
