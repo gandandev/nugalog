@@ -8,7 +8,8 @@ export const LogSchema = z.object({
 
 export const StudentSchema = z.object({
   name: z.string().min(1).trim(),
-  logs: z.array(LogSchema)
+  logs: z.array(LogSchema),
+  pinned: z.boolean().default(false)
 })
 
 export const StudentArraySchema = z.array(StudentSchema)

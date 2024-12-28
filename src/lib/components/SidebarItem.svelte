@@ -10,6 +10,8 @@
   import Edit from '~icons/mdi/pencil'
   import SwapVert from '~icons/mdi/swap-vertical'
   import DragHandle from '~icons/mdi/drag'
+  import Pin from '~icons/mdi/pin'
+  import PinOff from '~icons/mdi/pin-off'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{
@@ -40,6 +42,11 @@
       $data = $data.map((s) => (s === student ? { ...s, name: newName!.trim() } : s))
     }
     newName = null
+  }
+
+  function togglePin() {
+    $data = $data.map((s) => (s === student ? { ...s, pinned: !s.pinned } : s))
+    showOptions = false
   }
 </script>
 
@@ -78,6 +85,9 @@
       class:rounded-r-lg={reordering}
       onclick={(e) => reordering && e.preventDefault()}
     >
+      {#if student.pinned}
+        <Pin class="mr-1.5 h-4 w-4 shrink-0 text-stone-400 dark:text-stone-600" />
+      {/if}
       <span class="truncate py-1">
         {student.name}
       </span>
@@ -124,6 +134,18 @@
       >
         <Edit class="h-5 w-5" />
         이름 변경
+      </button>
+      <button
+        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+        onclick={togglePin}
+      >
+        {#if student.pinned}
+          <PinOff class="h-5 w-5" />
+          고정 해제
+        {:else}
+          <Pin class="h-5 w-5" />
+          고정하기
+        {/if}
       </button>
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
