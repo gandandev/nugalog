@@ -45,7 +45,9 @@ type TooltipOptions = {
   position?: 'top' | 'bottom' | 'left' | 'right'
 }
 
-export function tooltip(node: HTMLElement, options: TooltipOptions) {
+export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
+  if (!options) return { destroy() { } }
+
   let tooltipElement: HTMLDivElement | null = null
   const { text, position = 'top' } = options
 
@@ -120,7 +122,11 @@ export function tooltip(node: HTMLElement, options: TooltipOptions) {
   node.addEventListener('mouseleave', removeTooltip)
 
   return {
-    update(newOptions: TooltipOptions) {
+    update(newOptions: TooltipOptions | null) {
+      if (!newOptions) {
+        removeTooltip()
+        return
+      }
       Object.assign(options, newOptions)
       if (tooltipElement) {
         tooltipElement.textContent = newOptions.text

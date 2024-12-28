@@ -29,7 +29,7 @@
   class:ring-2={emphasized}
   {onclick}
   {disabled}
-  use:useTooltip={{ text: tooltip ?? '', position: tooltipPosition }}
+  use:useTooltip={tooltip ? { text: tooltip, position: tooltipPosition } : null}
 >
   <Icon class="m-1.5 h-5 w-5" />
   {#if text}
