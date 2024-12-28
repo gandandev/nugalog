@@ -53,10 +53,10 @@
 </script>
 
 <aside
-  class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-stone-900"
+  class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 dark:border-stone-800 dark:bg-stone-900"
 >
   <!-- 헤더 -->
-  <div class="flex items-center justify-between pl-4 pr-2 pt-2">
+  <div class="flex items-center justify-between pl-5 pr-3 pt-3">
     <Logo />
     {#if reordering}
       <button
@@ -76,7 +76,7 @@
 
   <!-- 이름 목록 -->
   <ul
-    class="w-full flex-1 space-y-0.5 overflow-y-auto px-1 pt-1"
+    class="w-full flex-1 space-y-0.5 overflow-y-auto px-2"
     ondragleave={(e) => handleDragLeave(e, dragState)}
     ondragover={(e) => e.preventDefault()}
   >
