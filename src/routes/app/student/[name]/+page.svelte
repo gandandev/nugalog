@@ -3,9 +3,12 @@
   import { scale, fade, fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { josa } from 'es-hangul'
+  import { goto } from '$app/navigation'
+  import { onMount } from 'svelte'
 
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
+  import Dialog from '$lib/components/Dialog.svelte'
 
   import Add from '~icons/mdi/add'
   import PersonOff from '~icons/mdi/person-off'
@@ -45,6 +48,19 @@
     addedNewLog = true
     setTimeout(() => (addedNewLog = false), 300)
   }
+
+  // 페이지 이동 확인
+  let showNavigationDialog = $state(false)
+  let pendingNavigation: { to: string; save: () => void } | null = $state(null)
+
+  onMount(() => {
+    const handler = (e: CustomEvent<{ to: string; save: () => void }>) => {
+      showNavigationDialog = true
+      pendingNavigation = e.detail
+    }
+    window.addEventListener('showNavigationDialog' as any, handler)
+    return () => window.removeEventListener('showNavigationDialog' as any, handler)
+  })
 </script>
 
 <div class="h-full space-y-1 overflow-y-auto">
@@ -90,3 +106,34 @@
     />
   {/if}
 </div>
+
+{#if showNavigationDialog && pendingNavigation}
+  <Dialog
+    title="저장하지 않은 변경 사항이 있습니다."
+    description="저장 후 이동하시겠습니까?"
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '저장하고 이동',
+        variant: 'primary',
+        onclick: async () => {
+          if (!pendingNavigation) return
+          const to = pendingNavigation.to
+          pendingNavigation.save()
+          showNavigationDialog = false
+          pendingNavigation = null
+          goto(to)
+        },
+        onenter: true
+      }
+    ]}
+    cancel={() => {
+      showNavigationDialog = false
+      pendingNavigation = null
+    }}
+  />
+{/if}
