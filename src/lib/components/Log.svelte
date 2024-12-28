@@ -23,26 +23,20 @@
     saveNewLog,
     cancelNewLog,
     deleteLog
-  } = $props<
-    | {
-        log: { date: Date | null; content: string }
-        isNew?: false
-        deleteLog: () => void
-      }
-    | {
-        log: { date: Date | null; content: string }
-        isNew: true
-        saveNewLog: (log: { date: Date; content: string }) => void
-        cancelNewLog: () => void
-      }
-  >()
+  }: {
+    log: { date: Date | null; content: string }
+    isNew?: boolean
+    deleteLog?: () => void
+    saveNewLog?: (log: { date: Date; content: string }) => void
+    cancelNewLog?: () => void
+  } = $props()
 
   // 삭제 확인
   let confirmingDelete = $state(false)
 
   // 편집
   let editing = $state(isNew)
-  let date = $state(log.date ?? new Date())
+  let date: Date | null = $state(log.date)
   let content = $state(log.content)
 
   let editorExpanded = $state(false)
@@ -66,8 +60,9 @@
   })
 
   function save() {
+    if (date === null) return
     if (isNew) {
-      saveNewLog({ date, content })
+      saveNewLog!({ date, content })
     } else {
       log.date = date
       log.content = content
@@ -79,9 +74,9 @@
   // 취소
   function cancel() {
     if (isNew) {
-      cancelNewLog()
+      cancelNewLog!()
     } else {
-      date = log.date
+      date = log.date ?? new Date()
       content = log.content
       editing = false
       editorExpanded = false
@@ -128,7 +123,9 @@
       </div>
     {:else}
       <span class="text-stone-500">
-        {log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
+        {log.date
+          ? log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
+          : '올바르지 않은 날짜'}
       </span>
     {/if}
 
@@ -177,7 +174,7 @@
             Icon={Delete}
             text={confirmingDelete ? '삭제' : undefined}
             onclick={() => {
-              if (confirmingDelete) deleteLog()
+              if (confirmingDelete) deleteLog!()
               else confirmingDelete = true
             }}
           />

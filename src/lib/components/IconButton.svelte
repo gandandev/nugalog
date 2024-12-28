@@ -2,13 +2,19 @@
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
 
-  const { Icon, text, onclick, emphasized, disabled } = $props<{
+  const {
+    Icon,
+    text,
+    onclick,
+    emphasized,
+    disabled
+  }: {
     Icon: any
     text?: string
     onclick?: () => void
     emphasized?: boolean
     disabled?: boolean
-  }>()
+  } = $props()
 </script>
 
 <button

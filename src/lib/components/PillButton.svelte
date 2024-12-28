@@ -4,12 +4,12 @@
     variant = 'primary',
     onclick,
     disabled
-  } = $props<{
+  }: {
     text: string
-    onclick: () => void
     variant?: 'primary' | 'secondary' | 'danger'
+    onclick: () => void
     disabled?: boolean
-  }>()
+  } = $props()
 </script>
 
 <button
