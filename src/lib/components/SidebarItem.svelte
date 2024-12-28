@@ -3,7 +3,7 @@
   import { focusOnElement, onClickOutside } from '$lib/utils'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data, type StudentData } from '$lib/stores'
+  import { data, type Student } from '$lib/stores'
 
   import MoreHoriz from '~icons/mdi/more-horiz'
   import Delete from '~icons/mdi/delete'
@@ -13,7 +13,7 @@
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{
-      student: StudentData
+      student: Student
       isActive: boolean
       reorder: () => void
       reordering: boolean
