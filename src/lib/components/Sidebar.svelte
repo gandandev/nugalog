@@ -13,16 +13,15 @@
     handleDragLeave,
     handleDrop
   } from '$lib/utils/sidebarReorder'
-  import { fly, slide } from 'svelte/transition'
+  import { fly, slide, fade } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
   import IconButton from './IconButton.svelte'
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
+  import Key from './Key.svelte'
 
   import GroupAdd from '~icons/mdi/group-add'
-  import Add from '~icons/mdi/add'
-  import Close from '~icons/mdi/close'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -49,6 +48,8 @@
     $data = $data.filter((_, i) => i !== studentToDeleteIndex)
     studentToDeleteIndex = null
   }
+
+  let newStudentNameInput: HTMLInputElement | null = $state(null)
 </script>
 
 <aside
@@ -110,11 +111,14 @@
     {/each}
     {#if newStudentName !== null}
       <li class="pt-1" transition:fly={{ duration: 150, y: -10 }}>
-        <div class="flex w-full gap-1">
+        <div class="flex w-full">
           <input
+            bind:this={newStudentNameInput}
             type="text"
             bind:value={newStudentName}
-            class="block w-full grow rounded-lg bg-transparent px-3 py-1 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
+            class="block w-full grow rounded-lg bg-transparent px-3 py-1 outline-none ring-2 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
+            class:ring-blue-500={!duplicateStudentName}
+            class:ring-red-500={duplicateStudentName}
             placeholder="추가할 학생 이름"
             onkeydown={(e) => {
               if (e.key === 'Enter' && !e.isComposing) {
@@ -124,25 +128,23 @@
               }
             }}
             onblur={() => {
-              if (!newStudentName?.trim()) {
-                newStudentName = null
-              }
+              addStudent()
+              newStudentName = null
             }}
             use:focusOnElement
           />
-          {#if newStudentName.trim()}
-            <IconButton
-              Icon={Add}
-              onclick={addStudent}
-              disabled={duplicateStudentName || !newStudentName.trim()}
-            />
+        </div>
+        <div class="relative mx-1 mt-2 text-xs text-stone-500 duration-150">
+          {#if duplicateStudentName}
+            <span class="absolute left-0 top-0" transition:fly={{ y: '3', duration: 150 }}>
+              학생 이름이 중복되었습니다.
+            </span>
           {:else}
-            <IconButton Icon={Close} onclick={() => (newStudentName = null)} />
+            <span class="absolute left-0 top-0" transition:fly={{ y: '3', duration: 150 }}>
+              <Key>Enter</Key> 키로 추가
+            </span>
           {/if}
         </div>
-        {#if duplicateStudentName}
-          <p class="pl-1 pt-1 text-xs text-stone-500 duration-150">학생 이름이 중복되었습니다.</p>
-        {/if}
       </li>
     {/if}
 

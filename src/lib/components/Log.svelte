@@ -2,6 +2,7 @@
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
+  import { focusOnElement } from '$lib/utils'
 
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
@@ -173,6 +174,11 @@
       class="w-full resize-none rounded-lg bg-stone-100 p-3 outline-none duration-150 dark:bg-stone-900"
       bind:value={content}
       use:autosize
+      use:focusOnElement
+      onkeydown={(e) => {
+        if (e.key === 'Enter' && e.metaKey && content.trim()) save()
+        else if (e.key === 'Escape') cancel()
+      }}
     ></textarea>
   {:else}
     <p class="m-3 mt-0 whitespace-pre-wrap font-sans">{log.content}</p>
