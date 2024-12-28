@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { focusOnElement } from '$lib/utils'
+  import { focusOnElement, onClickOutside } from '$lib/utils'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { data, type StudentData } from '$lib/stores'
@@ -24,6 +24,8 @@
     }>()
 
   let showOptions = $state(false)
+  let optionsButton: HTMLButtonElement | null = $state(null)
+  let optionsMenu: HTMLDivElement | null = $state(null)
 
   let newName: string | null = $state(null)
   const duplicateStudentName = $derived(
@@ -40,8 +42,6 @@
     newName = null
   }
 </script>
-
-<svelte:window onclick={() => (showOptions = false)} />
 
 <li
   class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300 dark:hover:bg-stone-800 dark:has-[a:active]:bg-stone-700"
@@ -88,6 +88,7 @@
   {/if}
   {#if !reordering && newName === null}
     <button
+      bind:this={optionsButton}
       class="group/options options-button rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100"
       onclick={(e) => {
         e.stopPropagation()
@@ -104,8 +105,13 @@
 
   {#if showOptions}
     <div
+      bind:this={optionsMenu}
       class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
       transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
+      use:onClickOutside={{
+        callback: () => (showOptions = false),
+        exclude: [optionsButton]
+      }}
     >
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
