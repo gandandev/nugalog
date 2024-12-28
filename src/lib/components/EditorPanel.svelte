@@ -6,6 +6,8 @@
 
   import PillButton from './PillButton.svelte'
 
+  import Calendar from '~icons/mdi/calendar'
+
   const {
     title,
     content,
@@ -40,13 +42,20 @@
     <div class="mb-3 flex flex-col gap-4">
       <h2 class="flex items-center text-2xl font-semibold">{title}</h2>
       <div class="flex items-center justify-between">
-        <input
-          type="date"
-          class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none dark:bg-stone-900"
-          value={editedDate?.toISOString().slice(0, 10)}
-          oninput={(e) =>
-            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
-        />
+        <div class="relative">
+          <input
+            type="date"
+            class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+            class:ring-2={!date}
+            class:ring-red-500={!date}
+            value={editedDate?.toISOString().slice(0, 10)}
+            oninput={(e) =>
+              (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+          />
+          {#if navigator.userAgent.includes('Chrome')}
+            <Calendar class="absolute right-3 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
+          {/if}
+        </div>
         <div class="flex justify-end gap-2">
           <PillButton text="취소" onclick={close} variant="secondary" />
           <PillButton text="작게 보기" onclick={minimizeEditor} variant="secondary" />
