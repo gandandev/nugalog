@@ -62,7 +62,7 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
       // 툴팁 생성
       tooltipElement = document.createElement('div')
       tooltipElement.textContent = text
-      tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-95 transition-all duration-150'
+      tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-90 duration-150'
 
       // 방향에 맞춰 기준점 설정
       const origins = {
@@ -117,7 +117,7 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
 
     if (tooltipElement) {
       tooltipElement.style.opacity = '0'
-      tooltipElement.style.transform = 'scale(0.95)'
+      tooltipElement.style.transform = 'scale(0.9)'
       hideTimeout = setTimeout(() => {
         if (tooltipElement) {
           document.body.removeChild(tooltipElement)
