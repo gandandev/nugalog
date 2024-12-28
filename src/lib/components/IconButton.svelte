@@ -6,19 +6,19 @@
   const {
     Icon,
     text,
+    tooltip,
+    tooltipPosition = 'top',
     onclick,
     emphasized,
-    disabled,
-    tooltip,
-    tooltipPosition = 'top'
+    disabled
   }: {
     Icon: any
     text?: string
+    tooltip?: string
+    tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
     onclick?: () => void
     emphasized?: boolean
     disabled?: boolean
-    tooltip?: string
-    tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
   } = $props()
 </script>
 

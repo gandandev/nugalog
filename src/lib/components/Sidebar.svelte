@@ -68,10 +68,10 @@
     {:else}
       <IconButton
         Icon={GroupAdd}
-        onclick={() => (newStudentName = '')}
-        emphasized={!$data.length}
         tooltip="새 학생 추가"
         tooltipPosition="bottom"
+        onclick={() => (newStudentName = '')}
+        emphasized={!$data.length}
       />
     {/if}
   </div>
