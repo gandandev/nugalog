@@ -46,6 +46,8 @@
           <input
             type="date"
             class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+            class:ring-2={!date}
+            class:ring-red-500={!date}
             value={editedDate?.toISOString().slice(0, 10)}
             oninput={(e) =>
               (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}

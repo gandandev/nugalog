@@ -114,7 +114,9 @@
         <input
           type="date"
           value={date?.toISOString().slice(0, 10)}
-          class="rounded-lg bg-stone-100 px-2 py-1 duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+          class="rounded-lg bg-stone-100 px-2 py-1 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+          class:ring-2={!date}
+          class:ring-red-500={!date}
           oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
         {#if navigator.userAgent.includes('Chrome')}
