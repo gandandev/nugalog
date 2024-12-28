@@ -1,9 +1,13 @@
 <script lang="ts">
-  const { Icon, title, description } = $props<{
+  const {
+    Icon,
+    title,
+    description
+  }: {
     Icon: any
     title: string
     description: string
-  }>()
+  } = $props()
 </script>
 
 <div class="w-full p-6 text-center">

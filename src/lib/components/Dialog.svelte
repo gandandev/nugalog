@@ -17,18 +17,23 @@
         cancel: true
       }
   )
-  const { title, description, actions, cancel } = $props<{
+  const {
+    title,
+    description,
+    actions,
+    cancel
+  }: {
     title: string
     description?: string
     actions: DialogAction[]
     cancel?: () => void
-  }>()
+  } = $props()
 </script>
 
 <svelte:window
   onkeydown={(e) => {
     if (e.key === 'Escape') cancel?.()
-    if (e.key == 'Enter') actions.find((action: DialogAction) => action.onenter)?.onclick()
+    if (e.key == 'Enter') actions.find((action: DialogAction) => action.onenter)?.onclick?.()
   }}
 />
 
@@ -50,7 +55,7 @@
       {#each actions as action}
         <PillButton
           text={action.label}
-          onclick={action.cancel ? cancel : action.onclick}
+          onclick={action.cancel ? (cancel as () => void) : action.onclick}
           variant={action.variant}
         />
       {/each}

@@ -6,14 +6,21 @@
 
   import PillButton from './PillButton.svelte'
 
-  const { title, content, date, close, save, minimizeEditor } = $props<{
+  const {
+    title,
+    content,
+    date,
+    close,
+    save,
+    minimizeEditor
+  }: {
     title: string
     content: string
     date: Date
     close: () => void
-    minimizeEditor: () => void
     save: (content: string, date: Date) => void
-  }>()
+    minimizeEditor: () => void
+  } = $props()
 
   let editedContent = $state(content)
   let editedDate = $state(date)
@@ -38,7 +45,7 @@
           class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none dark:bg-stone-900"
           value={editedDate?.toISOString().slice(0, 10)}
           oninput={(e) =>
-            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : new Date())}
         />
         <div class="flex justify-end gap-2">
           <PillButton text="취소" onclick={close} variant="secondary" />
