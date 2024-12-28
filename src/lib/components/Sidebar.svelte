@@ -112,7 +112,7 @@
     {/each}
     {#if newStudentName !== null}
       <li class="pt-1" transition:fly={{ duration: 150, y: -10 }}>
-        <div class="flex w-full gap-1">
+        <div class="flex w-full">
           <input
             bind:this={newStudentNameInput}
             type="text"
@@ -128,28 +128,24 @@
               }
             }}
             onblur={() => {
-              if (!newStudentName?.trim()) {
-                newStudentName = null
-              }
+              addStudent()
+              newStudentName = null
             }}
             use:focusOnElement
           />
-          {#if newStudentName.trim()}
-            <IconButton
-              Icon={Add}
-              onclick={() => {
-                addStudent()
-                newStudentNameInput?.focus()
-              }}
-              disabled={duplicateStudentName || !newStudentName.trim()}
-            />
-          {:else}
-            <IconButton Icon={Close} onclick={() => (newStudentName = null)} />
-          {/if}
         </div>
-        {#if duplicateStudentName}
-          <p class="pl-1 pt-1 text-xs text-stone-500 duration-150">학생 이름이 중복되었습니다.</p>
-        {/if}
+        <p class="pl-1 pt-2 text-xs text-stone-500 duration-150">
+          {#if duplicateStudentName}
+            학생 이름이 중복되었습니다.
+          {:else}
+            <kbd
+              class="rounded-lg border border-b-2 border-stone-300 px-1 py-0.5 text-xs dark:border-stone-700"
+            >
+              Enter
+            </kbd>
+            키로 추가
+          {/if}
+        </p>
       </li>
     {/if}
 
