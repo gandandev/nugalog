@@ -45,8 +45,8 @@
 
 <li
   class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300 dark:hover:bg-stone-800 dark:has-[a:active]:bg-stone-700"
-  class:bg-stone-200={isActive || reordering}
-  class:dark:bg-stone-800={isActive || reordering}
+  class:bg-stone-200={isActive || reordering || showOptions}
+  class:dark:bg-stone-800={isActive || reordering || showOptions}
   class:cursor-grab={reordering}
   class:opacity-50={dragged}
   draggable={reordering}
@@ -90,6 +90,7 @@
     <button
       bind:this={optionsButton}
       class="group/options options-button rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100"
+      class:opacity-100={showOptions}
       onclick={(e) => {
         e.stopPropagation()
         showOptions = !showOptions
@@ -97,6 +98,8 @@
     >
       <div
         class="flex h-6 w-6 items-center justify-center rounded duration-150 group-hover/options:bg-stone-300 dark:group-hover/options:bg-stone-700"
+        class:bg-stone-300={showOptions}
+        class:dark:bg-stone-700={showOptions}
       >
         <MoreHoriz class="h-5 w-5" />
       </div>
