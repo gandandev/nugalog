@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { beforeNavigate } from '$app/navigation'
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
   import { focusOnElement } from '$lib/utils'
+  import { page } from '$app/stores'
 
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
@@ -45,6 +47,24 @@
 
   let editorExpanded = $state(false)
 
+  beforeNavigate((navigation) => {
+    if (editing && !navigation.willUnload && navigation.to?.url.pathname !== $page.url.pathname) {
+      navigation.cancel()
+      window.dispatchEvent(
+        new CustomEvent('showNavigationDialog', {
+          detail: {
+            to: navigation.to?.url.pathname ?? '/',
+            save: () => {
+              save()
+              editing = false
+              editorExpanded = false
+            }
+          }
+        })
+      )
+    }
+  })
+
   function save() {
     if (isNew) {
       saveNewLog({ date, content })
@@ -85,6 +105,8 @@
   }
 </script>
 
+<svelte:window onbeforeunload={(e) => editing && e.preventDefault()} />
+
 <div
   class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50 dark:hover:bg-stone-900"
   class:hover:bg-transparent={editing}
@@ -113,6 +135,7 @@
     <!-- 액션 버튼 -->
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
+      class:opacity-100={editing}
     >
       {#if !editing && !confirmingDelete}
         <div
