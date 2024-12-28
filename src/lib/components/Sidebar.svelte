@@ -13,7 +13,7 @@
     handleDragLeave,
     handleDrop
   } from '$lib/utils/sidebarReorder'
-  import { fly, slide } from 'svelte/transition'
+  import { fly, slide, fade } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
   import IconButton from './IconButton.svelte'
@@ -134,14 +134,17 @@
             use:focusOnElement
           />
         </div>
-        <p class="pl-1 pt-2 text-xs text-stone-500 duration-150">
+        <div class="relative mx-1 mt-2 text-xs text-stone-500 duration-150">
           {#if duplicateStudentName}
-            학생 이름이 중복되었습니다.
+            <span class="absolute left-0 top-0" transition:fly={{ y: '3', duration: 150 }}>
+              학생 이름이 중복되었습니다.
+            </span>
           {:else}
-            <Key>Enter</Key>
-            키로 추가
+            <span class="absolute left-0 top-0" transition:fly={{ y: '3', duration: 150 }}>
+              <Key>Enter</Key> 키로 추가
+            </span>
           {/if}
-        </p>
+        </div>
       </li>
     {/if}
 
