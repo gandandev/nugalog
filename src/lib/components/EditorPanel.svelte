@@ -16,7 +16,7 @@
   }: {
     title: string
     content: string
-    date: Date
+    date: Date | null
     close: () => void
     save: (content: string, date: Date) => void
     minimizeEditor: () => void
@@ -45,14 +45,14 @@
           class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none dark:bg-stone-900"
           value={editedDate?.toISOString().slice(0, 10)}
           oninput={(e) =>
-            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : new Date())}
+            (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
         <div class="flex justify-end gap-2">
           <PillButton text="취소" onclick={close} variant="secondary" />
           <PillButton text="작게 보기" onclick={minimizeEditor} variant="secondary" />
           <PillButton
             text="저장"
-            onclick={() => save(editedContent, editedDate)}
+            onclick={() => save(editedContent, editedDate!)}
             variant="primary"
             disabled={!editedContent.trim() || !editedDate}
           />
@@ -66,7 +66,8 @@
       use:autosize
       use:focusOnElement
       onkeydown={(e) => {
-        if (e.key === 'Enter' && e.metaKey && editedContent.trim()) save(editedContent, editedDate)
+        if (e.key === 'Enter' && e.metaKey && editedContent.trim() && editedDate)
+          save(editedContent, editedDate)
         else if (e.key === 'Escape') close()
       }}
     ></textarea>
