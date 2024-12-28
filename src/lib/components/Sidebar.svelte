@@ -19,10 +19,9 @@
   import IconButton from './IconButton.svelte'
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
+  import Key from './Key.svelte'
 
   import GroupAdd from '~icons/mdi/group-add'
-  import Add from '~icons/mdi/add'
-  import Close from '~icons/mdi/close'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -138,11 +137,7 @@
           {#if duplicateStudentName}
             학생 이름이 중복되었습니다.
           {:else}
-            <kbd
-              class="rounded-lg border border-b-2 border-stone-300 px-1 py-0.5 text-xs dark:border-stone-700"
-            >
-              Enter
-            </kbd>
+            <Key>Enter</Key>
             키로 추가
           {/if}
         </p>
