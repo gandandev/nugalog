@@ -58,10 +58,7 @@ export async function handleOverwrite(supabase: SupabaseClient, conflictData: Co
   await saveDataToDb(supabase, conflictData.newLocal)
 }
 
-export async function handleMerge(
-  conflictData: ConflictData,
-  setData: (data: Student[]) => void
-) {
+export async function handleMerge(conflictData: ConflictData, setData: (data: Student[]) => void) {
   const { database, newLocal } = conflictData
 
   // 학생 이름을 기준으로 병합

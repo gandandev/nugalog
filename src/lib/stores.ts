@@ -19,7 +19,10 @@ export type Student = z.infer<typeof StudentSchema>
 export const dataLoaded = writable(false)
 export const data = writable<Student[]>([])
 
-export function parseData<T>(schema: z.ZodSchema<T>, data: unknown): z.SafeParseReturnType<unknown, T> {
+export function parseData<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+): z.SafeParseReturnType<unknown, T> {
   return schema.safeParse(data)
 }
 
