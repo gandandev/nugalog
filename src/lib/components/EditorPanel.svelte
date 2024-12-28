@@ -2,6 +2,7 @@
   import { fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
+  import { focusOnElement } from '$lib/utils'
 
   import PillButton from './PillButton.svelte'
 
@@ -56,6 +57,7 @@
       class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none dark:bg-stone-900"
       bind:value={editedContent}
       use:autosize
+      use:focusOnElement
     ></textarea>
   </div>
 </div>
