@@ -162,7 +162,10 @@
   <Sidebar />
 
   <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="sticky inset-x-0 top-0 flex justify-end p-4">
+    <div class="sticky inset-x-0 top-0 flex items-center justify-end gap-3 p-4">
+      {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3}
+        <p class="text-stone-500">로그인 후 여러 기기에서 작업해보세요</p>
+      {/if}
       <div class="relative z-50 h-8">
         {#if currentUser}
           <button
