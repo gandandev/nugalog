@@ -113,6 +113,7 @@
     <!-- 액션 버튼 -->
     <div
       class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
+      class:opacity-100={editing}
     >
       {#if !editing && !confirmingDelete}
         <div
