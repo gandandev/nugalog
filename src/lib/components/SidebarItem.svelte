@@ -74,11 +74,11 @@
   {:else}
     <a
       href="/app/student/{encodeURIComponent(student.name)}"
-      class="flex min-w-0 grow items-center rounded-l-lg py-1 pl-3"
+      class="flex min-w-0 grow items-center rounded-l-lg pl-3"
       class:rounded-r-lg={reordering}
       onclick={(e) => reordering && e.preventDefault()}
     >
-      <span class="truncate">
+      <span class="truncate py-1">
         {student.name}
       </span>
       {#if reordering}
@@ -89,7 +89,7 @@
   {#if !reordering && newName === null}
     <button
       bind:this={optionsButton}
-      class="group/options options-button rounded-r-lg pr-2 text-stone-500 opacity-0 duration-150 group-hover/item:opacity-100"
+      class="group/options options-button rounded-r-lg py-1 pr-2 text-stone-500 opacity-0 outline-none duration-150 group-hover/item:opacity-100"
       class:opacity-100={showOptions}
       onclick={(e) => {
         e.stopPropagation()
