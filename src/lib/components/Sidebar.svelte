@@ -70,6 +70,8 @@
         Icon={GroupAdd}
         onclick={() => (newStudentName = '')}
         emphasized={!$data.length}
+        tooltip="새 학생 추가"
+        tooltipPosition="bottom"
       />
     {/if}
   </div>
