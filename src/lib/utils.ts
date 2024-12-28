@@ -63,7 +63,7 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
       left: 'right',
       right: 'left'
     }
-    tooltipElement.style.transformOrigin = origins[position]
+    tooltipElement.style.transformOrigin = origins[position] ?? 'bottom'
 
     document.body.appendChild(tooltipElement)
     tooltipElement.getBoundingClientRect()
