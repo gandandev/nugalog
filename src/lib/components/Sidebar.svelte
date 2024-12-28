@@ -97,7 +97,7 @@
         <!-- 학생 목록 아이템 -->
         <SidebarItem
           {student}
-          isActive={$page.url.pathname === `/student/${encodeURIComponent(student.name)}`}
+          isActive={$page.url.pathname === `/app/student/${encodeURIComponent(student.name)}`}
           {reorder}
           {reordering}
           confirmdelete={() =>
