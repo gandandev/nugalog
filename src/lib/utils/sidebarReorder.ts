@@ -1,7 +1,7 @@
-import type { StudentData } from '$lib/stores'
+import type { Student } from '$lib/stores'
 
 export type DragState = {
-  draggedStudent: StudentData | null
+  draggedStudent: Student | null
   dropPreviewIndex: number | null
   dragOffset: { x: number; y: number }
 }
@@ -14,7 +14,7 @@ export function createDragState(): DragState {
   }
 }
 
-export function handleDragStart(e: DragEvent, student: StudentData, dragState: DragState): void {
+export function handleDragStart(e: DragEvent, student: Student, dragState: DragState): void {
   const element = e.currentTarget as HTMLElement
   if (!element) return
 
@@ -72,8 +72,8 @@ export function handleDragLeave(e: DragEvent, dragState: DragState): void {
 
 export function handleDrop(
   dragState: DragState,
-  data: StudentData[],
-  updateData: (newData: StudentData[]) => void
+  data: Student[],
+  updateData: (newData: Student[]) => void
 ): void {
   if (!dragState.draggedStudent || dragState.dropPreviewIndex === null) return
 

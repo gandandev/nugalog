@@ -6,29 +6,27 @@ export const LogSchema = z.object({
   content: z.string().min(1).trim()
 })
 
-export const StudentDataSchema = z.object({
+export const StudentSchema = z.object({
   name: z.string().min(1).trim(),
   logs: z.array(LogSchema)
 })
 
-export const StudentDataArraySchema = z.array(StudentDataSchema)
+export const StudentArraySchema = z.array(StudentSchema)
 
 export type Log = z.infer<typeof LogSchema>
-export type StudentData = z.infer<typeof StudentDataSchema>
+export type Student = z.infer<typeof StudentSchema>
 
 export const dataLoaded = writable(false)
-export const data = writable<StudentData[]>([])
+export const data = writable<Student[]>([])
 
-export function parseLog(data: unknown): z.SafeParseReturnType<unknown, Log> {
-  return LogSchema.safeParse(data)
-}
-
-export function parseStudentData(data: unknown): z.SafeParseReturnType<unknown, StudentData> {
-  return StudentDataSchema.safeParse(data)
-}
-
-export function parseStudentDataArray(
+export function parseData<T>(
+  schema: z.ZodSchema<T>,
   data: unknown
-): z.SafeParseReturnType<unknown, StudentData[]> {
-  return StudentDataArraySchema.safeParse(data)
+): z.SafeParseReturnType<unknown, T> {
+  return schema.safeParse(data)
 }
+
+// 편의를 위한 타입별 파서 함수들
+export const parseLog = (data: unknown) => parseData(LogSchema, data)
+export const parseStudent = (data: unknown) => parseData(StudentSchema, data)
+export const parseStudentArray = (data: unknown) => parseData(StudentArraySchema, data)

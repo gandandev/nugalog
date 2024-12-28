@@ -5,7 +5,7 @@
   import { type User } from '@supabase/supabase-js'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data as dataStore, dataLoaded, type StudentData } from '$lib/stores'
+  import { data as dataStore, dataLoaded, type Student } from '$lib/stores'
   import { onClickOutside } from '$lib/utils'
   import {
     loadDataFromDb,
@@ -35,7 +35,7 @@
   let conflictData = $state<ConflictData | null>(null)
 
   let showInitialConflictDialog = $state(false)
-  let initialConflictData = $state<{ dbData: StudentData[]; localData: StudentData[] } | null>(null)
+  let initialConflictData = $state<{ dbData: Student[]; localData: Student[] } | null>(null)
   let selectedInitialOption = $state<'useLocal' | 'useDB' | null>(null)
 
   onMount(async () => {
@@ -149,7 +149,7 @@
   }
 
   onMount(() => {
-    const handler = (e: CustomEvent<{ dbData: StudentData[]; localData: StudentData[] }>) => {
+    const handler = (e: CustomEvent<{ dbData: Student[]; localData: Student[] }>) => {
       showInitialConflictDialog = true
       initialConflictData = e.detail
     }

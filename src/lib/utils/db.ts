@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { StudentDataArraySchema, type StudentData } from '$lib/stores'
+import { StudentArraySchema, type Student } from '$lib/stores'
 
 // DB에서 데이터 가져오기
-export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentData[] | null> {
+export async function loadDataFromDb(supabase: SupabaseClient): Promise<Student[] | null> {
   const { data: userData } = await supabase.auth.getUser()
   const user = userData?.user
   if (!user) return null
@@ -16,7 +16,7 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
   if (error) throw error
 
   if (dbResult?.students) {
-    const parseResult = StudentDataArraySchema.safeParse(dbResult.students)
+    const parseResult = StudentArraySchema.safeParse(dbResult.students)
     if (!parseResult.success) {
       console.error('Invalid data format in DB:', parseResult.error)
       return null
@@ -29,7 +29,7 @@ export async function loadDataFromDb(supabase: SupabaseClient): Promise<StudentD
 // DB에 데이터 저장하기
 export async function saveDataToDb(
   supabase: SupabaseClient,
-  dataToSave: StudentData[]
+  dataToSave: Student[]
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const { data: userData, error: authError } = await supabase.auth.getUser()
@@ -37,7 +37,7 @@ export async function saveDataToDb(
     if (!userData?.user) return { success: false, error: 'User not authenticated' }
 
     // Validate data before saving
-    const parseResult = StudentDataArraySchema.safeParse(dataToSave)
+    const parseResult = StudentArraySchema.safeParse(dataToSave)
     if (!parseResult.success) {
       return { success: false, error: 'Invalid data format: ' + parseResult.error.message }
     }
@@ -63,7 +63,7 @@ export async function saveDataToDb(
 }
 
 // localStorage에서 데이터 불러오기
-export function loadDataFromLocalStorage(): { data: StudentData[] | null; error?: string } {
+export function loadDataFromLocalStorage(): { data: Student[] | null; error?: string } {
   if (typeof localStorage === 'undefined') {
     return { data: null, error: 'localStorage is not available' }
   }
@@ -72,7 +72,7 @@ export function loadDataFromLocalStorage(): { data: StudentData[] | null; error?
     const rawData = localStorage.getItem('data')
     if (!rawData) return { data: [] }
 
-    const parseResult = StudentDataArraySchema.safeParse(JSON.parse(rawData))
+    const parseResult = StudentArraySchema.safeParse(JSON.parse(rawData))
     if (!parseResult.success) {
       return {
         data: null,
@@ -89,9 +89,9 @@ export function loadDataFromLocalStorage(): { data: StudentData[] | null; error?
 
 export async function handleInitialDataConflict(
   supabase: SupabaseClient,
-  dbData: StudentData[],
-  localData: StudentData[]
-): Promise<StudentData[]> {
+  dbData: Student[],
+  localData: Student[]
+): Promise<Student[]> {
   return new Promise((resolve) => {
     // Create a custom event to handle the user's choice
     const handler = (e: CustomEvent<string>) => {
@@ -126,8 +126,8 @@ export async function handleInitialDataConflict(
   })
 }
 
-function mergeData(dbData: StudentData[], localData: StudentData[]): StudentData[] {
-  const mergedMap = new Map<string, StudentData>()
+function mergeData(dbData: Student[], localData: Student[]): Student[] {
+  const mergedMap = new Map<string, Student>()
 
   // DB 데이터를 먼저 추가
   dbData.forEach((student) => {

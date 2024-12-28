@@ -15,14 +15,15 @@ export function onClickOutside(node: HTMLElement, options: OnClickOutsideOptions
     const target = e.target
     if (!target || !(target instanceof Node)) return
 
-    isClickInside = node.contains(target) || exclude.some(el => el && el.contains(target))
+    isClickInside = node.contains(target) || exclude.some((el) => el && el.contains(target))
   }
 
   const onclick = (e: MouseEvent) => {
     const target = e.target
     if (!target || !(target instanceof Node)) return
 
-    const isClickOutside = !node.contains(target) && !exclude.some(el => el && el.contains(target))
+    const isClickOutside =
+      !node.contains(target) && !exclude.some((el) => el && el.contains(target))
     if (isClickOutside && !isClickInside) {
       callback()
     }
@@ -36,7 +37,7 @@ export function onClickOutside(node: HTMLElement, options: OnClickOutsideOptions
     destroy() {
       document.removeEventListener('mousedown', onmousedown, true)
       document.removeEventListener('click', onclick, true)
-    },
+    }
   }
 }
 
@@ -47,7 +48,7 @@ type TooltipOptions = {
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
-  if (!options) return { destroy() { } }
+  if (!options) return { destroy() {} }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
@@ -62,7 +63,8 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
       // 툴팁 생성
       tooltipElement = document.createElement('div')
       tooltipElement.textContent = text
-      tooltipElement.className = 'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-90 duration-150'
+      tooltipElement.className =
+        'fixed z-50 px-2 py-1 text-sm text-white bg-stone-800 rounded-lg pointer-events-none dark:bg-stone-700 opacity-0 scale-90 duration-150'
 
       // 방향에 맞춰 기준점 설정
       const origins = {

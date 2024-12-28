@@ -1,18 +1,18 @@
-import type { StudentData, Log } from '$lib/stores'
+import type { Student, Log } from '$lib/stores'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { saveDataToDb } from './db'
 
 export type ConflictData = {
-  previousLocal: StudentData[]
-  database: StudentData[]
-  newLocal: StudentData[]
+  previousLocal: Student[]
+  database: Student[]
+  newLocal: Student[]
 }
 
 function areLogsEqual(log1: Log, log2: Log): boolean {
   return log1.date.getTime() === log2.date.getTime() && log1.content === log2.content
 }
 
-function areStudentsEqual(student1: StudentData, student2: StudentData): boolean {
+function areStudentsEqual(student1: Student, student2: Student): boolean {
   if (student1.name !== student2.name || student1.logs.length !== student2.logs.length) {
     return false
   }
@@ -23,7 +23,7 @@ function areStudentsEqual(student1: StudentData, student2: StudentData): boolean
   })
 }
 
-function areStudentArraysEqual(arr1: StudentData[], arr2: StudentData[]): boolean {
+function areStudentArraysEqual(arr1: Student[], arr2: Student[]): boolean {
   if (arr1.length !== arr2.length) return false
 
   return arr1.every((student1, index) => {
@@ -33,9 +33,9 @@ function areStudentArraysEqual(arr1: StudentData[], arr2: StudentData[]): boolea
 }
 
 export function checkForConflicts(
-  previous: StudentData[],
-  database: StudentData[],
-  current: StudentData[]
+  previous: Student[],
+  database: Student[],
+  current: Student[]
 ): boolean {
   // DB가 이전 로컬 상태와 다르고
   // 현재 데이터가 이전 데이터 및 DB와 모두 다르다면
@@ -49,7 +49,7 @@ export function checkForConflicts(
 
 export async function handleCancelChanges(
   conflictData: ConflictData,
-  setData: (data: StudentData[]) => void
+  setData: (data: Student[]) => void
 ) {
   setData(conflictData.database)
 }
@@ -58,14 +58,11 @@ export async function handleOverwrite(supabase: SupabaseClient, conflictData: Co
   await saveDataToDb(supabase, conflictData.newLocal)
 }
 
-export async function handleMerge(
-  conflictData: ConflictData,
-  setData: (data: StudentData[]) => void
-) {
+export async function handleMerge(conflictData: ConflictData, setData: (data: Student[]) => void) {
   const { database, newLocal } = conflictData
 
   // 학생 이름을 기준으로 병합
-  const mergedMap = new Map<string, StudentData>()
+  const mergedMap = new Map<string, Student>()
 
   // DB 데이터를 먼저 추가
   database.forEach((student) => {
