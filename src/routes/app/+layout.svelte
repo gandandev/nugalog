@@ -260,6 +260,7 @@
           bind:this={settingsButton}
           class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 dark:hover:bg-stone-800"
           onclick={() => (showSettings = !showSettings)}
+          use:tooltip={{ text: '설정', position: 'bottom' }}
         >
           <Settings class="h-5 w-5" />
         </button>
