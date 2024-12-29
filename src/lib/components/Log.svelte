@@ -14,7 +14,7 @@
   import Delete from '~icons/material-symbols/delete-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
-  import Fullscreen from '~icons/material-symbols/fullscreen-rounded'
+  import Expand from '~icons/material-symbols/expand-rounded'
   import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
   const {
@@ -155,7 +155,7 @@
           transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
         >
           <IconButton Icon={Close} text="취소" onclick={cancel} />
-          <IconButton Icon={Fullscreen} text="크게 보기" onclick={() => (editorExpanded = true)} />
+          <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
         </div>
       {/if}
       {#if !confirmingDelete}
