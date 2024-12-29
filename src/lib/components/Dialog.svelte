@@ -7,6 +7,7 @@
     label: string
     variant?: 'primary' | 'secondary' | 'danger'
     onenter?: boolean
+    disabled?: boolean
   } & (
     | {
         onclick: () => void
@@ -21,12 +22,14 @@
     title,
     description,
     actions,
-    cancel
+    cancel,
+    children
   }: {
     title: string
     description?: string
     actions: DialogAction[]
     cancel?: () => void
+    children?: any
   } = $props()
 </script>
 
@@ -50,13 +53,17 @@
     transition:scale|global={{ start: 0.9, duration: 200 }}
   >
     <h2 class="text-xl font-semibold">{title}</h2>
-    <p class="mt-1 text-sm text-stone-500">{description}</p>
+    <p class="mt-1 whitespace-pre-wrap text-sm text-stone-500">{description}</p>
+    {#if children}
+      <div class="mt-3">{@render children()}</div>
+    {/if}
     <div class="mt-3 flex justify-end gap-2">
       {#each actions as action}
         <PillButton
           text={action.label}
           onclick={action.cancel ? (cancel as () => void) : action.onclick}
           variant={action.variant}
+          disabled={action.disabled}
         />
       {/each}
     </div>

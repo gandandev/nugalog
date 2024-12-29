@@ -158,3 +158,14 @@ function mergeData(dbData: Student[], localData: Student[]): Student[] {
 
   return Array.from(mergedMap.values())
 }
+
+export async function eraseAllData(supabase: SupabaseClient) {
+  const { data: userData } = await supabase.auth.getUser()
+  const user = userData?.user
+  if (!user) return
+
+  const { error } = await supabase.from('classes').delete().eq('user_id', user.id)
+  if (error) throw error
+
+  localStorage.removeItem('data')
+}
