@@ -33,8 +33,8 @@
 
   import Settings from '~icons/material-symbols/settings'
   import Logout from '~icons/material-symbols/logout'
-  import FileDownload from '~icons/material-symbols/file-download'
-  import FolderOpen from '~icons/material-symbols/folder-open'
+  import Download from '~icons/material-symbols/download'
+  import FileOpen from '~icons/material-symbols/file-open'
   import DeleteForever from '~icons/material-symbols/delete-forever'
 
   let { data, children }: { data: PageData; children: any } = $props()
@@ -277,7 +277,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
               onclick={saveDataToFile}
             >
-              <FileDownload class="h-5 w-5" />
+              <Download class="h-5 w-5" />
               데이터 다운로드
             </button>
 
@@ -285,7 +285,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
               onclick={loadDataFromFile}
             >
-              <FolderOpen class="h-5 w-5" />
+              <FileOpen class="h-5 w-5" />
               데이터 불러오기
             </button>
 
