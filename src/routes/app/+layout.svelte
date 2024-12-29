@@ -27,6 +27,8 @@
 
   import Settings from '~icons/mdi/settings'
   import Logout from '~icons/mdi/logout'
+  import FileDownload from '~icons/mdi/file-download'
+  import FolderOpen from '~icons/mdi/folder-open'
   import DeleteForever from '~icons/mdi/delete-forever'
 
   let { data, children }: { data: PageData; children: any } = $props()
@@ -210,6 +212,20 @@
               exclude: settingsButton ? [settingsButton] : []
             }}
           >
+            <button
+              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+            >
+              <FileDownload class="h-5 w-5" />
+              파일에 데이터 저장
+            </button>
+
+            <button
+              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+            >
+              <FolderOpen class="h-5 w-5" />
+              데이터 불러오기
+            </button>
+
             <button
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
               onclick={() => {
