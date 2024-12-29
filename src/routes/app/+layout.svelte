@@ -12,7 +12,7 @@
     parseStudentArray,
     showTooltip
   } from '$lib/stores'
-  import { onClickOutside, tooltip } from '$lib/utils'
+  import { onClickOutside, tooltip, formatStudentLogs, formatAllStudentLogs } from '$lib/utils'
   import {
     loadDataFromDb,
     saveDataToDb,
@@ -263,16 +263,7 @@
         bind:this={settingsButton}
         class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
         onclick={() => {
-          const text = `${student.name} 학생\n\n${student.logs
-            .map((log) => {
-              const date = log.date
-              return `${date.getFullYear()}년 ${
-                date.getMonth() + 1
-              }월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})\n${
-                log.content
-              }`
-            })
-            .join('\n\n')}`
+          const text = formatStudentLogs(student.name, student.logs)
           navigator.clipboard.writeText(text)
         }}
         disabled={!student?.logs.length}
@@ -307,7 +298,19 @@
             }}
           >
             <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
+              onclick={() => {
+                const text = formatAllStudentLogs($dataStore)
+                navigator.clipboard.writeText(text)
+              }}
+              disabled={!$dataStore.some((s) => s.logs.length > 0)}
+            >
+              <ContentCopy class="h-5 w-5" />
+              {$dataStore.some((s) => s.logs.length > 0) ? '모든 기록 복사' : '복사할 기록 없음'}
+            </button>
+
+            <button
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
               onclick={saveDataToFile}
             >
               <Download class="h-5 w-5" />
@@ -315,7 +318,7 @@
             </button>
 
             <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
               onclick={loadDataFromFile}
             >
               <FileOpen class="h-5 w-5" />
@@ -323,7 +326,7 @@
             </button>
 
             <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 active:bg-stone-200 dark:hover:bg-stone-700 dark:hover:text-red-500 dark:active:bg-stone-600"
               onclick={() => {
                 eraseDataConfirmationInput = ''
                 showEraseDataDialogState = 'confirm'
