@@ -5,8 +5,8 @@
   import { type User } from '@supabase/supabase-js'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data as dataStore, dataLoaded, type Student } from '$lib/stores'
-  import { onClickOutside } from '$lib/utils'
+  import { data as dataStore, dataLoaded, type Student, showTooltip } from '$lib/stores'
+  import { onClickOutside, tooltip } from '$lib/utils'
   import {
     loadDataFromDb,
     saveDataToDb,
@@ -117,6 +117,7 @@
   data.supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_OUT') {
       currentUser = null
+      $showTooltip = true
     } else if (session?.user) {
       currentUser = session.user
     }
@@ -179,8 +180,17 @@
 
   <div class="flex flex-1 flex-col overflow-hidden">
     <div class="sticky inset-x-0 top-0 flex items-center justify-end gap-3 p-4">
-      {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3}
-        <p class="text-stone-500">로그인 후 여러 기기에서 작업해보세요</p>
+      {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
+        <button
+          class="origin-right text-stone-500 hover:text-stone-600 dark:hover:text-stone-400"
+          onclick={() => {
+            $showTooltip = false
+          }}
+          transition:scale={{ duration: 150, start: 0.9 }}
+          use:tooltip={{ text: '클릭해서 숨기기', position: 'bottom', delay: 0 }}
+        >
+          로그인 후 여러 기기에서 작업해보세요
+        </button>
       {/if}
 
       <div class="relative">
