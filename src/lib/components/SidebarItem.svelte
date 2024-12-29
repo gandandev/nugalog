@@ -5,13 +5,13 @@
   import { expoOut } from 'svelte/easing'
   import { data, type Student } from '$lib/stores'
 
-  import MoreHoriz from '~icons/mdi/more-horiz'
-  import Delete from '~icons/mdi/delete'
-  import Edit from '~icons/mdi/pencil'
-  import SwapVert from '~icons/mdi/swap-vertical'
-  import DragHandle from '~icons/mdi/drag'
-  import Pin from '~icons/mdi/pin'
-  import PinOff from '~icons/mdi/pin-off'
+  import MoreHoriz from '~icons/material-symbols/more-horiz'
+  import Delete from '~icons/material-symbols/delete-rounded'
+  import Edit from '~icons/material-symbols/edit-rounded'
+  import SwapVert from '~icons/material-symbols/swap-vert-rounded'
+  import DragIndicator from '~icons/material-symbols/drag-indicator'
+  import Keep from '~icons/material-symbols/keep-rounded'
+  import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{
@@ -86,13 +86,13 @@
       onclick={(e) => reordering && e.preventDefault()}
     >
       {#if student.pinned}
-        <Pin class="mr-1.5 h-4 w-4 shrink-0 text-stone-400 dark:text-stone-600" />
+        <Keep class="mr-1.5 h-4 w-4 shrink-0 text-stone-400 dark:text-stone-600" />
       {/if}
       <span class="truncate py-1">
         {student.name}
       </span>
       {#if reordering}
-        <DragHandle class="ml-auto mr-1 h-6 w-6 shrink-0 text-stone-400 dark:text-stone-600" />
+        <DragIndicator class="ml-auto mr-1 h-6 w-6 shrink-0 text-stone-400 dark:text-stone-600" />
       {/if}
     </a>
   {/if}
@@ -140,10 +140,10 @@
         onclick={togglePin}
       >
         {#if student.pinned}
-          <PinOff class="h-5 w-5" />
+          <KeepOff class="h-5 w-5" />
           고정 해제
         {:else}
-          <Pin class="h-5 w-5" />
+          <Keep class="h-5 w-5" />
           고정하기
         {/if}
       </button>

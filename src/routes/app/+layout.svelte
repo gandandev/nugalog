@@ -31,11 +31,11 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
-  import Settings from '~icons/mdi/settings'
-  import Logout from '~icons/mdi/logout'
-  import FileDownload from '~icons/mdi/file-download'
-  import FolderOpen from '~icons/mdi/folder-open'
-  import DeleteForever from '~icons/mdi/delete-forever'
+  import Settings from '~icons/material-symbols/settings-rounded'
+  import Logout from '~icons/material-symbols/logout-rounded'
+  import Download from '~icons/material-symbols/download-rounded'
+  import FileOpen from '~icons/material-symbols/file-open-rounded'
+  import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -277,7 +277,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
               onclick={saveDataToFile}
             >
-              <FileDownload class="h-5 w-5" />
+              <Download class="h-5 w-5" />
               데이터 다운로드
             </button>
 
@@ -285,7 +285,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
               onclick={loadDataFromFile}
             >
-              <FolderOpen class="h-5 w-5" />
+              <FileOpen class="h-5 w-5" />
               데이터 불러오기
             </button>
 

@@ -21,7 +21,7 @@
   import Dialog from './Dialog.svelte'
   import Key from './Key.svelte'
 
-  import GroupAdd from '~icons/mdi/group-add'
+  import PersonAdd from '~icons/material-symbols/person-add-rounded'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -75,7 +75,7 @@
       </button>
     {:else}
       <IconButton
-        Icon={GroupAdd}
+        Icon={PersonAdd}
         tooltip="새 학생 추가"
         tooltipPosition="bottom"
         onclick={() => (newStudentName = '')}

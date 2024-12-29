@@ -9,13 +9,13 @@
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
 
-  import ContentCopy from '~icons/mdi/content-copy'
-  import Edit from '~icons/mdi/edit'
-  import Delete from '~icons/mdi/delete'
-  import Check from '~icons/mdi/check'
-  import Close from '~icons/mdi/close'
-  import Fullscreen from '~icons/mdi/fullscreen'
-  import Calendar from '~icons/mdi/calendar'
+  import ContentCopy from '~icons/material-symbols/content-copy-rounded'
+  import Edit from '~icons/material-symbols/edit-rounded'
+  import Delete from '~icons/material-symbols/delete-rounded'
+  import Check from '~icons/material-symbols/check-rounded'
+  import Close from '~icons/material-symbols/close-rounded'
+  import Expand from '~icons/material-symbols/expand-rounded'
+  import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
   const {
     log,
@@ -120,7 +120,7 @@
           oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
         {#if navigator.userAgent.includes('Chrome')}
-          <Calendar class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
+          <CalendarToday class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
         {/if}
       </div>
     {:else}
@@ -155,7 +155,7 @@
           transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
         >
           <IconButton Icon={Close} text="취소" onclick={cancel} />
-          <IconButton Icon={Fullscreen} text="크게 보기" onclick={() => (editorExpanded = true)} />
+          <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
         </div>
       {/if}
       {#if !confirmingDelete}
