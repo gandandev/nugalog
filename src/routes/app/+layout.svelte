@@ -427,8 +427,9 @@
     ]}
     cancel={() => (showEraseDataDialogState = 'closed')}
   >
-    <p class="text-sm text-stone-500 dark:text-stone-400">
-      데이터를 삭제하려면 <span class="font-semibold">데이터 모두 삭제</span>를 입력하세요.
+    <p class=" text-sm text-stone-500 dark:text-stone-400">
+      데이터를 삭제하려면 <span class="select-none font-semibold">데이터 모두 삭제</span>를
+      입력하세요.
     </p>
     <input
       type="text"
