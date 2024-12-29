@@ -164,6 +164,8 @@ export async function eraseAllData(supabase?: SupabaseClient, logout?: boolean) 
 
   const userData = await supabase?.auth.getUser()
 
+  if (userData?.error && userData?.error?.name !== 'AuthSessionMissingError') throw userData?.error
+
   if (userData?.data.user) {
     const user = userData.data.user
     if (user) {

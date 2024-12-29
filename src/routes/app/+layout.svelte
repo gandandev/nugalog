@@ -155,8 +155,13 @@
   let settingsButton: HTMLButtonElement | null = $state(null)
 
   // 데이터 삭제
-  let showEraseDataDialogState: 'closed' | 'confirm' | 'reconfirm' | 'confirmLogout' | 'complete' =
-    $state('closed')
+  let showEraseDataDialogState:
+    | 'closed'
+    | 'confirm'
+    | 'reconfirm'
+    | 'confirmLogout'
+    | 'complete'
+    | 'error' = $state('closed')
   let eraseDataConfirmationInput = $state('')
 
   onMount(() => {
@@ -470,17 +475,27 @@
       {
         label: '데이터만 삭제',
         variant: 'danger',
-        onclick: async () => {
-          await eraseAllData(data.supabase)
-          showEraseDataDialogState = 'complete'
+        onclick: () => {
+          eraseAllData(data.supabase)
+            .then(() => {
+              showEraseDataDialogState = 'complete'
+            })
+            .catch(() => {
+              showEraseDataDialogState = 'error'
+            })
         }
       },
       {
         label: '삭제 및 로그아웃',
         variant: 'danger',
-        onclick: async () => {
-          await eraseAllData(data.supabase, true)
-          showEraseDataDialogState = 'complete'
+        onclick: () => {
+          eraseAllData(data.supabase, true)
+            .then(() => {
+              showEraseDataDialogState = 'complete'
+            })
+            .catch(() => {
+              showEraseDataDialogState = 'error'
+            })
         }
       }
     ]}
@@ -488,12 +503,43 @@
   />
 {:else if showEraseDataDialogState === 'complete'}
   <Dialog
-    title={currentUser ? '삭제 완료' : '삭제 및 로그아웃 완료'}
+    title="완료"
     description="모든 데이터가 삭제되었습니다."
     actions={[
       {
         label: '닫기',
         variant: 'primary',
+        cancel: true
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
+{:else if showEraseDataDialogState === 'error'}
+  <Dialog
+    title="삭제 실패"
+    description="데이터 삭제에 실패했습니다."
+    actions={[
+      {
+        label: '다시 시도',
+        variant: 'primary',
+        onclick: () => {
+          showEraseDataDialogState = 'closed'
+
+          // 재시도되는 효과를 위해 다이얼로그가 닫히고 조금 후 결과 표시
+          setTimeout(() => {
+            eraseAllData(data.supabase, true)
+              .then(() => {
+                showEraseDataDialogState = 'complete'
+              })
+              .catch(() => {
+                showEraseDataDialogState = 'error'
+              })
+          }, 200)
+        }
+      },
+      {
+        label: '닫기',
+        variant: 'secondary',
         cancel: true
       }
     ]}
