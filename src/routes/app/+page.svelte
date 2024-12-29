@@ -4,7 +4,7 @@
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
 
   import HowToReg from '~icons/material-symbols/how-to-reg-rounded'
-  import GroupAdd from '~icons/material-symbols/group-add-rounded'
+  import Groups from '~icons/material-symbols/groups-rounded'
 </script>
 
 {#if $data.length}
@@ -15,7 +15,7 @@
   />
 {:else}
   <InfoDisplay
-    Icon={GroupAdd}
+    Icon={Groups}
     title="학생을 추가해 시작하세요"
     description="사이드바의 학생 추가 버튼으로 학생을 추가할 수 있습니다."
   />
