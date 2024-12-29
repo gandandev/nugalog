@@ -33,10 +33,13 @@ export const parseStudent = (data: unknown) => parseData(StudentSchema, data)
 export const parseStudentArray = (data: unknown) => parseData(StudentArraySchema, data)
 
 // 툴팁 표시 여부를 localStorage에서 불러오고 저장하기
-const storedShowTooltip = typeof localStorage !== 'undefined' ? localStorage.getItem('showTooltip') : null
-export const showTooltip = writable(storedShowTooltip === null ? true : storedShowTooltip === 'true')
+const storedShowTooltip =
+  typeof localStorage !== 'undefined' ? localStorage.getItem('showTooltip') : null
+export const showTooltip = writable(
+  storedShowTooltip === null ? true : storedShowTooltip === 'true'
+)
 
-showTooltip.subscribe(value => {
+showTooltip.subscribe((value) => {
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem('showTooltip', value.toString())
   }
