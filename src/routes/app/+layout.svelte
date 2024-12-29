@@ -117,6 +117,7 @@
   data.supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_OUT') {
       currentUser = null
+      $showTooltip = true
     } else if (session?.user) {
       currentUser = session.user
     }
@@ -139,6 +140,7 @@
     data.supabase.auth.signOut()
     currentUser = null
     showAccountOptions = false
+    $showTooltip = true
   }
 
   // 계정 옵션
