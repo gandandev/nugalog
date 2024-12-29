@@ -5,7 +5,13 @@
   import { type User } from '@supabase/supabase-js'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { data as dataStore, dataLoaded, type Student, showTooltip } from '$lib/stores'
+  import {
+    data as dataStore,
+    dataLoaded,
+    type Student,
+    parseStudentArray,
+    showTooltip
+  } from '$lib/stores'
   import { onClickOutside, tooltip } from '$lib/utils'
   import {
     loadDataFromDb,
@@ -157,6 +163,60 @@
   let showSettings = $state(false)
   let settingsButton: HTMLButtonElement | null = $state(null)
 
+  // 데이터 다운로드
+  function saveDataToFile() {
+    const data = JSON.stringify($dataStore, null, 2)
+    const blob = new Blob([data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'data.json'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  // 데이터 불러오기
+  let loadDataResultDialogState: 'closed' | 'conflict' | 'success' | 'error' = $state('closed')
+  let dataFromFile: Student[] | null = $state(null)
+  function loadDataFromFile() {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json'
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const content = JSON.parse(e.target?.result as string)
+          const result = parseStudentArray(content)
+          if (!result.success) {
+            console.error('Invalid data format:', result.error)
+            loadDataResultDialogState = 'error'
+            return
+          }
+
+          dataFromFile = result.data
+
+          if ($dataStore.length > 0) {
+            loadDataResultDialogState = 'conflict'
+          } else {
+            $dataStore = dataFromFile
+            loadDataResultDialogState = 'success'
+          }
+        } catch (err) {
+          console.error('Failed to parse file:', err)
+          loadDataResultDialogState = 'error'
+        }
+      }
+      reader.readAsText(file)
+    }
+    input.click()
+  }
+
   // 데이터 삭제
   let showEraseDataDialogState:
     | 'closed'
@@ -214,6 +274,7 @@
           >
             <button
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+              onclick={saveDataToFile}
             >
               <FileDownload class="h-5 w-5" />
               데이터 다운로드
@@ -221,6 +282,7 @@
 
             <button
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
+              onclick={loadDataFromFile}
             >
               <FolderOpen class="h-5 w-5" />
               데이터 불러오기
@@ -424,6 +486,56 @@
       ]}
     />
   {/if}
+{/if}
+
+{#if loadDataResultDialogState === 'conflict'}
+  <Dialog
+    title="데이터를 덮어쓰시겠습니까?"
+    description="데이터를 불러오면 현재 데이터가 사라집니다. 이 작업은 되돌릴 수 없습니다."
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '덮어쓰기',
+        variant: 'primary',
+        onclick: () => {
+          if (!dataFromFile) return
+          $dataStore = dataFromFile
+          loadDataResultDialogState = 'success'
+        }
+      }
+    ]}
+    cancel={() => (loadDataResultDialogState = 'closed')}
+  />
+{:else if loadDataResultDialogState === 'success'}
+  <Dialog
+    title="완료"
+    description="데이터를 성공적으로 불러왔습니다."
+    actions={[
+      {
+        label: '닫기',
+        variant: 'primary',
+        cancel: true
+      }
+    ]}
+    cancel={() => (loadDataResultDialogState = 'closed')}
+  />
+{:else if loadDataResultDialogState === 'error'}
+  <Dialog
+    title="불러오기 실패"
+    description="데이터를 불러오는 데 실패했습니다. 데이터가 올바른 형식인지 확인해주세요."
+    actions={[
+      {
+        label: '닫기',
+        variant: 'primary',
+        cancel: true
+      }
+    ]}
+    cancel={() => (loadDataResultDialogState = 'closed')}
+  />
 {/if}
 
 {#if showEraseDataDialogState === 'confirm'}

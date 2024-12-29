@@ -9,7 +9,7 @@ export const LogSchema = z.object({
 export const StudentSchema = z.object({
   name: z.string().min(1).trim(),
   logs: z.array(LogSchema),
-  pinned: z.boolean().default(false)
+  pinned: z.boolean().default(false).optional()
 })
 
 export const StudentArraySchema = z.array(StudentSchema)
