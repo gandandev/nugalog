@@ -31,6 +31,7 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
+  import ContentCopy from '~icons/material-symbols/content-copy-rounded'
   import Settings from '~icons/material-symbols/settings-rounded'
   import Logout from '~icons/material-symbols/logout-rounded'
   import Download from '~icons/material-symbols/download-rounded'
@@ -38,6 +39,10 @@
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
+
+  const student = $derived(
+    $dataStore.find((s) => s.name === decodeURIComponent($page.params.name))!
+  )
 
   let currentUser: User | null = $state(null)
 
@@ -240,7 +245,7 @@
   <Sidebar />
 
   <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="sticky inset-x-0 top-0 flex items-center justify-end gap-3 p-4">
+    <div class="sticky inset-x-0 top-0 flex items-center justify-end gap-1 p-4">
       {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
         <button
           class="origin-right text-stone-500 hover:text-stone-600 dark:hover:text-stone-400"
@@ -254,10 +259,39 @@
         </button>
       {/if}
 
+      <button
+        bind:this={settingsButton}
+        class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        onclick={() => {
+          const text = `${student.name} 학생\n\n${student.logs
+            .map((log) => {
+              const date = log.date
+              return `${date.getFullYear()}년 ${
+                date.getMonth() + 1
+              }월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})\n${
+                log.content
+              }`
+            })
+            .join('\n\n')}`
+          navigator.clipboard.writeText(text)
+        }}
+        disabled={!student?.logs.length}
+        use:tooltip={{
+          text: student
+            ? student.logs.length
+              ? '기록 전체 복사'
+              : '복사할 기록 없음'
+            : '복사할 학생 없음',
+          position: 'bottom'
+        }}
+      >
+        <ContentCopy class="h-5 w-5" />
+      </button>
+
       <div class="relative">
         <button
           bind:this={settingsButton}
-          class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 dark:hover:bg-stone-800"
+          class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
           onclick={() => (showSettings = !showSettings)}
           use:tooltip={{ text: '설정', position: 'bottom' }}
         >
@@ -302,7 +336,7 @@
         {/if}
       </div>
 
-      <div class="relative z-50 h-8">
+      <div class="relative z-50 ml-2 h-8">
         {#if currentUser}
           <button
             bind:this={accountButton}
