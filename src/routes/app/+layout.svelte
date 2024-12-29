@@ -188,7 +188,7 @@
             $showTooltip = false
           }}
           transition:scale={{ duration: 150, start: 0.9 }}
-          use:tooltip={{ text: '클릭해서 닫기', position: 'bottom', delay: 0 }}
+          use:tooltip={{ text: '클릭해서 숨기기', position: 'bottom', delay: 0 }}
         >
           로그인 후 여러 기기에서 작업해보세요
         </button>
