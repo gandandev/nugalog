@@ -155,7 +155,8 @@
   let settingsButton: HTMLButtonElement | null = $state(null)
 
   // 데이터 삭제
-  let showEraseDataDialogState: 'closed' | 'confirm' | 'reconfirm' | 'complete' = $state('closed')
+  let showEraseDataDialogState: 'closed' | 'confirm' | 'reconfirm' | 'confirmLogout' | 'complete' =
+    $state('closed')
   let eraseDataConfirmationInput = $state('')
 
   onMount(() => {
@@ -445,7 +446,40 @@
         label: '계속',
         variant: 'danger',
         onclick: async () => {
+          if (currentUser) {
+            showEraseDataDialogState = 'confirmLogout'
+          } else {
+            await eraseAllData(data.supabase)
+            showEraseDataDialogState = 'complete'
+          }
+        }
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
+{:else if showEraseDataDialogState === 'confirmLogout'}
+  <Dialog
+    title="로그아웃하시겠습니까?"
+    description="데이터가 모두 삭제되고 로그아웃됩니다."
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '데이터만 삭제',
+        variant: 'danger',
+        onclick: async () => {
           await eraseAllData(data.supabase)
+          showEraseDataDialogState = 'complete'
+        }
+      },
+      {
+        label: '삭제 및 로그아웃',
+        variant: 'danger',
+        onclick: async () => {
+          await eraseAllData(data.supabase, true)
           showEraseDataDialogState = 'complete'
         }
       }
@@ -454,8 +488,8 @@
   />
 {:else if showEraseDataDialogState === 'complete'}
   <Dialog
-    title="삭제 완료"
-    description="서버 및 이 기기에 저장된 모든 데이터가 성공적으로 삭제되었습니다."
+    title={currentUser ? '삭제 완료' : '삭제 및 로그아웃 완료'}
+    description="모든 데이터가 삭제되었습니다."
     actions={[
       {
         label: '닫기',
