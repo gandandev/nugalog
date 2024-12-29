@@ -216,7 +216,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
             >
               <FileDownload class="h-5 w-5" />
-              파일에 데이터 저장
+              데이터 다운로드
             </button>
 
             <button
