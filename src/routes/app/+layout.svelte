@@ -140,7 +140,6 @@
     data.supabase.auth.signOut()
     currentUser = null
     showAccountOptions = false
-    $showTooltip = true
   }
 
   // 계정 옵션
