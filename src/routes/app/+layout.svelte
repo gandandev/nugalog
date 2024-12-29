@@ -153,7 +153,6 @@
   // 계정 옵션
   let showAccountOptions = $state(false)
   let accountButton: HTMLButtonElement | null = $state(null)
-  let accountOptions: HTMLDivElement | null = $state(null)
   let logoutButton: HTMLButtonElement | null = $state(null)
   function closeAccountOptions() {
     showAccountOptions = false
@@ -344,7 +343,6 @@
 
       {#if showAccountOptions && currentUser}
         <div
-          bind:this={accountOptions}
           class="absolute top-14 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
           transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
           use:onClickOutside={{
