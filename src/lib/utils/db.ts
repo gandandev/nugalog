@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { StudentArraySchema, type Student } from '$lib/stores'
-
+import { data as dataStore } from '$lib/stores'
 // DB에서 데이터 가져오기
 export async function loadDataFromDb(supabase: SupabaseClient): Promise<Student[] | null> {
   const { data: userData } = await supabase.auth.getUser()
@@ -157,4 +157,24 @@ function mergeData(dbData: Student[], localData: Student[]): Student[] {
   })
 
   return Array.from(mergedMap.values())
+}
+
+export async function eraseAllData(supabase?: SupabaseClient, logout?: boolean) {
+  dataStore.set([])
+
+  const userData = await supabase?.auth.getUser()
+
+  if (userData?.error && userData?.error?.name !== 'AuthSessionMissingError') throw userData?.error
+
+  if (userData?.data.user) {
+    const user = userData.data.user
+    if (user) {
+      const { error } = await supabase!.from('classes').delete().eq('user_id', user.id)
+      if (error) throw error
+
+      if (logout) await supabase!.auth.signOut()
+    }
+  }
+
+  localStorage.removeItem('data')
 }

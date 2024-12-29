@@ -11,7 +11,8 @@
     loadDataFromDb,
     saveDataToDb,
     loadDataFromLocalStorage,
-    handleInitialDataConflict
+    handleInitialDataConflict,
+    eraseAllData
   } from '$lib/utils/db'
   import {
     type ConflictData,
@@ -24,7 +25,9 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
+  import Settings from '~icons/mdi/settings'
   import Logout from '~icons/mdi/logout'
+  import DeleteForever from '~icons/mdi/delete-forever'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -143,10 +146,23 @@
   let accountButton: HTMLButtonElement | null = $state(null)
   let accountOptions: HTMLDivElement | null = $state(null)
   let logoutButton: HTMLButtonElement | null = $state(null)
-
   function closeAccountOptions() {
     showAccountOptions = false
   }
+
+  // 설정
+  let showSettings = $state(false)
+  let settingsButton: HTMLButtonElement | null = $state(null)
+
+  // 데이터 삭제
+  let showEraseDataDialogState:
+    | 'closed'
+    | 'confirm'
+    | 'reconfirm'
+    | 'confirmLogout'
+    | 'complete'
+    | 'error' = $state('closed')
+  let eraseDataConfirmationInput = $state('')
 
   onMount(() => {
     const handler = (e: CustomEvent<{ dbData: Student[]; localData: Student[] }>) => {
@@ -166,6 +182,38 @@
       {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3}
         <p class="text-stone-500">로그인 후 여러 기기에서 작업해보세요</p>
       {/if}
+
+      <div class="relative">
+        <button
+          bind:this={settingsButton}
+          class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 dark:hover:bg-stone-800"
+          onclick={() => (showSettings = !showSettings)}
+        >
+          <Settings class="h-5 w-5" />
+        </button>
+        {#if showSettings}
+          <div
+            class="absolute -right-2 top-11 z-50 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
+            transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
+            use:onClickOutside={{
+              callback: () => (showSettings = false),
+              exclude: settingsButton ? [settingsButton] : []
+            }}
+          >
+            <button
+              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+              onclick={() => {
+                eraseDataConfirmationInput = ''
+                showEraseDataDialogState = 'confirm'
+              }}
+            >
+              <DeleteForever class="h-5 w-5" />
+              데이터 삭제
+            </button>
+          </div>
+        {/if}
+      </div>
+
       <div class="relative z-50 h-8">
         {#if currentUser}
           <button
@@ -208,7 +256,7 @@
       {#if showAccountOptions && currentUser}
         <div
           bind:this={accountOptions}
-          class="absolute top-12 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
+          class="absolute top-14 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
           transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
           use:onClickOutside={{
             callback: closeAccountOptions,
@@ -350,4 +398,152 @@
       ]}
     />
   {/if}
+{/if}
+
+{#if showEraseDataDialogState === 'confirm'}
+  <Dialog
+    title="모든 데이터를 삭제하시겠습니까?"
+    description="{currentUser
+      ? '서버 및 이 기기'
+      : '이 기기'}에 저장된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.{!currentUser
+      ? '\n서버에 저장된 정보를 삭제하려면 로그인하세요.'
+      : ''}"
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '삭제',
+        variant: 'danger',
+        onclick: () => {
+          if (eraseDataConfirmationInput !== '데이터 모두 삭제') return
+          showEraseDataDialogState = 'reconfirm'
+        },
+        onenter: true,
+        disabled: eraseDataConfirmationInput !== '데이터 모두 삭제'
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  >
+    <p class=" text-sm text-stone-500 dark:text-stone-400">
+      데이터를 삭제하려면 <span class="select-none font-semibold">데이터 모두 삭제</span>를
+      입력하세요.
+    </p>
+    <input
+      type="text"
+      bind:value={eraseDataConfirmationInput}
+      class="mt-1 w-full rounded-lg bg-stone-100 px-3 py-2 outline-none placeholder:text-stone-400 dark:bg-stone-700"
+      placeholder="데이터 모두 삭제"
+    />
+  </Dialog>
+{:else if showEraseDataDialogState === 'reconfirm'}
+  <Dialog
+    title="정말로 계속하시겠습니까?"
+    description="모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '계속',
+        variant: 'danger',
+        onclick: async () => {
+          if (currentUser) {
+            showEraseDataDialogState = 'confirmLogout'
+          } else {
+            await eraseAllData(data.supabase)
+            showEraseDataDialogState = 'complete'
+          }
+        }
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
+{:else if showEraseDataDialogState === 'confirmLogout'}
+  <Dialog
+    title="로그아웃하시겠습니까?"
+    description="데이터가 모두 삭제되고 로그아웃됩니다."
+    actions={[
+      {
+        label: '취소',
+        variant: 'secondary',
+        cancel: true
+      },
+      {
+        label: '데이터만 삭제',
+        variant: 'danger',
+        onclick: () => {
+          eraseAllData(data.supabase)
+            .then(() => {
+              showEraseDataDialogState = 'complete'
+            })
+            .catch(() => {
+              showEraseDataDialogState = 'error'
+            })
+        }
+      },
+      {
+        label: '삭제 및 로그아웃',
+        variant: 'danger',
+        onclick: () => {
+          eraseAllData(data.supabase, true)
+            .then(() => {
+              showEraseDataDialogState = 'complete'
+            })
+            .catch(() => {
+              showEraseDataDialogState = 'error'
+            })
+        }
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
+{:else if showEraseDataDialogState === 'complete'}
+  <Dialog
+    title="완료"
+    description="모든 데이터가 삭제되었습니다."
+    actions={[
+      {
+        label: '닫기',
+        variant: 'primary',
+        cancel: true
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
+{:else if showEraseDataDialogState === 'error'}
+  <Dialog
+    title="삭제 실패"
+    description="데이터 삭제에 실패했습니다."
+    actions={[
+      {
+        label: '다시 시도',
+        variant: 'primary',
+        onclick: () => {
+          showEraseDataDialogState = 'closed'
+
+          // 재시도되는 효과를 위해 다이얼로그가 닫히고 조금 후 결과 표시
+          setTimeout(() => {
+            eraseAllData(data.supabase, true)
+              .then(() => {
+                showEraseDataDialogState = 'complete'
+              })
+              .catch(() => {
+                showEraseDataDialogState = 'error'
+              })
+          }, 200)
+        }
+      },
+      {
+        label: '닫기',
+        variant: 'secondary',
+        cancel: true
+      }
+    ]}
+    cancel={() => (showEraseDataDialogState = 'closed')}
+  />
 {/if}
