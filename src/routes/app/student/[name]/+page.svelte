@@ -31,7 +31,7 @@
   }
 
   // 새 기록 추가
-  let newLog = $state<{ date: Date | null; content: string } | null>(null)
+  let newLog: { date: Date | null; content: string } | null = $state(null)
   let addedNewLog = $state(false)
   function saveNewLog(savedLog: { date: Date; content: string }) {
     $data = $data.map((s) => {
