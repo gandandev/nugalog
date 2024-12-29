@@ -43,11 +43,11 @@
 
   // 충돌 감지 및 해결에 사용
   let showConflictDialog = $state(false)
-  let conflictData = $state<ConflictData | null>(null)
+  let conflictData: ConflictData | null = $state(null)
 
   let showInitialConflictDialog = $state(false)
-  let initialConflictData = $state<{ dbData: Student[]; localData: Student[] } | null>(null)
-  let selectedInitialOption = $state<'useLocal' | 'useDB' | null>(null)
+  let initialConflictData: { dbData: Student[]; localData: Student[] } | null = $state(null)
+  let selectedInitialOption: 'useLocal' | 'useDB' | null = $state(null)
 
   onMount(async () => {
     const {
