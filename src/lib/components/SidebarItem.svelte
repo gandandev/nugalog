@@ -6,12 +6,12 @@
   import { data, type Student } from '$lib/stores'
 
   import MoreHoriz from '~icons/material-symbols/more-horiz'
-  import Delete from '~icons/material-symbols/delete'
-  import Edit from '~icons/material-symbols/edit'
-  import SwapVert from '~icons/material-symbols/swap-vert'
+  import Delete from '~icons/material-symbols/delete-rounded'
+  import Edit from '~icons/material-symbols/edit-rounded'
+  import SwapVert from '~icons/material-symbols/swap-vert-rounded'
   import DragIndicator from '~icons/material-symbols/drag-indicator'
-  import Keep from '~icons/material-symbols/keep'
-  import KeepOff from '~icons/material-symbols/keep-off'
+  import Keep from '~icons/material-symbols/keep-rounded'
+  import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
   const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
     $props<{

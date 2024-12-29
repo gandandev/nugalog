@@ -9,13 +9,13 @@
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
 
-  import ContentCopy from '~icons/material-symbols/content-copy'
-  import Edit from '~icons/material-symbols/edit'
-  import Delete from '~icons/material-symbols/delete'
-  import Check from '~icons/material-symbols/check'
-  import Close from '~icons/material-symbols/close'
-  import Fullscreen from '~icons/material-symbols/fullscreen'
-  import CalendarToday from '~icons/material-symbols/calendar-today'
+  import ContentCopy from '~icons/material-symbols/content-copy-rounded'
+  import Edit from '~icons/material-symbols/edit-rounded'
+  import Delete from '~icons/material-symbols/delete-rounded'
+  import Check from '~icons/material-symbols/check-rounded'
+  import Close from '~icons/material-symbols/close-rounded'
+  import Fullscreen from '~icons/material-symbols/fullscreen-rounded'
+  import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
   const {
     log,

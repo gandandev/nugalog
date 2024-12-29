@@ -10,8 +10,8 @@
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
-  import Add from '~icons/material-symbols/add'
-  import PersonOff from '~icons/material-symbols/person-off'
+  import Add from '~icons/material-symbols/add-rounded'
+  import PersonOff from '~icons/material-symbols/person-off-rounded'
 
   import { data, dataLoaded } from '$lib/stores'
 

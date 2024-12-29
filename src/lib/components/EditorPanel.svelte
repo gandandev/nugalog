@@ -6,7 +6,7 @@
 
   import PillButton from './PillButton.svelte'
 
-  import CalendarToday from '~icons/material-symbols/calendar-today'
+  import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
   const {
     title,

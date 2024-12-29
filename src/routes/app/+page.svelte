@@ -3,8 +3,8 @@
 
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
 
-  import HowToReg from '~icons/material-symbols/how-to-reg'
-  import GroupAdd from '~icons/material-symbols/group-add'
+  import HowToReg from '~icons/material-symbols/how-to-reg-rounded'
+  import GroupAdd from '~icons/material-symbols/group-add-rounded'
 </script>
 
 {#if $data.length}
