@@ -31,3 +31,5 @@ export function parseData<T>(
 export const parseLog = (data: unknown) => parseData(LogSchema, data)
 export const parseStudent = (data: unknown) => parseData(StudentSchema, data)
 export const parseStudentArray = (data: unknown) => parseData(StudentArraySchema, data)
+
+export const showTooltip = writable(true)
