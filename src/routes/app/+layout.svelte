@@ -31,11 +31,11 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
-  import Settings from '~icons/mdi/settings'
-  import Logout from '~icons/mdi/logout'
-  import FileDownload from '~icons/mdi/file-download'
-  import FolderOpen from '~icons/mdi/folder-open'
-  import DeleteForever from '~icons/mdi/delete-forever'
+  import Settings from '~icons/material-symbols/settings'
+  import Logout from '~icons/material-symbols/logout'
+  import FileDownload from '~icons/material-symbols/file-download'
+  import FolderOpen from '~icons/material-symbols/folder-open'
+  import DeleteForever from '~icons/material-symbols/delete-forever'
 
   let { data, children }: { data: PageData; children: any } = $props()
 

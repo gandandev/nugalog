@@ -6,7 +6,7 @@
 
   import PillButton from './PillButton.svelte'
 
-  import Calendar from '~icons/mdi/calendar'
+  import CalendarToday from '~icons/material-symbols/calendar-today'
 
   const {
     title,
@@ -53,7 +53,7 @@
               (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
           />
           {#if navigator.userAgent.includes('Chrome')}
-            <Calendar class="absolute right-3 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
+            <CalendarToday class="absolute right-3 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
           {/if}
         </div>
         <div class="flex justify-end gap-2">

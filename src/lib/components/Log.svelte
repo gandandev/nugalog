@@ -9,13 +9,13 @@
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
 
-  import ContentCopy from '~icons/mdi/content-copy'
-  import Edit from '~icons/mdi/edit'
-  import Delete from '~icons/mdi/delete'
-  import Check from '~icons/mdi/check'
-  import Close from '~icons/mdi/close'
-  import Fullscreen from '~icons/mdi/fullscreen'
-  import Calendar from '~icons/mdi/calendar'
+  import ContentCopy from '~icons/material-symbols/content-copy'
+  import Edit from '~icons/material-symbols/edit'
+  import Delete from '~icons/material-symbols/delete'
+  import Check from '~icons/material-symbols/check'
+  import Close from '~icons/material-symbols/close'
+  import Fullscreen from '~icons/material-symbols/fullscreen'
+  import CalendarToday from '~icons/material-symbols/calendar-today'
 
   const {
     log,
@@ -120,7 +120,7 @@
           oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
         />
         {#if navigator.userAgent.includes('Chrome')}
-          <Calendar class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
+          <CalendarToday class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
         {/if}
       </div>
     {:else}

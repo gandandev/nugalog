@@ -21,7 +21,7 @@
   import Dialog from './Dialog.svelte'
   import Key from './Key.svelte'
 
-  import GroupAdd from '~icons/mdi/group-add'
+  import GroupAdd from '~icons/material-symbols/group-add'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
