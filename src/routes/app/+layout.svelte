@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { type User } from '@supabase/supabase-js'
-  import { scale } from 'svelte/transition'
+  import { scale, fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import {
     data as dataStore,
@@ -12,7 +12,13 @@
     parseStudentArray,
     showTooltip
   } from '$lib/stores'
-  import { onClickOutside, tooltip, formatStudentLogs, formatAllStudentLogs } from '$lib/utils'
+  import {
+    onClickOutside,
+    tooltip,
+    formatStudentLogs,
+    formatAllStudentLogs,
+    useCopyFeedback
+  } from '$lib/utils'
   import {
     loadDataFromDb,
     saveDataToDb,
@@ -37,6 +43,7 @@
   import Download from '~icons/material-symbols/download-rounded'
   import FileOpen from '~icons/material-symbols/file-open-rounded'
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
+  import Check from '~icons/material-symbols/check-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -45,6 +52,12 @@
   )
 
   let currentUser: User | null = $state(null)
+
+  // 복사 피드백
+  let singleCopied = $state(false)
+  let allCopied = $state(false)
+  const handleSingleCopy = useCopyFeedback((isCopied) => (singleCopied = isCopied))
+  const handleAllCopy = useCopyFeedback((isCopied) => (allCopied = isCopied))
 
   // 충돌 감지 및 해결에 사용
   let showConflictDialog = $state(false)
@@ -261,22 +274,33 @@
 
       <button
         bind:this={settingsButton}
-        class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
         onclick={() => {
           const text = formatStudentLogs(student.name, student.logs)
           navigator.clipboard.writeText(text)
+          handleSingleCopy()
         }}
         disabled={!student?.logs.length}
         use:tooltip={{
           text: student
             ? student.logs.length
-              ? '기록 전체 복사'
+              ? singleCopied
+                ? '복사됨'
+                : '기록 전체 복사'
               : '복사할 기록 없음'
             : '복사할 학생 없음',
           position: 'bottom'
         }}
       >
-        <ContentCopy class="h-5 w-5" />
+        {#if singleCopied}
+          <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+            <Check class="h-5 w-5" />
+          </div>
+        {:else}
+          <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+            <ContentCopy class="h-5 w-5" />
+          </div>
+        {/if}
       </button>
 
       <div class="relative">
@@ -302,11 +326,34 @@
               onclick={() => {
                 const text = formatAllStudentLogs($dataStore)
                 navigator.clipboard.writeText(text)
+                handleAllCopy()
               }}
               disabled={!$dataStore.some((s) => s.logs.length > 0)}
             >
-              <ContentCopy class="h-5 w-5" />
-              {$dataStore.some((s) => s.logs.length > 0) ? '모든 기록 복사' : '복사할 기록 없음'}
+              <div class="relative h-5 w-5">
+                {#if allCopied}
+                  <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                    <Check class="h-5 w-5" />
+                  </div>
+                {:else}
+                  <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                    <ContentCopy class="h-5 w-5" />
+                  </div>
+                {/if}
+              </div>
+              {#key allCopied}
+                <span
+                  class="absolute left-11"
+                  in:fly={{ duration: 150, x: -10 }}
+                  out:fly={{ duration: 150, x: 10 }}
+                >
+                  {$dataStore.some((s) => s.logs.length > 0)
+                    ? allCopied
+                      ? '복사됨'
+                      : '모든 기록 복사'
+                    : '복사할 기록 없음'}
+                </span>
+              {/key}
             </button>
 
             <button

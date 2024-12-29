@@ -3,7 +3,7 @@
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
-  import { focusOnElement } from '$lib/utils'
+  import { focusOnElement, useCopyFeedback } from '$lib/utils'
   import { page } from '$app/stores'
 
   import IconButton from './IconButton.svelte'
@@ -84,19 +84,11 @@
   }
 
   // 내용 복사
-  let lastCopied = $state(0)
   let copied = $state(false)
+  const handleCopy = useCopyFeedback((isCopied) => (copied = isCopied))
   function copy() {
     navigator.clipboard.writeText(log.content)
-    const now = new Date().getTime()
-    lastCopied = now
-    copied = true
-    setTimeout(() => {
-      // lastCopied가 바뀌지 않았다면 그 사이 복사된 것이 아니므로 초기화
-      if (lastCopied === now) {
-        copied = false
-      }
-    }, 1000)
+    handleCopy()
   }
 </script>
 
