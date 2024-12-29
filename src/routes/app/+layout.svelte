@@ -322,7 +322,7 @@
             }}
           >
             <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
+              class="flex h-8 items-center gap-2 rounded-md px-3 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
               onclick={() => {
                 const text = formatAllStudentLogs($dataStore)
                 navigator.clipboard.writeText(text)
