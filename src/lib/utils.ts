@@ -48,7 +48,7 @@ type TooltipOptions = {
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
-  if (!options) return { destroy() { } }
+  if (!options) return { destroy() {} }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
@@ -163,14 +163,18 @@ export function formatStudentLogs(name: string, logs: { date: Date; content: str
   return `${name} 학생\n\n${logs
     .map((log) => {
       const date = log.date
-      return `${date.getFullYear()}년 ${date.getMonth() + 1
-        }월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})\n${log.content
-        }`
+      return `${date.getFullYear()}년 ${
+        date.getMonth() + 1
+      }월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})\n${
+        log.content
+      }`
     })
     .join('\n\n')}`
 }
 
-export function formatAllStudentLogs(students: { name: string; logs: { date: Date; content: string }[] }[]) {
+export function formatAllStudentLogs(
+  students: { name: string; logs: { date: Date; content: string }[] }[]
+) {
   return students
     .filter((student) => student.logs.length > 0)
     .map((student) => formatStudentLogs(student.name, student.logs))
