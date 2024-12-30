@@ -37,6 +37,7 @@
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
 
+  import Assignment from '~icons/material-symbols/assignment-rounded'
   import ContentCopy from '~icons/material-symbols/content-copy-rounded'
   import Settings from '~icons/material-symbols/settings-rounded'
   import Logout from '~icons/material-symbols/logout-rounded'
@@ -271,6 +272,13 @@
           로그인 후 여러 기기에서 작업해보세요
         </button>
       {/if}
+
+      <button
+        class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        use:tooltip={{ text: '행발 작성', position: 'bottom' }}
+      >
+        <Assignment class="h-5 w-5" />
+      </button>
 
       <button
         bind:this={settingsButton}
