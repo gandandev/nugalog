@@ -282,13 +282,7 @@
         }}
         disabled={!student?.logs.length}
         use:tooltip={{
-          text: student
-            ? student.logs.length
-              ? singleCopied
-                ? '복사됨'
-                : '기록 전체 복사'
-              : '복사할 기록 없음'
-            : '복사할 학생 없음',
+          text: singleCopied ? '복사됨' : '기록 전체 복사',
           position: 'bottom'
         }}
       >
