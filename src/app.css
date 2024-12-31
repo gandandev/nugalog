@@ -6,7 +6,7 @@
 @import url('https://fonts.cdnfonts.com/css/mona-sans');
 
 @layer base {
-  * {
+  *:not(.scrollbar) {
     scrollbar-width: none;
     /* scrollbar-color: theme('colors.stone.200') transparent; */
   }
