@@ -504,7 +504,7 @@
 
         <span class="font-medium">행발 예시</span>
         <textarea
-          class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
+          class="max-h-96 grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
           placeholder="행발 예시를 입력해주세요 (선택)"
           bind:value={hangbalOutputExample}
           use:autosize
