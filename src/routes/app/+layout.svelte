@@ -11,7 +11,8 @@
     dataLoaded,
     type Student,
     parseStudentArray,
-    showTooltip
+    showTooltip,
+    hangbalOutputExample as hangbalStore
   } from '$lib/stores'
   import {
     onClickOutside,
@@ -287,7 +288,10 @@
       <button
         class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
         disabled={!student?.logs.length}
-        onclick={() => (showHangbalPanel = true)}
+        onclick={() => {
+          hangbalExtraInfo = ''
+          showHangbalPanel = true
+        }}
         use:tooltip={{ text: '행발 작성', position: 'bottom' }}
       >
         <Assignment class="h-5 w-5" />
@@ -506,7 +510,7 @@
         <textarea
           class="max-h-96 grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
           placeholder="행발 예시를 입력해주세요 (선택)"
-          bind:value={hangbalOutputExample}
+          bind:value={$hangbalStore}
           use:autosize
         ></textarea>
 

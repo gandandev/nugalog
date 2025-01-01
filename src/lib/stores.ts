@@ -44,3 +44,14 @@ showTooltip.subscribe((value) => {
     localStorage.setItem('showTooltip', value.toString())
   }
 })
+
+// 행발 예시를 localStorage에서 불러오고 저장하기
+const storedHangbalExample =
+  typeof localStorage !== 'undefined' ? localStorage.getItem('hangbalExample') : null
+export const hangbalOutputExample = writable(storedHangbalExample || '')
+
+hangbalOutputExample.subscribe((value) => {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('hangbalExample', value)
+  }
+})
