@@ -12,13 +12,21 @@ export const getHangbalPrompt = (
   # 기록
   
   ${formatStudentLogs(student.name, student.logs, {
-    markdown: true,
-    includeName: false
-  })}
+  markdown: true,
+  includeName: false
+})}
 
-  ${extraInfo ? `# 추가 정보\n\n${extraInfo}` : ''}
+  ${extraInfo ? `**추가 정보**: ${extraInfo}` : ''}
 
   # 예시
 
-  ${outputExample ? `## 사용자 입력 예시:\n\n${outputExample}` : ''}
+  ## 예시 1
+
+  예시 1
+
+  ## 예시 2
+
+  예시 2
+
+  ${outputExample ? `## 사용자 입력 예시\n\n${outputExample}` : ''}
 `
