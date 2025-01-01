@@ -6,7 +6,6 @@
   import { scale, fly, slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
-  import dedent from 'dedent'
   import {
     data as dataStore,
     dataLoaded,
@@ -35,6 +34,7 @@
     handleMerge,
     checkForConflicts as checkForDataConflicts
   } from '$lib/utils/handleConflict'
+  import { getHangbalPrompt } from '$lib/prompts'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
@@ -76,14 +76,7 @@
   let showHangbalPanel = $state(false)
   let outputExample = $state('')
   const hangbalPrompt = $derived(
-    student
-      ? dedent(`
-    행발을 작성하세요.
-
-    ### 기록
-    ${formatStudentLogs(student.name, student.logs)}${outputExample ? `\n\n### 예시\n${outputExample}` : ''}
-  `)
-      : ''
+    student ? getHangbalPrompt(student, outputExample ? outputExample : undefined) : ''
   ) // FIXME: 임시
 
   onMount(async () => {
