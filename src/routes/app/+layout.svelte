@@ -3,8 +3,10 @@
   import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { type User } from '@supabase/supabase-js'
-  import { scale, fly } from 'svelte/transition'
+  import { scale, fly, slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
+  import autosize from 'svelte-autosize'
+  import dedent from 'dedent'
   import {
     data as dataStore,
     dataLoaded,
@@ -45,6 +47,8 @@
   import FileOpen from '~icons/material-symbols/file-open-rounded'
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
   import Check from '~icons/material-symbols/check-rounded'
+  import Close from '~icons/material-symbols/close-rounded'
+  import KeyboardArrowDown from '~icons/material-symbols/keyboard-arrow-down-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -67,6 +71,21 @@
   let showInitialConflictDialog = $state(false)
   let initialConflictData: { dbData: Student[]; localData: Student[] } | null = $state(null)
   let selectedInitialOption: 'useLocal' | 'useDB' | null = $state(null)
+
+  // 행발 작성 패널
+  let showHangbalPanel = $state(true) // FIXME: 임시
+  let showOutputExample = $state(false)
+  let outputExample = $state('')
+  const hangbalPrompt = $derived(
+    student
+      ? dedent(`
+    행발을 작성하세요.
+
+    ### 기록
+    ${formatStudentLogs(student.name, student.logs)}${outputExample ? `\n\n### 예시\n${outputExample}` : ''}
+  `)
+      : ''
+  ) // FIXME: 임시
 
   onMount(async () => {
     const {
@@ -275,6 +294,8 @@
 
       <button
         class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        disabled={!student?.logs.length}
+        onclick={() => (showHangbalPanel = true)}
         use:tooltip={{ text: '행발 작성', position: 'bottom' }}
       >
         <Assignment class="h-5 w-5" />
@@ -471,6 +492,107 @@
     </div>
   </div>
 </div>
+
+{#if showHangbalPanel}
+  <div
+    class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white dark:bg-stone-950"
+    transition:fly={{ y: 100, duration: 400, easing: expoOut }}
+  >
+    <div class="flex max-h-full w-1/2 flex-col justify-between p-5">
+      <div class="mb-3 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
+          <button
+            class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+            onclick={() => (showHangbalPanel = false)}
+          >
+            <Close class="h-5 w-5" />
+          </button>
+        </div>
+
+        <!-- <div class="flex flex-col">
+          <button
+            class="relative -left-1 flex w-fit items-center gap-1 pr-1 text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-300"
+            onclick={() => (showOutputExample = !showOutputExample)}
+          >
+            <div class="duration-150" class:-scale-y-100={showOutputExample}>
+              <KeyboardArrowDown class="h-8 w-8" />
+            </div>
+            예시 추가<span class="text-xs">(선택)</span>
+          </button>
+          {#if showOutputExample} -->
+        <textarea
+          class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
+          placeholder="행발 예시를 제공해주세요 (선택)"
+          bind:value={outputExample}
+          use:autosize
+        ></textarea>
+        <!-- {/if}
+        </div> -->
+
+        <!-- <div class="flex flex-col gap-2">
+          <h2 class="text-xl font-semibold">생성된 프롬프트</h2>
+          <pre
+            class="scrollbar overflow-y-autp font-sans text-stone-600 dark:text-stone-400">{hangbalPrompt}</pre
+          >
+        </div> -->
+
+        <p class="text-sm text-stone-500 dark:text-stone-400">
+          행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
+          각 서비스 로그인 후 사용하면 더욱 나은 결과를 얻을 수 있습니다.
+        </p>
+
+        <div class="flex justify-end gap-2">
+          <button
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+            onclick={() => navigator.clipboard.writeText(hangbalPrompt)}
+            use:tooltip={{
+              text: '다른 AI 서비스에 붙여넣어 사용하세요',
+              position: 'bottom',
+              delay: 0
+            }}
+          >
+            <ContentCopy class="h-5 w-5" />
+            프롬프트 복사
+          </button>
+          <a
+            href="https://claude.ai/new?q={encodeURIComponent(hangbalPrompt)}"
+            target="_blank"
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 100 100"
+              class="w-5 fill-[#d97757]"
+            >
+              <path
+                d="m19.6 66.5 19.7-11 .3-1-.3-.5h-1l-3.3-.2-11.2-.3L14 53l-9.5-.5-2.4-.5L0 49l.2-1.5 2-1.3 2.9.2 6.3.5 9.5.6 6.9.4L38 49.1h1.6l.2-.7-.5-.4-.4-.4L29 41l-10.6-7-5.6-4.1-3-2-1.5-2-.6-4.2 2.7-3 3.7.3.9.2 3.7 2.9 8 6.1L37 36l1.5 1.2.6-.4.1-.3-.7-1.1L33 25l-6-10.4-2.7-4.3-.7-2.6c-.3-1-.4-2-.4-3l3-4.2L28 0l4.2.6L33.8 2l2.6 6 4.1 9.3L47 29.9l2 3.8 1 3.4.3 1h.7v-.5l.5-7.2 1-8.7 1-11.2.3-3.2 1.6-3.8 3-2L61 2.6l2 2.9-.3 1.8-1.1 7.7L59 27.1l-1.5 8.2h.9l1-1.1 4.1-5.4 6.9-8.6 3-3.5L77 13l2.3-1.8h4.3l3.1 4.7-1.4 4.9-4.4 5.6-3.7 4.7-5.3 7.1-3.2 5.7.3.4h.7l12-2.6 6.4-1.1 7.6-1.3 3.5 1.6.4 1.6-1.4 3.4-8.2 2-9.6 2-14.3 3.3-.2.1.2.3 6.4.6 2.8.2h6.8l12.6 1 3.3 2 1.9 2.7-.3 2-5.1 2.6-6.8-1.6-16-3.8-5.4-1.3h-.8v.4l4.6 4.5 8.3 7.5L89 80.1l.5 2.4-1.3 2-1.4-.2-9.2-7-3.6-3-8-6.8h-.5v.7l1.8 2.7 9.8 14.7.5 4.5-.7 1.4-2.6 1-2.7-.6-5.8-8-6-9-4.7-8.2-.5.4-2.9 30.2-1.3 1.5-3 1.2-2.5-2-1.4-3 1.4-6.2 1.6-8 1.3-6.4 1.2-7.9.7-2.6v-.2H49L43 72l-9 12.3-7.2 7.6-1.7.7-3-1.5.3-2.8L24 86l10-12.8 6-7.9 4-4.6-.1-.5h-.3L17.2 77.4l-4.7.6-2-2 .2-3 1-1 8-5.5Z"
+              ></path>
+            </svg>
+            Claude로 계속
+          </a>
+          <a
+            href="https://chatgpt.com?q={encodeURIComponent(hangbalPrompt)}"
+            target="_blank"
+            class="flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 hover:bg-stone-800 active:scale-95 active:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 320 320"
+              class="h-5 w-5"
+              fill="currentColor"
+            >
+              <path
+                d="m297.06 130.97c7.26-21.79 4.76-45.66-6.85-65.48-17.46-30.4-52.56-46.04-86.84-38.68-15.25-17.18-37.16-26.95-60.13-26.81-35.04-.08-66.13 22.48-76.91 55.82-22.51 4.61-41.94 18.7-53.31 38.67-17.59 30.32-13.58 68.54 9.92 94.54-7.26 21.79-4.76 45.66 6.85 65.48 17.46 30.4 52.56 46.04 86.84 38.68 15.24 17.18 37.16 26.95 60.13 26.8 35.06.09 66.16-22.49 76.94-55.86 22.51-4.61 41.94-18.7 53.31-38.67 17.57-30.32 13.55-68.51-9.94-94.51zm-120.28 168.11c-14.03.02-27.62-4.89-38.39-13.88.49-.26 1.34-.73 1.89-1.07l63.72-36.8c3.26-1.85 5.26-5.32 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.91 59.97zm-128.84-55.03c-7.03-12.14-9.56-26.37-7.15-40.18.47.28 1.3.79 1.89 1.13l63.72 36.8c3.23 1.89 7.23 1.89 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.52-65.33 6.7-81.92-21.95zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61c-.02 3.74 1.98 7.21 5.23 9.06l77.79 44.91-26.93 15.55c-.27.18-.61.21-.91.08l-64.42-37.22c-28.63-16.58-38.45-53.21-21.95-81.89zm221.26 51.49-77.79-44.92 26.93-15.54c.27-.18.61-.21.91-.08l64.42 37.19c28.68 16.57 38.51 53.26 21.94 81.94-7.01 12.14-18.05 21.44-31.2 26.28v-75.81c.03-3.74-1.96-7.2-5.2-9.06zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8c-3.23-1.89-7.23-1.89-10.47 0l-77.79 44.92v-31.1c-.02-.32.13-.63.38-.83l64.41-37.16c28.69-16.55 65.37-6.7 81.91 22 6.99 12.12 9.52 26.31 7.15 40.1zm-168.51 55.43-26.94-15.55c-.29-.14-.48-.42-.52-.74v-74.39c.02-33.12 26.89-59.96 60.01-59.94 14.01 0 27.57 4.92 38.34 13.88-.49.26-1.33.73-1.89 1.07l-63.72 36.8c-3.26 1.85-5.26 5.31-5.24 9.06l-.04 89.79zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20z"
+              />
+            </svg>
+            ChatGPT로 계속
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 {#if showConflictDialog && conflictData}
   <Dialog
