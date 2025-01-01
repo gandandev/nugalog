@@ -74,9 +74,10 @@
 
   // 행발 작성 패널
   let showHangbalPanel = $state(false)
-  let outputExample = $state('')
+  let hangbalOutputExample = $state('')
+  let hangbalExtraInfo = $state('')
   const hangbalPrompt = $derived(
-    student ? getHangbalPrompt(student, outputExample ? outputExample : undefined) : ''
+    student ? getHangbalPrompt(student, hangbalOutputExample, hangbalExtraInfo) : ''
   ) // FIXME: 임시
 
   onMount(async () => {
@@ -491,8 +492,8 @@
     transition:fly={{ y: 100, duration: 400, easing: expoOut }}
   >
     <div class="flex max-h-full w-1/2 flex-col justify-between p-5">
-      <div class="mb-3 flex flex-col gap-4">
-        <div class="flex items-center justify-between">
+      <div class="mb-3 flex flex-col space-y-2">
+        <div class="mb-2 flex items-center justify-between">
           <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
           <button
             class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
@@ -502,19 +503,29 @@
           </button>
         </div>
 
+        <span class="font-medium">행발 예시</span>
         <textarea
           class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
-          placeholder="행발 예시를 제공해주세요 (선택)"
-          bind:value={outputExample}
+          placeholder="행발 예시를 입력해주세요 (선택)"
+          bind:value={hangbalOutputExample}
           use:autosize
         ></textarea>
 
-        <p class="text-sm text-stone-500 dark:text-stone-400">
+        <span class="font-medium">추가 정보</span>
+        <input
+          type="text"
+          class="grow resize-none rounded-xl bg-stone-100 px-3 py-2 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
+          placeholder="예시: 부반장"
+          bind:value={hangbalExtraInfo}
+          use:autosize
+        />
+
+        <p class="py-2 text-sm text-stone-500 dark:text-stone-400">
           행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
           각 서비스 로그인 후 사용하면 더욱 나은 결과를 얻을 수 있습니다.
         </p>
 
-        <div class="flex justify-end gap-2">
+        <div class="mt-4 flex justify-end gap-2">
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
             onclick={() => navigator.clipboard.writeText(hangbalPrompt)}
