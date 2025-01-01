@@ -50,7 +50,7 @@ type TooltipOptions = {
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
-  if (!options) return { destroy() {} }
+  if (!options) return { destroy() { } }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
@@ -168,18 +168,10 @@ export function formatStudentLogs(
     markdown?: boolean
     includeName?: boolean
   } = {
-    markdown: false,
-    includeName: true
-  }
+      markdown: false,
+      includeName: true
+    }
 ) {
-  // return `${options.includeName ? `${name} 학생\n\n` : ''}${logs
-  //   .map((log) => {
-  //     const date = log.date
-  //     return `${options.markdown ? '**' : ''}${date.getFullYear()}년 ${date.getMonth() + 1
-  //       }월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})\n${log.content
-  //       }${options.markdown ? '**' : ''}`
-  //   })
-  //   .join('\n\n')}`
   return dedent`
     ${options.includeName ? `${name} 학생` : ''}
 
