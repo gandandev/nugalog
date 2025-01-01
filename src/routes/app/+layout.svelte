@@ -510,32 +510,12 @@
           </button>
         </div>
 
-        <!-- <div class="flex flex-col">
-          <button
-            class="relative -left-1 flex w-fit items-center gap-1 pr-1 text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-300"
-            onclick={() => (showOutputExample = !showOutputExample)}
-          >
-            <div class="duration-150" class:-scale-y-100={showOutputExample}>
-              <KeyboardArrowDown class="h-8 w-8" />
-            </div>
-            예시 추가<span class="text-xs">(선택)</span>
-          </button>
-          {#if showOutputExample} -->
         <textarea
           class="grow resize-none rounded-xl bg-stone-100 p-3 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
           placeholder="행발 예시를 제공해주세요 (선택)"
           bind:value={outputExample}
           use:autosize
         ></textarea>
-        <!-- {/if}
-        </div> -->
-
-        <!-- <div class="flex flex-col gap-2">
-          <h2 class="text-xl font-semibold">생성된 프롬프트</h2>
-          <pre
-            class="scrollbar overflow-y-autp font-sans text-stone-600 dark:text-stone-400">{hangbalPrompt}</pre
-          >
-        </div> -->
 
         <p class="text-sm text-stone-500 dark:text-stone-400">
           행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
