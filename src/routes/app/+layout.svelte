@@ -48,7 +48,6 @@
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
-  import KeyboardArrowDown from '~icons/material-symbols/keyboard-arrow-down-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
