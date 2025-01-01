@@ -73,8 +73,7 @@
   let selectedInitialOption: 'useLocal' | 'useDB' | null = $state(null)
 
   // 행발 작성 패널
-  let showHangbalPanel = $state(true) // FIXME: 임시
-  let showOutputExample = $state(false)
+  let showHangbalPanel = $state(false)
   let outputExample = $state('')
   const hangbalPrompt = $derived(
     student
