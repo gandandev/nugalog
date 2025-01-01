@@ -78,7 +78,7 @@
   let hangbalExtraInfo = $state('')
   const hangbalPrompt = $derived(
     student ? getHangbalPrompt(student, hangbalOutputExample, hangbalExtraInfo) : ''
-  ) // FIXME: 임시
+  )
 
   onMount(async () => {
     const {
