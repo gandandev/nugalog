@@ -514,7 +514,7 @@
         <input
           type="text"
           class="grow resize-none rounded-xl bg-stone-100 px-3 py-2 outline-none placeholder:text-stone-400 dark:bg-stone-900 dark:placeholder:text-stone-600"
-          placeholder="예시: 부반장"
+          placeholder="전반적인 평가 등 행발 작성에 도움이 될 정보를 입력해주세요 (선택)"
           bind:value={hangbalExtraInfo}
           use:autosize
         />
