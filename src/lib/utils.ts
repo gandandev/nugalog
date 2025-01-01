@@ -50,7 +50,7 @@ type TooltipOptions = {
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
-  if (!options) return { destroy() { } }
+  if (!options) return { destroy() {} }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
@@ -168,9 +168,9 @@ export function formatStudentLogs(
     markdown?: boolean
     includeName?: boolean
   } = {
-      markdown: false,
-      includeName: true
-    }
+    markdown: false,
+    includeName: true
+  }
 ) {
   // return `${options.includeName ? `${name} 학생\n\n` : ''}${logs
   //   .map((log) => {
