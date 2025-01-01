@@ -9,7 +9,7 @@ export const getHangbalPrompt = (student: Student, outputExample: string, extraI
   
   ${formatStudentLogs(student.name, student.logs, {
   markdown: true,
-  includeName: true
+  includeName: false
 })}
 
   ${extraInfo ? `# 추가 정보\n\n${extraInfo}` : ''}
