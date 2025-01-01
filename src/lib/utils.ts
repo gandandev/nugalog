@@ -161,7 +161,7 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
   }
 }
 
-export function formatStudentLogs(
+export const formatStudentLogs = (
   name: string,
   logs: { date: Date; content: string }[],
   options: {
@@ -171,30 +171,26 @@ export function formatStudentLogs(
       markdown: false,
       includeName: true
     }
-) {
-  return dedent`
+) => dedent`
     ${options.includeName ? `${name} 학생` : ''}
 
     ${logs
-      .map((log) => {
-        const date = log.date
-        return dedent`
+    .map((log) => {
+      const date = log.date
+      return dedent`
           ${options.markdown ? '**' : ''}${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})${options.markdown ? '**' : ''}
           ${log.content}
         `
-      })
-      .join('\n\n')}
+    })
+    .join('\n\n')}
   `
-}
 
-export function formatAllStudentLogs(
+export const formatAllStudentLogs = (
   students: { name: string; logs: { date: Date; content: string }[] }[]
-) {
-  return students
-    .filter((student) => student.logs.length > 0)
-    .map((student) => formatStudentLogs(student.name, student.logs))
-    .join('\n\n---\n\n')
-}
+) => students
+  .filter((student) => student.logs.length > 0)
+  .map((student) => formatStudentLogs(student.name, student.logs))
+  .join('\n\n---\n\n')
 
 export function useCopyFeedback(callback: (copied: boolean) => void) {
   let lastCopied = 0
