@@ -61,8 +61,10 @@
   // 복사 피드백
   let singleCopied = $state(false)
   let allCopied = $state(false)
+  let hangbalPromptCopied = $state(false)
   const handleSingleCopy = useCopyFeedback((isCopied) => (singleCopied = isCopied))
   const handleAllCopy = useCopyFeedback((isCopied) => (allCopied = isCopied))
+  const handleHangbalPromptCopy = useCopyFeedback((isCopied) => (hangbalPromptCopied = isCopied))
 
   // 충돌 감지 및 해결에 사용
   let showConflictDialog = $state(false)
@@ -531,14 +533,27 @@
         <div class="mt-4 flex justify-end gap-2">
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
-            onclick={() => navigator.clipboard.writeText(hangbalPrompt)}
+            onclick={() => {
+              navigator.clipboard.writeText(hangbalPrompt)
+              handleHangbalPromptCopy()
+            }}
             use:tooltip={{
               text: '다른 AI 서비스에 붙여넣어 사용하세요',
               position: 'bottom',
               delay: 0
             }}
           >
-            <ContentCopy class="h-5 w-5" />
+            <div class="relative h-5 w-5">
+              {#if hangbalPromptCopied}
+                <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                  <Check class="h-5 w-5" />
+                </div>
+              {:else}
+                <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                  <ContentCopy class="h-5 w-5" />
+                </div>
+              {/if}
+            </div>
             복사
           </button>
           <button
