@@ -8,22 +8,17 @@
   import MoreHoriz from '~icons/material-symbols/more-horiz'
   import Delete from '~icons/material-symbols/delete-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
-  import SwapVert from '~icons/material-symbols/swap-vert-rounded'
-  import DragIndicator from '~icons/material-symbols/drag-indicator'
   import Keep from '~icons/material-symbols/keep-rounded'
   import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
-  const { student, isActive, reorder, reordering, confirmdelete, ondragstart, ondragend, dragged } =
-    $props<{
-      student: Student
-      isActive: boolean
-      reorder: () => void
-      reordering: boolean
-      confirmdelete: () => void
-      ondragstart: (e: DragEvent) => void
-      ondragend: () => void
-      dragged: boolean
-    }>()
+  const { student, isActive, confirmdelete, ondragstart, ondragend, dragged } = $props<{
+    student: Student
+    isActive: boolean
+    confirmdelete: () => void
+    ondragstart: (e: DragEvent) => void
+    ondragend: () => void
+    dragged: boolean
+  }>()
 
   let showOptions = $state(false)
   let optionsButton: HTMLButtonElement | null = $state(null)
@@ -52,12 +47,11 @@
 
 <li
   class="group/item relative flex w-full items-center rounded-lg duration-150 hover:bg-stone-200 has-[a:active]:bg-stone-300 dark:hover:bg-stone-800 dark:has-[a:active]:bg-stone-700"
-  class:bg-stone-200={isActive || reordering || showOptions}
-  class:dark:bg-stone-800={isActive || reordering || showOptions}
-  class:cursor-grab={reordering}
+  class:bg-stone-200={isActive || showOptions}
+  class:dark:bg-stone-800={isActive || showOptions}
   class:opacity-50={dragged}
-  draggable={reordering}
-  ondragstart={(e) => reordering && ondragstart(e)}
+  draggable="true"
+  {ondragstart}
   {ondragend}
 >
   {#if newName !== null}
@@ -82,8 +76,7 @@
     <a
       href="/app/student/{encodeURIComponent(student.name)}"
       class="flex min-w-0 grow items-center rounded-l-lg pl-3"
-      class:rounded-r-lg={reordering}
-      onclick={(e) => reordering && e.preventDefault()}
+      class:rounded-r-lg={true}
     >
       {#if student.pinned}
         <Keep class="mr-1.5 h-4 w-4 shrink-0 text-stone-400 dark:text-stone-600" />
@@ -91,12 +84,9 @@
       <span class="truncate py-1">
         {student.name}
       </span>
-      {#if reordering}
-        <DragIndicator class="ml-auto mr-1 h-6 w-6 shrink-0 text-stone-400 dark:text-stone-600" />
-      {/if}
     </a>
   {/if}
-  {#if !reordering && newName === null}
+  {#if newName === null}
     <button
       bind:this={optionsButton}
       class="group/options options-button rounded-r-lg py-1 pr-2 text-stone-500 opacity-0 outline-none duration-150 group-hover/item:opacity-100"
@@ -146,13 +136,6 @@
           <Keep class="h-5 w-5" />
           고정하기
         {/if}
-      </button>
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
-        onclick={() => (reorder(), (showOptions = false))}
-      >
-        <SwapVert class="h-5 w-5" />
-        순서 변경
       </button>
       <button
         class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"

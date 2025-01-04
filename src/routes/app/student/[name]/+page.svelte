@@ -10,6 +10,7 @@
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
   import IconButton from '$lib/components/IconButton.svelte'
+  import DragPreviewLine from '$lib/components/DragPreviewLine.svelte'
 
   import Add from '~icons/material-symbols/add-rounded'
   import PersonOff from '~icons/material-symbols/person-off-rounded'
@@ -24,7 +25,7 @@
     handleDragOver,
     handleDragLeave,
     handleDrop
-  } from '$lib/utils/logReorder'
+  } from '$lib/utils/reorder'
 
   const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
 
@@ -61,7 +62,7 @@
   }
 
   // 드래그 상태
-  let dragState: DragState = $state(createDragState())
+  let dragState: DragState<{ date: Date; content: string }> = $state(createDragState())
 
   // 페이지 이동 확인
   let showNavigationDialog = $state(false)
@@ -80,48 +81,57 @@
 
 <div class="h-full space-y-1 overflow-y-auto">
   {#if student}
-    <div class="mx-auto w-1/2 px-12 pb-32">
+    <div class="mx-auto w-1/2 px-12 pb-32 pt-0.5">
       <!-- 로그 목록 -->
       <div
         role="list"
-        ondragleave={(e) => handleDragLeave(e, dragState)}
-        ondragover={(e) => e.preventDefault()}
+        ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'div[role="list"]')}
+        ondragover={(e: DragEvent) => e.preventDefault()}
       >
         {#each student.logs as log, i (log.date.getTime())}
           <div
             class="relative"
-            ondragover={(e) => handleDragOver(e, i, true, dragState)}
+            ondragover={(e: DragEvent) =>
+              handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
             ondrop={() => {
-              handleDrop(dragState, student.logs, (newLogs) => {
-                $data = $data.map((s) => {
-                  if (s.name === student.name) {
-                    return {
-                      ...s,
-                      logs: newLogs
+              handleDrop(
+                dragState,
+                student.logs,
+                (newLogs) => {
+                  $data = $data.map((s) => {
+                    if (s.name === student.name) {
+                      return {
+                        ...s,
+                        logs: newLogs
+                      }
                     }
-                  }
-                  return s
-                })
-              })
+                    return s
+                  })
+                },
+                (log) => log.date.getTime()
+              )
             }}
             role="listitem"
           >
             <!-- 순서 변경 위치 미리보기 -->
-            <div
-              class="absolute -top-0.5 left-0 right-0 h-0.5 rounded-full bg-blue-500 opacity-0"
-              class:opacity-100={dragState.dropPreviewIndex === i}
-              role="presentation"
-            ></div>
+            {#if dragState.dropPreviewIndex === i}
+              <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
+            {/if}
 
             <Log
               {log}
               deleteLog={() => deleteLog(i)}
-              dragged={dragState.draggedLog === log}
-              ondragstart={(e) => handleDragStart(e, log, dragState)}
+              dragged={dragState.draggedItem === log}
+              ondragstart={(e: DragEvent) => handleDragStart(e, log, dragState)}
               ondragend={() => handleDragEnd(dragState)}
             />
           </div>
         {/each}
+        <div class="h-0.5">
+          {#if dragState.dropPreviewIndex === student.logs.length}
+            <DragPreviewLine class="relative -top-0.5" />
+          {/if}
+        </div>
       </div>
 
       <!-- 새 기록 추가 -->

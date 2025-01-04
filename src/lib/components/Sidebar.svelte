@@ -12,7 +12,7 @@
     handleDragOver,
     handleDragLeave,
     handleDrop
-  } from '$lib/utils/sidebarReorder'
+  } from '$lib/utils/reorder'
   import { fly, slide, fade } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
@@ -20,8 +20,11 @@
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
   import Key from './Key.svelte'
+  import DragPreviewLine from './DragPreviewLine.svelte'
 
   import PersonAdd from '~icons/material-symbols/person-add-rounded'
+
+  import type { Student } from '$lib/stores'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -43,12 +46,7 @@
   )
 
   // 순서 변경
-  let reordering = $state(false)
-  let dragState: DragState = $state(createDragState())
-  function reorder() {
-    reordering = true
-    newStudentName = null
-  }
+  let dragState: DragState<Student> = $state(createDragState())
 
   // 학생 삭제
   let studentToDeleteIndex: number | null = $state(null)
@@ -66,56 +64,51 @@
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
     <Logo />
-    {#if reordering}
-      <button
-        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700 dark:active:scale-95"
-        onclick={() => (reordering = false)}
-      >
-        완료
-      </button>
-    {:else}
-      <IconButton
-        Icon={PersonAdd}
-        tooltip="새 학생 추가"
-        tooltipPosition="bottom"
-        onclick={() => (newStudentName = '')}
-        emphasized={!$data.length}
-      />
-    {/if}
+    <IconButton
+      Icon={PersonAdd}
+      tooltip="새 학생 추가"
+      tooltipPosition="bottom"
+      onclick={() => (newStudentName = '')}
+      emphasized={!$data.length}
+    />
   </div>
 
   <!-- 이름 목록 -->
   <ul
-    class="w-full flex-1 space-y-0.5 overflow-y-auto px-2"
-    ondragleave={(e) => handleDragLeave(e, dragState)}
+    class="w-full flex-1 space-y-0.5 overflow-y-auto px-2 pt-0.5"
+    ondragleave={(e) => handleDragLeave(e, dragState, 'ul')}
     ondragover={(e) => e.preventDefault()}
   >
     {#each sortedStudents as student, i (student.name)}
       <div
         class="relative"
-        ondragover={(e) => handleDragOver(e, i, reordering, dragState)}
-        ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
+        ondragover={(e: DragEvent) =>
+          handleDragOver(e, i, true, dragState, sortedStudents, (s) => s.name)}
+        ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'ul')}
+        ondrop={() =>
+          handleDrop(
+            dragState,
+            $data,
+            (newData) => ($data = newData),
+            (s) => s.name
+          )}
         role="listitem"
         transition:slide={{ duration: 150 }}
       >
         <!-- 순서 변경 위치 미리보기 -->
-        <div
-          class="absolute -top-0.5 left-0 right-0 h-0.5 rounded-full bg-blue-500 opacity-0"
-          class:opacity-100={dragState.dropPreviewIndex === i}
-          role="presentation"
-        ></div>
+        {#if dragState.dropPreviewIndex === i}
+          <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
+        {/if}
 
         <!-- 학생 목록 아이템 -->
         <SidebarItem
           {student}
           isActive={$page.url.pathname === `/app/student/${encodeURIComponent(student.name)}`}
-          {reorder}
-          {reordering}
+          dragged={dragState.draggedItem?.name === student.name}
+          ondragstart={(e: DragEvent) => handleDragStart(e, student, dragState)}
+          ondragend={() => handleDragEnd(dragState)}
           confirmdelete={() =>
             (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
-          ondragstart={(e) => handleDragStart(e, student, dragState)}
-          ondragend={() => handleDragEnd(dragState)}
-          dragged={dragState.draggedStudent?.name === student.name}
         />
       </div>
     {/each}
@@ -161,18 +154,25 @@
     <!-- 맨 아래 드래그 공간 -->
     <div
       class="min-h-[50px] flex-1"
-      ondragover={(e) => handleDragOver(e, $data.length, reordering, dragState)}
-      ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
+      ondragover={(e) =>
+        handleDragOver(e, $data.length, true, dragState, sortedStudents, (s) => s.name)}
+      ondrop={() =>
+        handleDrop(
+          dragState,
+          $data,
+          (newData) => ($data = newData),
+          (s) => s.name
+        )}
       role="presentation"
     >
       {#if dragState.dropPreviewIndex === $data.length}
-        <div class="relative -top-0.5 h-0.5 rounded-full bg-blue-500" role="presentation"></div>
+        <DragPreviewLine class="relative -top-0.5" />
       {/if}
     </div>
   </ul>
 </aside>
 
-<svelte:window ondrag={(e) => handleDrag(e, dragState)} />
+<svelte:window ondrag={(e) => handleDrag(e)} />
 
 {#if studentToDeleteIndex !== null}
   <!-- 학생 삭제 확인 -->
