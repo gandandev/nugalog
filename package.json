@@ -34,6 +34,7 @@
     "@iconify/json": "^2.2.276",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.10",
+    "dedent": "^1.5.3",
     "es-hangul": "^2.2.4",
     "svelte-autosize": "^1.1.5",
     "unplugin-icons": "^0.20.1",
