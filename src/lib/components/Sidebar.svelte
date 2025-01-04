@@ -89,7 +89,7 @@
 
   <!-- 이름 목록 -->
   <ul
-    class="w-full flex-1 space-y-0.5 overflow-y-auto px-2"
+    class="w-full flex-1 space-y-0.5 overflow-y-auto px-2 pt-0.5"
     ondragleave={(e) => handleDragLeave(e, dragState, 'ul')}
     ondragover={(e) => e.preventDefault()}
   >

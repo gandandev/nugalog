@@ -81,7 +81,7 @@
 
 <div class="h-full space-y-1 overflow-y-auto">
   {#if student}
-    <div class="mx-auto w-1/2 px-12 pb-32">
+    <div class="mx-auto w-1/2 px-12 pb-32 pt-0.5">
       <!-- 로그 목록 -->
       <div
         role="list"
@@ -127,6 +127,11 @@
             />
           </div>
         {/each}
+        <div class="h-0.5">
+          {#if dragState.dropPreviewIndex === student.logs.length}
+            <DragPreviewLine class="relative -top-0.5" />
+          {/if}
+        </div>
       </div>
 
       <!-- 새 기록 추가 -->
