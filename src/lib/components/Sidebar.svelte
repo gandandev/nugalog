@@ -46,12 +46,7 @@
   )
 
   // 순서 변경
-  let reordering = $state(false)
   let dragState: DragState<Student> = $state(createDragState())
-  function reorder() {
-    reordering = true
-    newStudentName = null
-  }
 
   // 학생 삭제
   let studentToDeleteIndex: number | null = $state(null)
@@ -69,22 +64,13 @@
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
     <Logo />
-    {#if reordering}
-      <button
-        class="rounded-full bg-stone-200 px-3 py-1 text-sm text-stone-500 duration-150 hover:bg-stone-300 active:scale-95 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700 dark:active:scale-95"
-        onclick={() => (reordering = false)}
-      >
-        완료
-      </button>
-    {:else}
-      <IconButton
-        Icon={PersonAdd}
-        tooltip="새 학생 추가"
-        tooltipPosition="bottom"
-        onclick={() => (newStudentName = '')}
-        emphasized={!$data.length}
-      />
-    {/if}
+    <IconButton
+      Icon={PersonAdd}
+      tooltip="새 학생 추가"
+      tooltipPosition="bottom"
+      onclick={() => (newStudentName = '')}
+      emphasized={!$data.length}
+    />
   </div>
 
   <!-- 이름 목록 -->
@@ -97,7 +83,7 @@
       <div
         class="relative"
         ondragover={(e: DragEvent) =>
-          handleDragOver(e, i, reordering, dragState, sortedStudents, (s) => s.name)}
+          handleDragOver(e, i, true, dragState, sortedStudents, (s) => s.name)}
         ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'ul')}
         ondrop={() =>
           handleDrop(
@@ -118,13 +104,11 @@
         <SidebarItem
           {student}
           isActive={$page.url.pathname === `/app/student/${encodeURIComponent(student.name)}`}
-          {reorder}
-          {reordering}
-          confirmdelete={() =>
-            (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
+          dragged={dragState.draggedItem?.name === student.name}
           ondragstart={(e: DragEvent) => handleDragStart(e, student, dragState)}
           ondragend={() => handleDragEnd(dragState)}
-          dragged={dragState.draggedItem?.name === student.name}
+          confirmdelete={() =>
+            (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
         />
       </div>
     {/each}
@@ -171,7 +155,7 @@
     <div
       class="min-h-[50px] flex-1"
       ondragover={(e) =>
-        handleDragOver(e, $data.length, reordering, dragState, sortedStudents, (s) => s.name)}
+        handleDragOver(e, $data.length, true, dragState, sortedStudents, (s) => s.name)}
       ondrop={() =>
         handleDrop(
           dragState,
