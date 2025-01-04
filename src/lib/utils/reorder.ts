@@ -1,20 +1,18 @@
-import type { Log } from '$lib/stores'
-
-export type DragState = {
-  draggedLog: Log | null
+export type DragState<T> = {
+  draggedItem: T | null
   dropPreviewIndex: number | null
   dragOffset: { x: number; y: number }
 }
 
-export function createDragState(): DragState {
+export function createDragState<T>(): DragState<T> {
   return {
-    draggedLog: null,
+    draggedItem: null,
     dropPreviewIndex: null,
     dragOffset: { x: 0, y: 0 }
   }
 }
 
-export function handleDragStart(e: DragEvent, log: Log, dragState: DragState): void {
+export function handleDragStart<T>(e: DragEvent, item: T, dragState: DragState<T>): void {
   const element = e.currentTarget as HTMLElement
   if (!element) return
 
@@ -36,23 +34,23 @@ export function handleDragStart(e: DragEvent, log: Log, dragState: DragState): v
     document.body.removeChild(ghost)
   })
 
-  dragState.draggedLog = log
+  dragState.draggedItem = item
 }
 
-export function handleDragEnd(dragState: DragState): void {
-  dragState.draggedLog = null
+export function handleDragEnd<T>(dragState: DragState<T>): void {
+  dragState.draggedItem = null
   dragState.dropPreviewIndex = null
 }
 
-export function handleDrag(e: DragEvent, dragState: DragState): void {
+export function handleDrag(e: DragEvent): void {
   if (e.clientX === 0 && e.clientY === 0) return
 }
 
-export function handleDragOver(
+export function handleDragOver<T>(
   e: DragEvent,
   index: number,
   reordering: boolean,
-  dragState: DragState
+  dragState: DragState<T>
 ): void {
   if (!reordering) return
 
@@ -62,22 +60,23 @@ export function handleDragOver(
   dragState.dropPreviewIndex = e.clientY < midY ? index : index + 1
 }
 
-export function handleDragLeave(e: DragEvent, dragState: DragState): void {
+export function handleDragLeave<T>(e: DragEvent, dragState: DragState<T>, containerSelector: string): void {
   const relatedTarget = e.relatedTarget as HTMLElement
-  const listContainer = (e.currentTarget as HTMLElement).closest('div[role="list"]')
+  const listContainer = (e.currentTarget as HTMLElement).closest(containerSelector)
   if (!listContainer?.contains(relatedTarget)) {
     dragState.dropPreviewIndex = null
   }
 }
 
-export function handleDrop(
-  dragState: DragState,
-  logs: Log[],
-  updateLogs: (newLogs: Log[]) => void
+export function handleDrop<T>(
+  dragState: DragState<T>,
+  items: T[],
+  updateItems: (newItems: T[]) => void,
+  getItemId: (item: T) => string | number
 ): void {
-  if (!dragState.draggedLog || dragState.dropPreviewIndex === null) return
+  if (!dragState.draggedItem || dragState.dropPreviewIndex === null) return
 
-  const oldIndex = logs.findIndex((l) => l === dragState.draggedLog)
+  const oldIndex = items.findIndex((item) => getItemId(item) === getItemId(dragState.draggedItem!))
   if (oldIndex === -1) return
 
   const newIndex =
@@ -85,11 +84,11 @@ export function handleDrop(
       ? dragState.dropPreviewIndex - 1
       : dragState.dropPreviewIndex
 
-  const newLogs = [...logs]
-  const [removed] = newLogs.splice(oldIndex, 1)
-  newLogs.splice(newIndex, 0, removed)
-  updateLogs(newLogs)
+  const newItems = [...items]
+  const [removed] = newItems.splice(oldIndex, 1)
+  newItems.splice(newIndex, 0, removed)
+  updateItems(newItems)
 
-  dragState.draggedLog = null
+  dragState.draggedItem = null
   dragState.dropPreviewIndex = null
 } 

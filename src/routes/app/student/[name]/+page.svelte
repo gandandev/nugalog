@@ -24,7 +24,7 @@
     handleDragOver,
     handleDragLeave,
     handleDrop
-  } from '$lib/utils/logReorder'
+  } from '$lib/utils/reorder'
 
   const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name))!)
 
@@ -61,7 +61,7 @@
   }
 
   // 드래그 상태
-  let dragState: DragState = $state(createDragState())
+  let dragState: DragState<{ date: Date; content: string }> = $state(createDragState())
 
   // 페이지 이동 확인
   let showNavigationDialog = $state(false)
@@ -84,25 +84,30 @@
       <!-- 로그 목록 -->
       <div
         role="list"
-        ondragleave={(e) => handleDragLeave(e, dragState)}
-        ondragover={(e) => e.preventDefault()}
+        ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'div[role="list"]')}
+        ondragover={(e: DragEvent) => e.preventDefault()}
       >
         {#each student.logs as log, i (log.date.getTime())}
           <div
             class="relative"
-            ondragover={(e) => handleDragOver(e, i, true, dragState)}
+            ondragover={(e: DragEvent) => handleDragOver(e, i, true, dragState)}
             ondrop={() => {
-              handleDrop(dragState, student.logs, (newLogs) => {
-                $data = $data.map((s) => {
-                  if (s.name === student.name) {
-                    return {
-                      ...s,
-                      logs: newLogs
+              handleDrop(
+                dragState,
+                student.logs,
+                (newLogs) => {
+                  $data = $data.map((s) => {
+                    if (s.name === student.name) {
+                      return {
+                        ...s,
+                        logs: newLogs
+                      }
                     }
-                  }
-                  return s
-                })
-              })
+                    return s
+                  })
+                },
+                (log) => log.date.getTime()
+              )
             }}
             role="listitem"
           >
@@ -116,8 +121,8 @@
             <Log
               {log}
               deleteLog={() => deleteLog(i)}
-              dragged={dragState.draggedLog === log}
-              ondragstart={(e) => handleDragStart(e, log, dragState)}
+              dragged={dragState.draggedItem === log}
+              ondragstart={(e: DragEvent) => handleDragStart(e, log, dragState)}
               ondragend={() => handleDragEnd(dragState)}
             />
           </div>

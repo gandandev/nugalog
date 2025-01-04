@@ -12,7 +12,7 @@
     handleDragOver,
     handleDragLeave,
     handleDrop
-  } from '$lib/utils/sidebarReorder'
+  } from '$lib/utils/reorder'
   import { fly, slide, fade } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
@@ -22,6 +22,8 @@
   import Key from './Key.svelte'
 
   import PersonAdd from '~icons/material-symbols/person-add-rounded'
+
+  import type { Student } from '$lib/stores'
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -44,7 +46,7 @@
 
   // 순서 변경
   let reordering = $state(false)
-  let dragState: DragState = $state(createDragState())
+  let dragState: DragState<Student> = $state(createDragState())
   function reorder() {
     reordering = true
     newStudentName = null
@@ -87,14 +89,21 @@
   <!-- 이름 목록 -->
   <ul
     class="w-full flex-1 space-y-0.5 overflow-y-auto px-2"
-    ondragleave={(e) => handleDragLeave(e, dragState)}
+    ondragleave={(e) => handleDragLeave(e, dragState, 'ul')}
     ondragover={(e) => e.preventDefault()}
   >
     {#each sortedStudents as student, i (student.name)}
       <div
         class="relative"
-        ondragover={(e) => handleDragOver(e, i, reordering, dragState)}
-        ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
+        ondragover={(e: DragEvent) => handleDragOver(e, i, reordering, dragState)}
+        ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'ul')}
+        ondrop={() =>
+          handleDrop(
+            dragState,
+            $data,
+            (newData) => ($data = newData),
+            (s) => s.name
+          )}
         role="listitem"
         transition:slide={{ duration: 150 }}
       >
@@ -113,9 +122,9 @@
           {reordering}
           confirmdelete={() =>
             (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
-          ondragstart={(e) => handleDragStart(e, student, dragState)}
+          ondragstart={(e: DragEvent) => handleDragStart(e, student, dragState)}
           ondragend={() => handleDragEnd(dragState)}
-          dragged={dragState.draggedStudent?.name === student.name}
+          dragged={dragState.draggedItem?.name === student.name}
         />
       </div>
     {/each}
@@ -162,7 +171,13 @@
     <div
       class="min-h-[50px] flex-1"
       ondragover={(e) => handleDragOver(e, $data.length, reordering, dragState)}
-      ondrop={() => handleDrop(dragState, $data, (newData) => ($data = newData))}
+      ondrop={() =>
+        handleDrop(
+          dragState,
+          $data,
+          (newData) => ($data = newData),
+          (s) => s.name
+        )}
       role="presentation"
     >
       {#if dragState.dropPreviewIndex === $data.length}
@@ -172,7 +187,7 @@
   </ul>
 </aside>
 
-<svelte:window ondrag={(e) => handleDrag(e, dragState)} />
+<svelte:window ondrag={(e) => handleDrag(e)} />
 
 {#if studentToDeleteIndex !== null}
   <!-- 학생 삭제 확인 -->
