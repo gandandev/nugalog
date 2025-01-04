@@ -82,6 +82,8 @@
     student ? getHangbalPrompt(student, hangbalOutputExample, hangbalExtraInfo) : ''
   )
 
+  let saveDebounceTimer: ReturnType<typeof setTimeout> | null = $state(null)
+
   onMount(async () => {
     const {
       data: { session }
@@ -124,34 +126,42 @@
 
     $dataLoaded = true
 
-    dataStore.subscribe(async (value) => {
-      if (currentUser) {
-        const dbData = await loadDataFromDb(data.supabase)
-        const { data: localData } = loadDataFromLocalStorage() // 저장되기 전 데이터
+    dataStore.subscribe((value) => {
+      // 대기 중인 저장 작업 취소
+      if (saveDebounceTimer) {
+        clearTimeout(saveDebounceTimer)
+      }
 
-        // 다른 곳에서 DB가 변경되었는지 확인
-        if (dbData && localData) {
-          const hasConflicts = checkForDataConflicts(localData, dbData, value)
-          if (hasConflicts) {
-            showConflictDialog = true
-            conflictData = {
-              previousLocal: localData,
-              database: dbData,
-              newLocal: value
+      // 3초 기다린 후 저장
+      saveDebounceTimer = setTimeout(async () => {
+        if (currentUser) {
+          const dbData = await loadDataFromDb(data.supabase)
+          const { data: localData } = loadDataFromLocalStorage()
+
+          // 데이터 충돌 체크
+          if (dbData && localData) {
+            const hasConflicts = checkForDataConflicts(localData, dbData, value)
+            if (hasConflicts) {
+              showConflictDialog = true
+              conflictData = {
+                previousLocal: localData,
+                database: dbData,
+                newLocal: value
+              }
             }
+          }
+
+          // 실제 변경 사항이 있을 때만 저장
+          if (JSON.stringify(dbData) !== JSON.stringify(value)) {
+            await saveDataToDb(data.supabase, value)
           }
         }
 
-        // 실제로 변경되었을 때만 DB에 저장
-        if (JSON.stringify(dbData) !== JSON.stringify(value)) {
-          await saveDataToDb(data.supabase, value)
+        // localStorage는 언제나 저장
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('data', JSON.stringify(value))
         }
-      }
-
-      // 데이터 변경 후 localStorage에 저장
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('data', JSON.stringify(value))
-      }
+      }, 3000)
     })
   })
 
