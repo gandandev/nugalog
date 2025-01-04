@@ -108,6 +108,7 @@
   draggable={!editing}
   {ondragstart}
   {ondragend}
+  role="listitem"
 >
   <div class="mt-2 flex items-center justify-between" class:pl-3={!editing} class:pr-2={!editing}>
     <!-- 날짜 -->
