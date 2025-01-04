@@ -22,13 +22,19 @@
     isNew = false,
     saveNewLog,
     cancelNewLog,
-    deleteLog
+    deleteLog,
+    dragged = false,
+    ondragstart,
+    ondragend
   }: {
     log: { date: Date | null; content: string }
     isNew?: boolean
     deleteLog?: () => void
     saveNewLog?: (log: { date: Date; content: string }) => void
     cancelNewLog?: () => void
+    dragged?: boolean
+    ondragstart?: (e: DragEvent) => void
+    ondragend?: () => void
   } = $props()
 
   // 삭제 확인
@@ -98,30 +104,36 @@
   class="group flex w-full flex-col gap-1 rounded-xl duration-150 hover:bg-stone-50 dark:hover:bg-stone-900"
   class:hover:bg-transparent={editing}
   class:dark:hover:bg-transparent={editing}
+  class:opacity-50={dragged}
+  draggable={!editing}
+  {ondragstart}
+  {ondragend}
 >
   <div class="mt-2 flex items-center justify-between" class:pl-3={!editing} class:pr-2={!editing}>
     <!-- 날짜 -->
-    {#if editing}
-      <div class="relative">
-        <input
-          type="date"
-          value={date?.toISOString().slice(0, 10)}
-          class="rounded-lg bg-stone-100 px-2 py-1 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
-          class:ring-2={!date}
-          class:ring-red-500={!date}
-          oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
-        />
-        {#if navigator.userAgent.includes('Chrome')}
-          <CalendarToday class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
-        {/if}
-      </div>
-    {:else}
-      <span class="text-stone-500">
-        {log.date
-          ? log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
-          : '올바르지 않은 날짜'}
-      </span>
-    {/if}
+    <div class="flex items-center gap-2">
+      {#if editing}
+        <div class="relative">
+          <input
+            type="date"
+            value={date?.toISOString().slice(0, 10)}
+            class="rounded-lg bg-stone-100 px-2 py-1 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+            class:ring-2={!date}
+            class:ring-red-500={!date}
+            oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+          />
+          {#if navigator.userAgent.includes('Chrome')}
+            <CalendarToday class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
+          {/if}
+        </div>
+      {:else}
+        <span class="text-stone-500">
+          {log.date
+            ? log.date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
+            : '올바르지 않은 날짜'}
+        </span>
+      {/if}
+    </div>
 
     <!-- 액션 버튼 -->
     <div
