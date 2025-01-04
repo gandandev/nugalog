@@ -37,7 +37,7 @@
     if (duplicateStudentName) return
     if (newName && newName.trim()) {
       if (isActive) {
-        goto(`/student/${encodeURIComponent(newName!.trim())}`)
+        goto(`/app/student/${encodeURIComponent(newName!.trim())}`)
       }
       $data = $data.map((s) => (s === student ? { ...s, name: newName!.trim() } : s))
     }
