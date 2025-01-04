@@ -10,6 +10,7 @@
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
   import IconButton from '$lib/components/IconButton.svelte'
+  import DragPreviewLine from '$lib/components/DragPreviewLine.svelte'
 
   import Add from '~icons/material-symbols/add-rounded'
   import PersonOff from '~icons/material-symbols/person-off-rounded'
@@ -113,11 +114,9 @@
             role="listitem"
           >
             <!-- 순서 변경 위치 미리보기 -->
-            <div
-              class="absolute -top-0.5 left-0 right-0 h-0.5 rounded-full bg-blue-500 opacity-0"
-              class:opacity-100={dragState.dropPreviewIndex === i}
-              role="presentation"
-            ></div>
+            {#if dragState.dropPreviewIndex === i}
+              <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
+            {/if}
 
             <Log
               {log}

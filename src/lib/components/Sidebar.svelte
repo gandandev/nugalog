@@ -20,6 +20,7 @@
   import SidebarItem from './SidebarItem.svelte'
   import Dialog from './Dialog.svelte'
   import Key from './Key.svelte'
+  import DragPreviewLine from './DragPreviewLine.svelte'
 
   import PersonAdd from '~icons/material-symbols/person-add-rounded'
 
@@ -109,11 +110,9 @@
         transition:slide={{ duration: 150 }}
       >
         <!-- 순서 변경 위치 미리보기 -->
-        <div
-          class="absolute -top-0.5 left-0 right-0 h-0.5 rounded-full bg-blue-500 opacity-0"
-          class:opacity-100={dragState.dropPreviewIndex === i}
-          role="presentation"
-        ></div>
+        {#if dragState.dropPreviewIndex === i}
+          <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
+        {/if}
 
         <!-- 학생 목록 아이템 -->
         <SidebarItem
@@ -183,7 +182,7 @@
       role="presentation"
     >
       {#if dragState.dropPreviewIndex === $data.length}
-        <div class="relative -top-0.5 h-0.5 rounded-full bg-blue-500" role="presentation"></div>
+        <DragPreviewLine class="relative -top-0.5" />
       {/if}
     </div>
   </ul>
