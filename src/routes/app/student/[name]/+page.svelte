@@ -90,7 +90,8 @@
         {#each student.logs as log, i (log.date.getTime())}
           <div
             class="relative"
-            ondragover={(e: DragEvent) => handleDragOver(e, i, true, dragState)}
+            ondragover={(e: DragEvent) =>
+              handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
             ondrop={() => {
               handleDrop(
                 dragState,

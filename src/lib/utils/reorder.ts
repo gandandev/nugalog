@@ -50,14 +50,27 @@ export function handleDragOver<T>(
   e: DragEvent,
   index: number,
   reordering: boolean,
-  dragState: DragState<T>
+  dragState: DragState<T>,
+  items: T[],
+  getItemId: (item: T) => string | number
 ): void {
   if (!reordering) return
 
   e.preventDefault()
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
   const midY = rect.top + rect.height / 2
-  dragState.dropPreviewIndex = e.clientY < midY ? index : index + 1
+  const newPreviewIndex = e.clientY < midY ? index : index + 1
+
+  // 드래그하는 아이템의 원래 인덱스와 같거나, 바로 다음 인덱스라면 미리보기를 표시하지 않음
+  if (dragState.draggedItem) {
+    const currentIndex = items.findIndex((item) => getItemId(item) === getItemId(dragState.draggedItem!))
+    if (newPreviewIndex === currentIndex || newPreviewIndex === currentIndex + 1) {
+      dragState.dropPreviewIndex = null
+      return
+    }
+  }
+
+  dragState.dropPreviewIndex = newPreviewIndex
 }
 
 export function handleDragLeave<T>(e: DragEvent, dragState: DragState<T>, containerSelector: string): void {

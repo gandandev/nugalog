@@ -95,7 +95,8 @@
     {#each sortedStudents as student, i (student.name)}
       <div
         class="relative"
-        ondragover={(e: DragEvent) => handleDragOver(e, i, reordering, dragState)}
+        ondragover={(e: DragEvent) =>
+          handleDragOver(e, i, reordering, dragState, sortedStudents, (s) => s.name)}
         ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'ul')}
         ondrop={() =>
           handleDrop(
@@ -170,7 +171,8 @@
     <!-- 맨 아래 드래그 공간 -->
     <div
       class="min-h-[50px] flex-1"
-      ondragover={(e) => handleDragOver(e, $data.length, reordering, dragState)}
+      ondragover={(e) =>
+        handleDragOver(e, $data.length, reordering, dragState, sortedStudents, (s) => s.name)}
       ondrop={() =>
         handleDrop(
           dragState,
