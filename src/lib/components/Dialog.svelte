@@ -49,7 +49,7 @@
   role="presentation"
 >
   <div
-    class="min-w-96 rounded-2xl bg-white p-5 dark:bg-stone-800"
+    class="min-w-96 rounded-2xl bg-white p-5 dark:bg-stone-900"
     transition:scale|global={{ start: 0.9, duration: 200 }}
   >
     <h2 class="text-xl font-semibold">{title}</h2>
