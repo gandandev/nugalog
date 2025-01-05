@@ -291,15 +291,15 @@
 
   <div class="flex flex-1 flex-col overflow-hidden">
     <div class="sticky inset-x-0 top-0 flex items-center justify-between gap-1 p-4">
-      {#if student}
-        <button
-          class="flex items-center gap-1 rounded-lg px-2 py-1 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible dark:hover:bg-stone-800 dark:active:bg-stone-700"
-          onclick={() => (showSidebar = !showSidebar)}
-        >
-          {student.name}
-          <KeyboardArrowDown class="h-5 w-5" />
-        </button>
-      {/if}
+      <button
+        class="flex items-center gap-1 rounded-lg px-2 py-1 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        class:invisible={!student}
+        class:size-0={!student}
+        onclick={() => (showSidebar = !showSidebar)}
+      >
+        {student?.name}
+        <KeyboardArrowDown class="h-5 w-5" />
+      </button>
       <div class="flex items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
           <button
