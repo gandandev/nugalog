@@ -81,7 +81,7 @@
 
 <div class="h-full space-y-1 overflow-y-auto">
   {#if student}
-    <div class="mx-auto w-1/2 px-12 pb-32 pt-0.5">
+    <div class="mx-auto w-full max-w-[600px] px-3 pb-32 pt-0.5 lg:w-1/2 lg:min-w-[600px] lg:px-12">
       <!-- 로그 목록 -->
       <div
         role="list"
