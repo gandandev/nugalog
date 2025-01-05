@@ -11,7 +11,15 @@
   import Keep from '~icons/material-symbols/keep-rounded'
   import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
-  const { student, isActive, confirmdelete, ondragstart, ondragend, dragged, onclick } = $props<{
+  const {
+    student,
+    isActive,
+    confirmdelete,
+    ondragstart,
+    ondragend,
+    dragged,
+    onclick
+  }: {
     student: Student
     isActive: boolean
     confirmdelete: () => void
@@ -19,7 +27,7 @@
     ondragend: () => void
     dragged: boolean
     onclick: () => void
-  }>()
+  } = $props()
 
   let showOptions = $state(false)
   let optionsButton: HTMLButtonElement | null = $state(null)
