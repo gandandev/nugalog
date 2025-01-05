@@ -303,7 +303,7 @@
       <div class="flex items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
           <button
-            class="origin-right text-stone-500 hover:text-stone-600 dark:hover:text-stone-400"
+            class="hidden origin-right text-stone-500 hover:text-stone-600 sm:block dark:hover:text-stone-400"
             onclick={() => {
               $showTooltip = false
             }}
