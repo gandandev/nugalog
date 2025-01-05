@@ -84,7 +84,7 @@
     <div
       class="mx-auto w-full max-w-[600px] px-3 pb-32 pt-0.5 md:px-6 lg:w-1/2 lg:min-w-[600px] lg:px-12"
     >
-      <!-- 로그 목록 -->
+      <!-- 기록 목록 -->
       <div
         role="list"
         ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'div[role="list"]')}
