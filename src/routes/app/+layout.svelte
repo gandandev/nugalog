@@ -319,7 +319,7 @@
           disabled={!student?.logs.length}
           onclick={() => {
             hangbalExtraInfo = ''
-            showHangbalPanel = true
+            showHangbalPanel = !showHangbalPanel
           }}
           use:tooltip={{ text: '행발 작성', position: 'bottom' }}
         >
