@@ -90,7 +90,6 @@
       >
         {#each student.logs as log, i (log.date.getTime())}
           <div
-            class="relative"
             ondragover={(e: DragEvent) =>
               handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
             ondrop={() => {
@@ -114,9 +113,9 @@
             role="listitem"
           >
             <!-- 순서 변경 위치 미리보기 -->
-            {#if dragState.dropPreviewIndex === i}
-              <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
-            {/if}
+            <DragPreviewLine
+              class={dragState.dropPreviewIndex === i ? 'opacity-100' : 'opacity-0'}
+            />
 
             <Log
               {log}
