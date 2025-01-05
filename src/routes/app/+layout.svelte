@@ -521,10 +521,10 @@
 
 {#if showHangbalPanel}
   <div
-    class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white dark:bg-stone-950"
+    class="fixed inset-y-0 left-0 right-0 z-10 flex items-center justify-center bg-white md:left-64 dark:bg-stone-950"
     transition:fly={{ y: 100, duration: 400, easing: expoOut }}
   >
-    <div class="flex max-h-full w-1/2 flex-col justify-between p-5">
+    <div class="flex max-h-full w-full flex-col justify-between p-5 md:w-1/2">
       <div class="mb-3 flex flex-col space-y-2">
         <div class="mb-2 flex items-center justify-between">
           <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
@@ -555,10 +555,10 @@
 
         <p class="py-2 text-sm text-stone-500 dark:text-stone-400">
           행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
-          각 서비스 로그인 후 사용하면 더욱 나은 결과를 얻을 수 있습니다.
+          각 서비스 로그인 시 더욱 나은 결과를 얻을 수 있습니다.
         </p>
 
-        <div class="mt-4 flex justify-end gap-2">
+        <div class="mt-4 flex flex-wrap justify-end gap-2">
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
             onclick={() => {
