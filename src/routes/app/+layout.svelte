@@ -290,7 +290,9 @@
   />
 
   <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4">
+    <div
+      class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
+    >
       <button
         class="flex items-center gap-1 rounded-lg px-2 py-1 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
         class:invisible={!student}
