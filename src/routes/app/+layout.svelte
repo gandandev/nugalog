@@ -285,7 +285,7 @@
 
 <div class="flex h-screen overflow-hidden">
   <Sidebar
-    showOnMobile={showSidebar || $dataStore.length == 0 || !student}
+    showOnMobile={showSidebar || (($dataStore.length == 0 || !student) && $dataLoaded)}
     closeSidebar={() => (showSidebar = false)}
   />
 
