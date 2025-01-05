@@ -468,7 +468,7 @@
                   class="h-5 w-5"
                 />
               </div>
-              Google로 로그인
+              로그인
             </button>
           {/if}
         </div>
