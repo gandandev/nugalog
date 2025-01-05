@@ -50,6 +50,9 @@ type TooltipOptions = {
 }
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
+  // 터치 기기에서 툴팁 비활성화
+  if ('ontouchstart' in window) return { destroy() { } }
+
   if (!options) return { destroy() { } }
 
   let tooltipElement: HTMLDivElement | null = null
