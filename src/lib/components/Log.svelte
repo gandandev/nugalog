@@ -92,10 +92,6 @@
   // 내용 복사
   let copied = $state(false)
   const handleCopy = useCopyFeedback((isCopied) => (copied = isCopied))
-  function copy() {
-    navigator.clipboard.writeText(log.content)
-    handleCopy()
-  }
 </script>
 
 <svelte:window onbeforeunload={(e) => editing && e.preventDefault()} />
@@ -148,9 +144,14 @@
         >
           <IconButton
             Icon={copied ? Check : ContentCopy}
-            text={copied ? '복사됨' : undefined}
+            text={navigator.clipboard ? (copied ? '복사됨' : undefined) : '복사 지원 안 됨'}
             tooltip="내용 복사"
-            onclick={copy}
+            onclick={() => {
+              if (!navigator.clipboard) return
+              navigator.clipboard.writeText(log.content)
+              handleCopy()
+            }}
+            disabled={!navigator.clipboard}
           />
         </div>
       {/if}

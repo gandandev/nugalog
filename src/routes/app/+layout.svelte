@@ -330,11 +330,12 @@
           bind:this={settingsButton}
           class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
           onclick={() => {
+            if (!navigator.clipboard) return
             const text = formatStudentLogs(student.name, student.logs)
             navigator.clipboard.writeText(text)
             handleSingleCopy()
           }}
-          disabled={!student?.logs.length}
+          disabled={!student?.logs.length || !navigator.clipboard}
           use:tooltip={{
             text: singleCopied ? '복사됨' : '기록 전체 복사',
             position: 'bottom'
@@ -372,11 +373,12 @@
               <button
                 class="flex h-8 items-center gap-2 rounded-md px-3 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
                 onclick={() => {
+                  if (!navigator.clipboard) return
                   const text = formatAllStudentLogs($dataStore)
                   navigator.clipboard.writeText(text)
                   handleAllCopy()
                 }}
-                disabled={!$dataStore.some((s) => s.logs.length > 0)}
+                disabled={!$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard}
               >
                 <div class="relative h-5 w-5">
                   {#if allCopied}
@@ -395,11 +397,13 @@
                     in:fly={{ duration: 150, x: -10 }}
                     out:fly={{ duration: 150, x: 10 }}
                   >
-                    {$dataStore.some((s) => s.logs.length > 0)
-                      ? allCopied
-                        ? '복사됨'
-                        : '모든 기록 복사'
-                      : '복사할 기록 없음'}
+                    {navigator.clipboard
+                      ? $dataStore.some((s) => s.logs.length > 0)
+                        ? allCopied
+                          ? '복사됨'
+                          : '모든 기록 복사'
+                        : '복사할 기록 없음'
+                      : '복사 지원 안 됨'}
                   </span>
                 {/key}
               </button>
