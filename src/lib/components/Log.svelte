@@ -211,7 +211,7 @@
         {/if}
       </div>
       {#if !editing && !confirmingDelete}
-        <div class="flex items-center gap-2">
+        <div class="pointer:hidden flex items-center gap-2">
           <IconButton
             Icon={actionButtonExpanded ? ChevronRight : MoreHoriz}
             onclick={() => (actionButtonExpanded = !actionButtonExpanded)}
