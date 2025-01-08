@@ -96,6 +96,7 @@
       console.error('Failed to load local data:', localError)
       $dataStore = []
       $dataLoaded = true
+      showSidebar = $dataStore.length == 0 || !student
       return
     }
 
@@ -126,6 +127,7 @@
     }
 
     $dataLoaded = true
+    showSidebar = $dataStore.length == 0 || !student
 
     dataStore.subscribe((value) => {
       // 대기 중인 저장 작업 취소
@@ -284,10 +286,7 @@
 </script>
 
 <div class="flex h-screen overflow-hidden">
-  <Sidebar
-    showOnMobile={showSidebar || (($dataStore.length == 0 || !student) && $dataLoaded)}
-    closeSidebar={() => (showSidebar = false)}
-  />
+  <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
   <div class="flex flex-1 flex-col overflow-hidden">
     <div
@@ -295,11 +294,9 @@
     >
       <button
         class="flex items-center gap-1 rounded-lg px-2 py-1 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
-        class:invisible={!student}
-        class:size-0={!student}
         onclick={() => (showSidebar = !showSidebar)}
       >
-        {student?.name}
+        {student?.name || '사이드바'}
         <KeyboardArrowDown class="h-5 w-5" />
       </button>
       <div class="flex items-center justify-end gap-1">
