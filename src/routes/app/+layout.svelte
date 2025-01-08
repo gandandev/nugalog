@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { type User } from '@supabase/supabase-js'
-  import { scale, fly, slide } from 'svelte/transition'
+  import { scale, fly, slide, blur } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
   import {
@@ -49,6 +49,8 @@
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
+  import ChevronRight from '~icons/material-symbols/chevron-right-rounded'
+  import ThumbnailBar from '~icons/material-symbols/thumbnail-bar-outline'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -95,6 +97,7 @@
       console.error('Failed to load local data:', localError)
       $dataStore = []
       $dataLoaded = true
+      showSidebar = $dataStore.length == 0 || !student
       return
     }
 
@@ -125,6 +128,7 @@
     }
 
     $dataLoaded = true
+    showSidebar = $dataStore.length == 0 || !student
 
     dataStore.subscribe((value) => {
       // 대기 중인 저장 작업 취소
@@ -192,6 +196,9 @@
     currentUser = null
     showAccountOptions = false
   }
+
+  // 사이드바
+  let showSidebar = $state(false)
 
   // 계정 옵션
   let showAccountOptions = $state(false)
@@ -280,222 +287,241 @@
 </script>
 
 <div class="flex h-screen overflow-hidden">
-  <Sidebar />
+  <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
   <div class="flex flex-1 flex-col overflow-hidden">
-    <div class="sticky inset-x-0 top-0 flex items-center justify-end gap-1 p-4">
-      {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
-        <button
-          class="origin-right text-stone-500 hover:text-stone-600 dark:hover:text-stone-400"
-          onclick={() => {
-            $showTooltip = false
-          }}
-          transition:scale={{ duration: 150, start: 0.9 }}
-          use:tooltip={{ text: '클릭해서 숨기기', position: 'bottom', delay: 0 }}
-        >
-          로그인 후 여러 기기에서 작업해보세요
-        </button>
-      {/if}
-
+    <div
+      class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
+    >
       <button
-        class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
-        disabled={!student?.logs.length}
-        onclick={() => {
-          hangbalExtraInfo = ''
-          showHangbalPanel = true
-        }}
-        use:tooltip={{ text: '행발 작성', position: 'bottom' }}
+        class="flex h-8 items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        onclick={() => (showSidebar = !showSidebar)}
       >
-        <Assignment class="h-5 w-5" />
-      </button>
-
-      <button
-        bind:this={settingsButton}
-        class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
-        onclick={() => {
-          const text = formatStudentLogs(student.name, student.logs)
-          navigator.clipboard.writeText(text)
-          handleSingleCopy()
-        }}
-        disabled={!student?.logs.length}
-        use:tooltip={{
-          text: singleCopied ? '복사됨' : '기록 전체 복사',
-          position: 'bottom'
-        }}
-      >
-        {#if singleCopied}
-          <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-            <Check class="h-5 w-5" />
-          </div>
+        {student?.name}
+        {#if student}
+          <ChevronRight class="h-5 w-5" />
         {:else}
-          <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-            <ContentCopy class="h-5 w-5" />
-          </div>
+          <ThumbnailBar class="h-5 w-5" />
         {/if}
       </button>
+      <div class="flex items-center justify-end gap-1">
+        {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
+          <button
+            class="hidden origin-right text-stone-500 hover:text-stone-600 sm:block dark:hover:text-stone-400"
+            onclick={() => {
+              $showTooltip = false
+            }}
+            transition:scale={{ duration: 150, start: 0.9 }}
+            use:tooltip={{ text: '클릭해서 숨기기', position: 'bottom', delay: 0 }}
+          >
+            로그인 후 여러 기기에서 작업해보세요
+          </button>
+        {/if}
 
-      <div class="relative">
+        <button
+          class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+          disabled={!student?.logs.length}
+          onclick={() => {
+            hangbalExtraInfo = ''
+            showHangbalPanel = !showHangbalPanel
+          }}
+          use:tooltip={{ text: '행발 작성', position: 'bottom' }}
+        >
+          <Assignment class="h-5 w-5" />
+        </button>
+
         <button
           bind:this={settingsButton}
-          class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
-          onclick={() => (showSettings = !showSettings)}
-          use:tooltip={{ text: '설정', position: 'bottom' }}
+          class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
+          onclick={() => {
+            if (!navigator.clipboard) return
+            const text = formatStudentLogs(student.name, student.logs)
+            navigator.clipboard.writeText(text)
+            handleSingleCopy()
+          }}
+          disabled={!student?.logs.length || !navigator.clipboard}
+          use:tooltip={{
+            text: singleCopied ? '복사됨' : '기록 전체 복사',
+            position: 'bottom'
+          }}
         >
-          <Settings class="h-5 w-5" />
+          {#if singleCopied}
+            <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+              <Check class="h-5 w-5" />
+            </div>
+          {:else}
+            <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+              <ContentCopy class="h-5 w-5" />
+            </div>
+          {/if}
         </button>
-        {#if showSettings}
+
+        <div class="relative">
+          <button
+            bind:this={settingsButton}
+            class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+            onclick={() => (showSettings = !showSettings)}
+            use:tooltip={{ text: '설정', position: 'bottom' }}
+          >
+            <Settings class="h-5 w-5" />
+          </button>
+          {#if showSettings}
+            <div
+              class="absolute -right-2 top-11 z-50 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
+              transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
+              use:onClickOutside={{
+                callback: () => (showSettings = false),
+                exclude: settingsButton ? [settingsButton] : []
+              }}
+            >
+              <button
+                class="flex h-8 items-center gap-2 rounded-md px-3 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
+                onclick={() => {
+                  if (!navigator.clipboard) return
+                  const text = formatAllStudentLogs($dataStore)
+                  navigator.clipboard.writeText(text)
+                  handleAllCopy()
+                }}
+                disabled={!$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard}
+              >
+                <div class="relative h-5 w-5">
+                  {#if allCopied}
+                    <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                      <Check class="h-5 w-5" />
+                    </div>
+                  {:else}
+                    <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
+                      <ContentCopy class="h-5 w-5" />
+                    </div>
+                  {/if}
+                </div>
+                {#key allCopied}
+                  <span
+                    class="absolute left-11"
+                    in:fly={{ duration: 150, x: -10 }}
+                    out:fly={{ duration: 150, x: 10 }}
+                  >
+                    {navigator.clipboard
+                      ? $dataStore.some((s) => s.logs.length > 0)
+                        ? allCopied
+                          ? '복사됨'
+                          : '모든 기록 복사'
+                        : '복사할 기록 없음'
+                      : '복사 지원 안 됨'}
+                  </span>
+                {/key}
+              </button>
+
+              <button
+                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
+                onclick={saveDataToFile}
+              >
+                <Download class="h-5 w-5" />
+                데이터 다운로드
+              </button>
+
+              <button
+                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
+                onclick={loadDataFromFile}
+              >
+                <FileOpen class="h-5 w-5" />
+                데이터 불러오기
+              </button>
+
+              <button
+                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 active:bg-stone-200 dark:hover:bg-stone-700 dark:hover:text-red-500 dark:active:bg-stone-600"
+                onclick={() => {
+                  eraseDataConfirmationInput = ''
+                  showEraseDataDialogState = 'confirm'
+                }}
+              >
+                <DeleteForever class="h-5 w-5" />
+                데이터 삭제
+              </button>
+            </div>
+          {/if}
+        </div>
+
+        <div class="relative z-50 ml-2 h-8">
+          {#if currentUser}
+            <button
+              bind:this={accountButton}
+              class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
+              onclick={() => (showAccountOptions = !showAccountOptions)}
+              onkeydown={(e) => {
+                if (e.key === 'ArrowDown' && !showAccountOptions) {
+                  e.preventDefault()
+                  showAccountOptions = true
+                  logoutButton?.focus()
+                }
+              }}
+              aria-expanded={showAccountOptions}
+              aria-haspopup="true"
+            >
+              <img
+                src={currentUser.user_metadata.avatar_url}
+                alt="프로필 사진"
+                class="h-8 w-8 rounded-full"
+              />
+            </button>
+          {:else}
+            <button
+              class="flex items-center rounded-full border border-stone-200 pr-2.5 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:border-stone-800 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
+              onclick={signInWithGoogle}
+            >
+              <div class="flex h-8 w-8 items-center justify-center">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                  alt="Google 로고"
+                  class="h-5 w-5"
+                />
+              </div>
+              로그인
+            </button>
+          {/if}
+        </div>
+
+        {#if showAccountOptions && currentUser}
           <div
-            class="absolute -right-2 top-11 z-50 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
+            class="absolute top-14 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
             transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
             use:onClickOutside={{
-              callback: () => (showSettings = false),
-              exclude: settingsButton ? [settingsButton] : []
+              callback: closeAccountOptions,
+              exclude: accountButton ? [accountButton] : []
             }}
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="account-menu-button"
           >
-            <button
-              class="flex h-8 items-center gap-2 rounded-md px-3 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
-              onclick={() => {
-                const text = formatAllStudentLogs($dataStore)
-                navigator.clipboard.writeText(text)
-                handleAllCopy()
-              }}
-              disabled={!$dataStore.some((s) => s.logs.length > 0)}
-            >
-              <div class="relative h-5 w-5">
-                {#if allCopied}
-                  <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-                    <Check class="h-5 w-5" />
-                  </div>
-                {:else}
-                  <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-                    <ContentCopy class="h-5 w-5" />
-                  </div>
-                {/if}
-              </div>
-              {#key allCopied}
-                <span
-                  class="absolute left-11"
-                  in:fly={{ duration: 150, x: -10 }}
-                  out:fly={{ duration: 150, x: 10 }}
-                >
-                  {$dataStore.some((s) => s.logs.length > 0)
-                    ? allCopied
-                      ? '복사됨'
-                      : '모든 기록 복사'
-                    : '복사할 기록 없음'}
-                </span>
-              {/key}
-            </button>
-
-            <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
-              onclick={saveDataToFile}
-            >
-              <Download class="h-5 w-5" />
-              데이터 다운로드
-            </button>
-
-            <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
-              onclick={loadDataFromFile}
-            >
-              <FileOpen class="h-5 w-5" />
-              데이터 불러오기
-            </button>
-
-            <button
-              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 active:bg-stone-200 dark:hover:bg-stone-700 dark:hover:text-red-500 dark:active:bg-stone-600"
-              onclick={() => {
-                eraseDataConfirmationInput = ''
-                showEraseDataDialogState = 'confirm'
-              }}
-            >
-              <DeleteForever class="h-5 w-5" />
-              데이터 삭제
-            </button>
-          </div>
-        {/if}
-      </div>
-
-      <div class="relative z-50 ml-2 h-8">
-        {#if currentUser}
-          <button
-            bind:this={accountButton}
-            class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
-            onclick={() => (showAccountOptions = !showAccountOptions)}
-            onkeydown={(e) => {
-              if (e.key === 'ArrowDown' && !showAccountOptions) {
-                e.preventDefault()
-                showAccountOptions = true
-                logoutButton?.focus()
-              }
-            }}
-            aria-expanded={showAccountOptions}
-            aria-haspopup="true"
-          >
-            <img
-              src={currentUser.user_metadata.avatar_url}
-              alt="프로필 사진"
-              class="h-8 w-8 rounded-full"
-            />
-          </button>
-        {:else}
-          <button
-            class="flex items-center rounded-full border border-stone-200 pr-2.5 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:border-stone-800 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
-            onclick={signInWithGoogle}
-          >
-            <div class="flex h-8 w-8 items-center justify-center">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
-                alt="Google 로고"
-                class="h-5 w-5"
-              />
+            <div class="h-14 px-3 pt-2 leading-tight">
+              <span class="font-medium">
+                {currentUser.identities?.[0]?.identity_data?.full_name}
+              </span>
+              <span class="text-sm text-stone-500">
+                {currentUser.email}
+              </span>
             </div>
-            Google로 로그인
-          </button>
+            <button
+              bind:this={logoutButton}
+              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+              onclick={signOut}
+              onkeydown={(e) => {
+                if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
+                  e.preventDefault()
+                  closeAccountOptions()
+                  accountButton?.focus()
+                }
+              }}
+              role="menuitem"
+            >
+              <Logout class="h-5 w-5" />
+              로그아웃
+            </button>
+          </div>
         {/if}
       </div>
-
-      {#if showAccountOptions && currentUser}
-        <div
-          class="absolute top-14 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
-          transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-          use:onClickOutside={{
-            callback: closeAccountOptions,
-            exclude: accountButton ? [accountButton] : []
-          }}
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="account-menu-button"
-        >
-          <div class="h-14 px-3 pt-2 leading-tight">
-            <span class="font-medium">
-              {currentUser.identities?.[0]?.identity_data?.full_name}
-            </span>
-            <span class="text-sm text-stone-500">
-              {currentUser.email}
-            </span>
-          </div>
-          <button
-            bind:this={logoutButton}
-            class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
-            onclick={signOut}
-            onkeydown={(e) => {
-              if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
-                e.preventDefault()
-                closeAccountOptions()
-                accountButton?.focus()
-              }
-            }}
-            role="menuitem"
-          >
-            <Logout class="h-5 w-5" />
-            로그아웃
-          </button>
-        </div>
-      {/if}
     </div>
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden pt-16">
       {@render children()}
     </div>
   </div>
@@ -503,10 +529,10 @@
 
 {#if showHangbalPanel}
   <div
-    class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white dark:bg-stone-950"
+    class="fixed inset-y-0 left-0 right-0 z-10 flex items-center justify-center bg-white md:left-64 dark:bg-stone-950"
     transition:fly={{ y: 100, duration: 400, easing: expoOut }}
   >
-    <div class="flex max-h-full w-1/2 flex-col justify-between p-5">
+    <div class="flex max-h-full w-full flex-col justify-between p-5 md:w-1/2">
       <div class="mb-3 flex flex-col space-y-2">
         <div class="mb-2 flex items-center justify-between">
           <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
@@ -537,10 +563,10 @@
 
         <p class="py-2 text-sm text-stone-500 dark:text-stone-400">
           행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
-          각 서비스 로그인 후 사용하면 더욱 나은 결과를 얻을 수 있습니다.
+          각 서비스 로그인 시 더욱 나은 결과를 얻을 수 있습니다.
         </p>
 
-        <div class="mt-4 flex justify-end gap-2">
+        <div class="mt-4 flex flex-wrap justify-end gap-2">
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
             onclick={() => {

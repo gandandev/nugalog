@@ -13,6 +13,7 @@
     handleDragLeave,
     handleDrop
   } from '$lib/utils/reorder'
+  import type { Student } from '$lib/stores'
   import { fly, slide, fade } from 'svelte/transition'
 
   import Logo from './Logo.svelte'
@@ -24,7 +25,8 @@
 
   import PersonAdd from '~icons/material-symbols/person-add-rounded'
 
-  import type { Student } from '$lib/stores'
+  const { showOnMobile, closeSidebar }: { showOnMobile: boolean; closeSidebar: () => void } =
+    $props()
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -59,7 +61,9 @@
 </script>
 
 <aside
-  class="flex w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 dark:border-stone-800 dark:bg-stone-900"
+  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
+  class:left-0={showOnMobile}
+  class:shadow-lg={showOnMobile}
 >
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
@@ -109,6 +113,7 @@
           ondragend={() => handleDragEnd(dragState)}
           confirmdelete={() =>
             (studentToDeleteIndex = $data.findIndex((s) => s.name === student.name))}
+          onclick={closeSidebar}
         />
       </div>
     {/each}
@@ -171,6 +176,15 @@
     </div>
   </ul>
 </aside>
+
+{#if showOnMobile}
+  <div
+    class="fixed inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-sm md:hidden"
+    onclick={closeSidebar}
+    role="presentation"
+    transition:fade={{ duration: 150 }}
+  ></div>
+{/if}
 
 <svelte:window ondrag={(e) => handleDrag(e)} />
 

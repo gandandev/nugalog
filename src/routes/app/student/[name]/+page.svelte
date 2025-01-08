@@ -81,8 +81,10 @@
 
 <div class="h-full space-y-1 overflow-y-auto">
   {#if student}
-    <div class="mx-auto w-1/2 px-12 pb-32 pt-0.5">
-      <!-- 로그 목록 -->
+    <div
+      class="mx-auto w-full max-w-[600px] px-3 pb-32 pt-0.5 md:px-6 lg:w-1/2 lg:min-w-[600px] lg:px-12"
+    >
+      <!-- 기록 목록 -->
       <div
         role="list"
         ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'div[role="list"]')}
@@ -90,7 +92,6 @@
       >
         {#each student.logs as log, i (log.date.getTime())}
           <div
-            class="relative"
             ondragover={(e: DragEvent) =>
               handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
             ondrop={() => {
@@ -114,9 +115,9 @@
             role="listitem"
           >
             <!-- 순서 변경 위치 미리보기 -->
-            {#if dragState.dropPreviewIndex === i}
-              <DragPreviewLine class="absolute -top-0.5 left-0 right-0 opacity-100" />
-            {/if}
+            <DragPreviewLine
+              class={dragState.dropPreviewIndex === i ? 'opacity-100' : 'opacity-0'}
+            />
 
             <Log
               {log}

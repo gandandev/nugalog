@@ -41,7 +41,7 @@
 />
 
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-2 backdrop-blur-sm"
   transition:fade|global={{ duration: 100 }}
   onclick={(e) => {
     if (e.target === e.currentTarget) cancel?.()
@@ -49,7 +49,7 @@
   role="presentation"
 >
   <div
-    class="min-w-96 rounded-2xl bg-white p-5 dark:bg-stone-900"
+    class="w-full rounded-2xl bg-white p-5 sm:w-fit sm:min-w-96 dark:bg-stone-900"
     transition:scale|global={{ start: 0.9, duration: 200 }}
   >
     <h2 class="text-xl font-semibold">{title}</h2>

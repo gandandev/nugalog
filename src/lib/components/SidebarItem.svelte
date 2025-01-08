@@ -11,14 +11,23 @@
   import Keep from '~icons/material-symbols/keep-rounded'
   import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
-  const { student, isActive, confirmdelete, ondragstart, ondragend, dragged } = $props<{
+  const {
+    student,
+    isActive,
+    confirmdelete,
+    ondragstart,
+    ondragend,
+    dragged,
+    onclick
+  }: {
     student: Student
     isActive: boolean
     confirmdelete: () => void
     ondragstart: (e: DragEvent) => void
     ondragend: () => void
     dragged: boolean
-  }>()
+    onclick: () => void
+  } = $props()
 
   let showOptions = $state(false)
   let optionsButton: HTMLButtonElement | null = $state(null)
@@ -77,6 +86,7 @@
       href="/app/student/{encodeURIComponent(student.name)}"
       class="flex min-w-0 grow items-center rounded-l-lg pl-3"
       class:rounded-r-lg={true}
+      {onclick}
     >
       {#if student.pinned}
         <Keep class="mr-1.5 h-4 w-4 shrink-0 text-stone-400 dark:text-stone-600" />
@@ -91,6 +101,8 @@
       bind:this={optionsButton}
       class="group/options options-button rounded-r-lg py-1 pr-2 text-stone-500 opacity-0 outline-none duration-150 group-hover/item:opacity-100"
       class:opacity-100={showOptions}
+      class:touch:hidden={!isActive}
+      class:touch:opacity-100={isActive}
       onclick={(e) => {
         e.stopPropagation()
         showOptions = !showOptions
