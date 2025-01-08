@@ -61,8 +61,9 @@
 </script>
 
 <aside
-  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 shadow-lg duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
+  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
   class:left-0={showOnMobile}
+  class:shadow-lg={showOnMobile}
 >
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
