@@ -144,14 +144,16 @@
       use:onClickOutside={{ callback: () => (actionButtonExpanded = false) }}
     >
       <div
-        class="flex items-center opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
-        class:opacity-100={editing}
-        class:touch:opacity-100={actionButtonExpanded}
+        class="flex items-center active:text-stone-600 dark:text-stone-400 dark:active:text-stone-300"
       >
         {#if !editing && !confirmingDelete}
           <div
-            class="flex items-center"
-            transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+            class="flex items-center opacity-0 duration-150 group-hover:opacity-100"
+            class:opacity-100={editing}
+            class:touch:opacity-100={actionButtonExpanded}
+            class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
+            class:touch:delay-[100ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 100, easing: expoOut }}
           >
             <IconButton
               Icon={copied ? Check : ContentCopy}
@@ -168,8 +170,12 @@
         {/if}
         {#if editing}
           <div
-            class="flex items-center"
-            transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+            class="flex items-center opacity-0 duration-150 group-hover:opacity-100"
+            class:opacity-100={editing}
+            class:touch:opacity-100={actionButtonExpanded}
+            class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
+            class:touch:delay-[75ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
           >
             <IconButton Icon={Close} text="취소" onclick={cancel} />
             <div class="hidden md:block">
@@ -178,7 +184,14 @@
           </div>
         {/if}
         {#if !confirmingDelete}
-          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <div
+            class="opacity-0 duration-150 group-hover:opacity-100"
+            class:opacity-100={editing}
+            class:touch:opacity-100={actionButtonExpanded}
+            class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
+            class:touch:delay-[50ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 200, easing: expoOut }}
+          >
             <IconButton
               Icon={editing ? Check : Edit}
               text={editing ? '저장' : undefined}
@@ -192,7 +205,14 @@
           </div>
         {/if}
         {#if !editing}
-          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <div
+            class="opacity-0 duration-150 group-hover:opacity-100"
+            class:opacity-100={editing}
+            class:touch:opacity-100={actionButtonExpanded}
+            class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
+            class:touch:delay-[25ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 250, easing: expoOut }}
+          >
             <IconButton
               Icon={Delete}
               text={confirmingDelete ? '삭제' : undefined}
@@ -205,7 +225,12 @@
           </div>
         {/if}
         {#if confirmingDelete}
-          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+          <div
+            class="opacity-0 duration-150 group-hover:opacity-100"
+            class:opacity-100={editing}
+            class:touch:opacity-100={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+          >
             <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
           </div>
         {/if}
