@@ -161,7 +161,9 @@
           transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
         >
           <IconButton Icon={Close} text="취소" onclick={cancel} />
-          <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
+          <div class="hidden md:block">
+            <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
+          </div>
         </div>
       {/if}
       {#if !confirmingDelete}

@@ -35,7 +35,7 @@
 />
 
 <div
-  class="fixed inset-y-0 left-64 right-0 z-10 flex items-center justify-center bg-white dark:bg-stone-950"
+  class="fixed inset-y-0 left-64 right-0 z-10 hidden items-center justify-center bg-white md:flex dark:bg-stone-950"
   transition:fly={{ y: 100, duration: 400, easing: expoOut }}
 >
   <div class="flex max-h-full min-h-[50%] w-1/2 flex-col justify-between p-5">
