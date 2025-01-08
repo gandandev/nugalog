@@ -3,7 +3,7 @@
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
-  import { focusOnElement, useCopyFeedback } from '$lib/utils'
+  import { focusOnElement, onClickOutside, useCopyFeedback } from '$lib/utils'
   import { page } from '$app/stores'
 
   import IconButton from './IconButton.svelte'
@@ -15,6 +15,8 @@
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
   import Expand from '~icons/material-symbols/expand-rounded'
+  import MoreHoriz from '~icons/material-symbols/more-horiz'
+  import ChevronRight from '~icons/material-symbols/chevron-right-rounded'
   import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
   const {
@@ -58,6 +60,7 @@
               save()
               editing = false
               editorExpanded = false
+              actionButtonExpanded = false
             }
           }
         })
@@ -92,6 +95,9 @@
   // 내용 복사
   let copied = $state(false)
   const handleCopy = useCopyFeedback((isCopied) => (copied = isCopied))
+
+  // (터치 기기) 액션 버튼 펼침
+  let actionButtonExpanded = $state(false)
 </script>
 
 <svelte:window onbeforeunload={(e) => editing && e.preventDefault()} />
@@ -134,68 +140,82 @@
 
     <!-- 액션 버튼 -->
     <div
-      class="flex items-center text-stone-500 opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
-      class:opacity-100={editing}
+      class="flex justify-end text-stone-500"
+      use:onClickOutside={{ callback: () => (actionButtonExpanded = false) }}
     >
-      {#if !editing && !confirmingDelete}
-        <div
-          class="flex items-center"
-          transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
-        >
-          <IconButton
-            Icon={copied ? Check : ContentCopy}
-            text={navigator.clipboard ? (copied ? '복사됨' : undefined) : '복사 지원 안 됨'}
-            tooltip="내용 복사"
-            onclick={() => {
-              if (!navigator.clipboard) return
-              navigator.clipboard.writeText(log.content)
-              handleCopy()
-            }}
-            disabled={!navigator.clipboard}
-          />
-        </div>
-      {/if}
-      {#if editing}
-        <div
-          class="flex items-center"
-          transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
-        >
-          <IconButton Icon={Close} text="취소" onclick={cancel} />
-          <div class="hidden md:block">
-            <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
+      <div
+        class="flex items-center opacity-0 duration-150 active:text-stone-600 group-hover:opacity-100 dark:text-stone-400 dark:active:text-stone-300"
+        class:opacity-100={editing}
+        class:touch:opacity-100={actionButtonExpanded}
+      >
+        {#if !editing && !confirmingDelete}
+          <div
+            class="flex items-center"
+            transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+          >
+            <IconButton
+              Icon={copied ? Check : ContentCopy}
+              text={navigator.clipboard ? (copied ? '복사됨' : undefined) : '복사 지원 안 됨'}
+              tooltip="내용 복사"
+              onclick={() => {
+                if (!navigator.clipboard) return
+                navigator.clipboard.writeText(log.content)
+                handleCopy()
+              }}
+              disabled={!navigator.clipboard}
+            />
           </div>
-        </div>
-      {/if}
-      {#if !confirmingDelete}
-        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+        {/if}
+        {#if editing}
+          <div
+            class="flex items-center"
+            transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}
+          >
+            <IconButton Icon={Close} text="취소" onclick={cancel} />
+            <div class="hidden md:block">
+              <IconButton Icon={Expand} text="크게 보기" onclick={() => (editorExpanded = true)} />
+            </div>
+          </div>
+        {/if}
+        {#if !confirmingDelete}
+          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+            <IconButton
+              Icon={editing ? Check : Edit}
+              text={editing ? '저장' : undefined}
+              tooltip={!editing ? '편집' : undefined}
+              onclick={() => {
+                if (editing) save()
+                else editing = true
+              }}
+              disabled={editing && (!content.trim() || !date)}
+            />
+          </div>
+        {/if}
+        {#if !editing}
+          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+            <IconButton
+              Icon={Delete}
+              text={confirmingDelete ? '삭제' : undefined}
+              tooltip="삭제"
+              onclick={() => {
+                if (confirmingDelete) deleteLog!()
+                else confirmingDelete = true
+              }}
+            />
+          </div>
+        {/if}
+        {#if confirmingDelete}
+          <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
+            <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
+          </div>
+        {/if}
+      </div>
+      {#if !editing && !confirmingDelete}
+        <div class="flex items-center gap-2">
           <IconButton
-            Icon={editing ? Check : Edit}
-            text={editing ? '저장' : undefined}
-            tooltip={!editing ? '편집' : undefined}
-            onclick={() => {
-              if (editing) save()
-              else editing = true
-            }}
-            disabled={editing && (!content.trim() || !date)}
+            Icon={actionButtonExpanded ? ChevronRight : MoreHoriz}
+            onclick={() => (actionButtonExpanded = !actionButtonExpanded)}
           />
-        </div>
-      {/if}
-      {#if !editing}
-        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
-          <IconButton
-            Icon={Delete}
-            text={confirmingDelete ? '삭제' : undefined}
-            tooltip="삭제"
-            onclick={() => {
-              if (confirmingDelete) deleteLog!()
-              else confirmingDelete = true
-            }}
-          />
-        </div>
-      {/if}
-      {#if confirmingDelete}
-        <div transition:slide={{ axis: 'x', duration: 300, easing: expoOut }}>
-          <IconButton Icon={Close} text="취소" onclick={() => (confirmingDelete = false)} />
         </div>
       {/if}
     </div>
