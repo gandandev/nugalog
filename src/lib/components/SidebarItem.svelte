@@ -146,7 +146,7 @@
           고정 해제
         {:else}
           <Keep class="h-5 w-5" />
-          고정하기
+          상단 고정
         {/if}
       </button>
       <button
