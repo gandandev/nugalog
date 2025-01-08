@@ -535,7 +535,12 @@
     <div class="flex max-h-full w-full flex-col justify-between p-5 md:w-1/2">
       <div class="mb-3 flex flex-col space-y-2">
         <div class="mb-2 flex items-center justify-between">
-          <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
+          <div class="flex flex-col gap-0.5">
+            <h2 class="text-2xl font-semibold">행발 초안 작성</h2>
+            <p class="text-sm text-stone-500">
+              AI 서비스에 붙여넣어 사용할 수 있는 프롬프트를 생성합니다.
+            </p>
+          </div>
           <button
             class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
             onclick={() => (showHangbalPanel = false)}
@@ -561,12 +566,11 @@
           use:autosize
         />
 
-        <p class="py-2 text-sm text-stone-500 dark:text-stone-400">
-          행발 예시 및 학생 기록이 프롬프트에 포함됩니다.<br />
-          각 서비스 로그인 시 더욱 나은 결과를 얻을 수 있습니다.
+        <p class="text-sm text-stone-500">
+          서비스 로그인 후 사용 시 더욱 나은 결과를 얻을 수 있습니다.
         </p>
 
-        <div class="mt-4 flex flex-wrap justify-end gap-2">
+        <div class="flex flex-wrap justify-end gap-2 pt-2">
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
             onclick={() => {
