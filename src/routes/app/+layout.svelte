@@ -295,6 +295,7 @@
     >
       <button
         class="flex h-8 items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        class:pr-0.5={student}
         onclick={() => (showSidebar = !showSidebar)}
       >
         {student?.name}
