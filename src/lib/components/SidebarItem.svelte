@@ -99,8 +99,10 @@
   {#if newName === null}
     <button
       bind:this={optionsButton}
-      class="group/options options-button rounded-r-lg py-1 pr-2 text-stone-500 opacity-0 outline-none duration-150 group-hover/item:opacity-100"
+      class="group/options options-button hidden rounded-r-lg py-1 pr-2 text-stone-500 opacity-0 outline-none duration-150 group-hover/options:block group-hover/item:opacity-100"
       class:opacity-100={showOptions}
+      class:touch:block={isActive}
+      class:touch:opacity-100={isActive}
       onclick={(e) => {
         e.stopPropagation()
         showOptions = !showOptions

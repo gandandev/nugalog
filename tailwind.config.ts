@@ -22,5 +22,10 @@ export default {
     hoverOnlyWhenSupported: true
   },
 
-  plugins: []
+  plugins: [
+    function ({ addVariant }) {
+      addVariant('touch', '@media (hover: none) and (pointer: coarse)')
+      addVariant('pointer', '@media (hover: hover) and (pointer: fine)')
+    }
+  ]
 } satisfies Config
