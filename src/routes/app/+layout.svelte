@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { type User } from '@supabase/supabase-js'
-  import { scale, fly, slide } from 'svelte/transition'
+  import { scale, fly, slide, blur } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
   import {
@@ -50,6 +50,7 @@
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
   import ChevronRight from '~icons/material-symbols/chevron-right-rounded'
+  import ThumbnailBar from '~icons/material-symbols/thumbnail-bar-outline'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -293,11 +294,15 @@
       class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
     >
       <button
-        class="flex items-center gap-1 rounded-lg px-2 py-1 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+        class="flex h-8 items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
         onclick={() => (showSidebar = !showSidebar)}
       >
-        {student?.name || '사이드바'}
-        <ChevronRight class="h-5 w-5" />
+        {student?.name}
+        {#if student}
+          <ChevronRight class="h-5 w-5" />
+        {:else}
+          <ThumbnailBar class="h-5 w-5" />
+        {/if}
       </button>
       <div class="flex items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
