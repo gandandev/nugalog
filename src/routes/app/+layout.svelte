@@ -49,7 +49,7 @@
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
-  import KeyboardArrowDown from '~icons/material-symbols/keyboard-arrow-down-rounded'
+  import ChevronRight from '~icons/material-symbols/chevron-right-rounded'
 
   let { data, children }: { data: PageData; children: any } = $props()
 
@@ -297,7 +297,7 @@
         onclick={() => (showSidebar = !showSidebar)}
       >
         {student?.name || '사이드바'}
-        <KeyboardArrowDown class="h-5 w-5" />
+        <ChevronRight class="h-5 w-5" />
       </button>
       <div class="flex items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
