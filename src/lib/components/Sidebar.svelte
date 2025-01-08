@@ -24,15 +24,9 @@
   import DragPreviewLine from './DragPreviewLine.svelte'
 
   import PersonAdd from '~icons/material-symbols/person-add-rounded'
-  import Edit from '~icons/material-symbols/edit-rounded'
-  import Keep from '~icons/material-symbols/keep-rounded'
-  import KeepOff from '~icons/material-symbols/keep-off-rounded'
-  import Delete from '~icons/material-symbols/delete-rounded'
 
   const { showOnMobile, closeSidebar }: { showOnMobile: boolean; closeSidebar: () => void } =
     $props()
-
-  const student = $derived($data.find((s) => s.name === decodeURIComponent($page.params.name)))
 
   // 학생 추가
   let newStudentName: string | null = $state(null)
@@ -67,11 +61,11 @@
 </script>
 
 <aside
-  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-1 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 dark:border-stone-800 dark:bg-stone-900"
+  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 dark:border-stone-800 dark:bg-stone-900"
   class:left-0={showOnMobile}
 >
   <!-- 헤더 -->
-  <div class="flex items-center justify-between pb-1 pl-5 pr-3 pt-3">
+  <div class="flex items-center justify-between pl-5 pr-3 pt-3">
     <Logo />
     <IconButton
       Icon={PersonAdd}
@@ -81,50 +75,6 @@
       emphasized={!$data.length}
     />
   </div>
-
-  <!-- 작은 화면에서 학생 옵션 메뉴 -->
-  {#if $data.length}
-    <div class="grid w-full grid-cols-[1fr_1fr_1fr] gap-1 px-2 md:hidden">
-      <button
-        class="flex grow flex-col items-center gap-1 rounded-lg bg-stone-200 pb-2 pt-3 duration-150 enabled:hover:bg-stone-300 enabled:active:scale-95 enabled:active:bg-stone-400 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
-        disabled={!student}
-      >
-        <Edit class="h-5 w-5" />
-        이름 변경
-      </button>
-      <button
-        class="flex grow flex-col items-center gap-1 rounded-lg bg-stone-200 pb-2 pt-3 duration-150 enabled:hover:bg-stone-300 enabled:active:scale-95 enabled:active:bg-stone-400 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
-        onclick={() => {
-          const index = $data.findIndex((s) => s === student)
-          if (index !== -1) {
-            $data = $data.map((s) => (s === student ? { ...s, pinned: !s.pinned } : s))
-          }
-        }}
-        disabled={!student}
-      >
-        {#if student?.pinned}
-          <KeepOff class="h-5 w-5" />
-          해제
-        {:else}
-          <Keep class="h-5 w-5" />
-          고정
-        {/if}
-      </button>
-      <button
-        class="flex grow flex-col items-center gap-1 rounded-lg bg-stone-200 pb-2 pt-3 duration-150 enabled:hover:bg-stone-300 enabled:active:scale-95 enabled:active:bg-stone-400 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
-        onclick={() => {
-          const index = $data.findIndex((s) => s === student)
-          if (index !== -1) {
-            studentToDeleteIndex = index
-          }
-        }}
-        disabled={!student}
-      >
-        <Delete class="h-5 w-5" />
-        삭제
-      </button>
-    </div>
-  {/if}
 
   <!-- 이름 목록 -->
   <ul
