@@ -504,7 +504,7 @@
             </div>
             <button
               bind:this={logoutButton}
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
               onclick={signOut}
               onkeydown={(e) => {
                 if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
