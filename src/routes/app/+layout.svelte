@@ -293,19 +293,23 @@
     <div
       class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
     >
-      <button
-        class="flex h-8 items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
-        class:pr-0.5={student}
-        onclick={() => (showSidebar = !showSidebar)}
-      >
-        {student?.name}
-        {#if student}
-          <ChevronRight class="h-5 w-5" />
-        {:else}
-          <ThumbnailBar class="h-5 w-5" />
-        {/if}
-      </button>
-      <div class="flex items-center justify-end gap-1">
+      <div class="min-w-0">
+        <button
+          class="flex h-8 w-full items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+          class:pr-0.5={student}
+          onclick={() => (showSidebar = !showSidebar)}
+        >
+          <div class="min-w-0 flex-1 truncate">
+            {student?.name}
+          </div>
+          {#if student}
+            <ChevronRight class="h-5 w-5 flex-shrink-0" />
+          {:else}
+            <ThumbnailBar class="h-5 w-5 flex-shrink-0" />
+          {/if}
+        </button>
+      </div>
+      <div class="flex shrink-0 items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
           <button
             class="hidden origin-right text-stone-500 hover:text-stone-600 sm:block dark:hover:text-stone-400"
@@ -722,7 +726,7 @@
     />
   {:else}
     <Dialog
-      title="계속하시겠습니까?"
+      title="계속하시겠습니니까?"
       description={selectedInitialOption === 'useLocal'
         ? '서버에 저장된 데이터가 로그인 전 작성한 데이터로 대체됩니다.'
         : '로그인 전 작성한 데이터가 삭제되고 서버에 저장된 데이터를 사용합니다.'}
