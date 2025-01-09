@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { focusOnElement, onClickOutside } from '$lib/utils'
+  import { focusOnElement } from '$lib/utils/focus'
+  import { onClickOutside } from '$lib/utils/clickOutside'
   import { scale } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { data, type Student } from '$lib/stores'

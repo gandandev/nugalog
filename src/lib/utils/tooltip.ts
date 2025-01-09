@@ -1,48 +1,3 @@
-import dedent from 'dedent'
-
-export function focusOnElement(node: HTMLElement) {
-  node.focus()
-}
-
-type OnClickOutsideOptions = {
-  callback: () => void
-  exclude?: (HTMLElement | null)[]
-}
-
-export function onClickOutside(node: HTMLElement, options: OnClickOutsideOptions) {
-  const { callback, exclude = [] } = options
-  let isClickInside = false
-
-  const onmousedown = (e: MouseEvent) => {
-    const target = e.target
-    if (!target || !(target instanceof Node)) return
-
-    isClickInside = node.contains(target) || exclude.some((el) => el && el.contains(target))
-  }
-
-  const onclick = (e: MouseEvent) => {
-    const target = e.target
-    if (!target || !(target instanceof Node)) return
-
-    const isClickOutside =
-      !node.contains(target) && !exclude.some((el) => el && el.contains(target))
-    if (isClickOutside && !isClickInside) {
-      callback()
-    }
-    isClickInside = false
-  }
-
-  document.addEventListener('mousedown', onmousedown, true)
-  document.addEventListener('click', onclick, true)
-
-  return {
-    destroy() {
-      document.removeEventListener('mousedown', onmousedown, true)
-      document.removeEventListener('click', onclick, true)
-    }
-  }
-}
-
 type TooltipOptions = {
   text: string
   position?: 'top' | 'bottom' | 'left' | 'right'
@@ -51,9 +6,9 @@ type TooltipOptions = {
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
   // 터치 기기에서 툴팁 비활성화
-  if ('ontouchstart' in window) return { destroy() { } }
+  if ('ontouchstart' in window) return { destroy() {} }
 
-  if (!options) return { destroy() { } }
+  if (!options) return { destroy() {} }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
@@ -161,52 +116,5 @@ export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
       node.removeEventListener('mouseenter', onMouseEnter)
       node.removeEventListener('mouseleave', removeTooltip)
     }
-  }
-}
-
-export const formatStudentLogs = (
-  name: string,
-  logs: { date: Date; content: string }[],
-  options: {
-    markdown?: boolean
-    includeName?: boolean
-  } = {
-      markdown: false,
-      includeName: true
-    }
-) => dedent`
-    ${options.includeName ? `${name} 학생` : ''}
-
-    ${logs
-    .map((log) => {
-      const date = log.date
-      return dedent`
-          ${options.markdown ? '**' : ''}${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][date.getDay()]})${options.markdown ? '**' : ''}
-          ${log.content}
-        `
-    })
-    .join('\n\n')}
-  `
-
-export const formatAllStudentLogs = (
-  students: { name: string; logs: { date: Date; content: string }[] }[]
-) => students
-  .filter((student) => student.logs.length > 0)
-  .map((student) => formatStudentLogs(student.name, student.logs))
-  .join('\n\n---\n\n')
-
-export function useCopyFeedback(callback: (copied: boolean) => void) {
-  let lastCopied = 0
-
-  return () => {
-    const now = new Date().getTime()
-    lastCopied = now
-    callback(true)
-    setTimeout(() => {
-      // lastCopied가 바뀌지 않았다면 그 사이 복사된 것이 아니므로 초기화
-      if (lastCopied === now) {
-        callback(false)
-      }
-    }, 1000)
   }
 }

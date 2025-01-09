@@ -1,4 +1,4 @@
-import { formatStudentLogs } from './utils'
+import { formatStudentLogs } from './utils/formatLogs'
 import dedent from 'dedent'
 import type { Student } from './stores'
 
@@ -36,9 +36,9 @@ export const getHangbalPrompt = (
   # 기록
 
   ${formatStudentLogs(student.name, student.logs, {
-  markdown: true,
-  includeName: false
-})}
+    markdown: true,
+    includeName: false
+  })}
   ${extraInfo ? `\n**추가 정보**: ${extraInfo}\n` : ''}
   # 행발 예시
 

@@ -14,13 +14,10 @@
     showTooltip,
     hangbalOutputExample as hangbalStore
   } from '$lib/stores'
-  import {
-    onClickOutside,
-    tooltip,
-    formatStudentLogs,
-    formatAllStudentLogs,
-    useCopyFeedback
-  } from '$lib/utils'
+  import { onClickOutside } from '$lib/utils/clickOutside'
+  import { tooltip } from '$lib/utils/tooltip'
+  import { formatStudentLogs, formatAllStudentLogs } from '$lib/utils/formatLogs'
+  import { useCopyFeedback } from '$lib/utils/copyFeedback'
   import {
     loadDataFromDb,
     saveDataToDb,
