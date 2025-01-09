@@ -451,7 +451,10 @@
           {#if currentUser}
             <button
               bind:this={accountButton}
-              class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
+              class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 active:scale-95 dark:hover:ring-stone-800"
+              class:ring-4={showAccountOptions}
+              class:ring-stone-100={showAccountOptions}
+              class:dark:ring-stone-800={showAccountOptions}
               onclick={() => (showAccountOptions = !showAccountOptions)}
               onkeydown={(e) => {
                 if (e.key === 'ArrowDown' && !showAccountOptions) {
