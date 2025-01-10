@@ -75,10 +75,9 @@
 
   // 행발 작성 패널
   let showHangbalPanel = $state(false)
-  let hangbalOutputExample = $state('')
   let hangbalExtraInfo = $state('')
   const hangbalPrompt = $derived(
-    student ? getHangbalPrompt(student, hangbalOutputExample, hangbalExtraInfo) : ''
+    student ? getHangbalPrompt(student, $hangbalStore, hangbalExtraInfo) : ''
   )
 
   let saveDebounceTimer: ReturnType<typeof setTimeout> | null = $state(null)
