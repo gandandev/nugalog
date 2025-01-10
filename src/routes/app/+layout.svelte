@@ -576,13 +576,16 @@
 
         <div class="flex flex-wrap justify-end gap-2 pt-2">
           <button
-            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               handleHangbalPromptCopy()
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '다른 AI 서비스에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '다른 AI 서비스에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
@@ -601,13 +604,16 @@
             복사
           </button>
           <button
-            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               window.open('https://claude.ai', '_blank')
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '입력 창에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '입력 창에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
@@ -624,13 +630,16 @@
             복사 후 Claude로 계속
           </button>
           <button
-            class="flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 hover:bg-stone-800 active:scale-95 active:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
+            class="enabled:active:(scale-95 bg-stone-900) flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 enabled:hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               window.open('https://chatgpt.com', '_blank')
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '입력 창에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '입력 창에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
