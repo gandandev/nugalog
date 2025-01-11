@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
+
   const { class: className = '' }: { class?: string } = $props()
 </script>
 
