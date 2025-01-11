@@ -6,6 +6,7 @@
 
   import PillButton from './PillButton.svelte'
   import Panel from './Panel.svelte'
+  import DatePicker from './DatePicker.svelte'
 
   import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
@@ -29,6 +30,8 @@
 
   let editedContent = $state(content)
   let editedDate = $state(date)
+  let datePickerOpen = $state(false)
+  let datePickerButton: HTMLElement | null = $state(null)
 </script>
 
 <svelte:window
@@ -43,18 +46,35 @@
       <h2 class="flex items-center text-2xl font-semibold">{title}</h2>
       <div class="flex items-center justify-between">
         <div class="relative">
-          <input
-            type="date"
-            class="w-fit rounded-xl bg-stone-100 px-3 py-2 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
-            class:ring-2={!date}
-            class:ring-red-500={!date}
-            value={editedDate?.toISOString().slice(0, 10)}
-            oninput={(e) =>
-              (editedDate = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+          <button
+            bind:this={datePickerButton}
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800"
+            class:ring-2={!editedDate}
+            class:ring-red-500={!editedDate}
+            onclick={() => (datePickerOpen = !datePickerOpen)}
+          >
+            <CalendarToday class="h-5 w-5" />
+            <span>
+              {editedDate
+                ? editedDate.toLocaleString('ko-KR', {
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short'
+                  })
+                : '날짜 선택'}
+            </span>
+          </button>
+          <DatePicker
+            show={datePickerOpen}
+            date={editedDate}
+            button={datePickerButton}
+            closeMenu={() => (datePickerOpen = false)}
+            onSelect={(newDate) => {
+              editedDate = newDate
+              datePickerOpen = false
+            }}
+            class="mt-1"
           />
-          {#if navigator.userAgent.includes('Chrome')}
-            <CalendarToday class="absolute right-3 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
-          {/if}
         </div>
         <div class="flex justify-end gap-2">
           <PillButton text="취소" onclick={close} variant="secondary" />

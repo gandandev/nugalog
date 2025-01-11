@@ -7,9 +7,11 @@
   import { onClickOutside } from '$lib/utils/clickOutside'
   import { useCopyFeedback } from '$lib/utils/copyFeedback'
   import { page } from '$app/stores'
+  import { data, type Student } from '$lib/stores'
 
   import IconButton from './IconButton.svelte'
   import EditorPanel from './EditorPanel.svelte'
+  import DatePicker from './DatePicker.svelte'
 
   import ContentCopy from '~icons/material-symbols/content-copy-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
@@ -50,6 +52,8 @@
   let content = $state(log.content)
 
   let editorExpanded = $state(false)
+  let datePickerOpen = $state(false)
+  let datePickerButton: HTMLElement | null = $state(null)
 
   beforeNavigate((navigation) => {
     if (editing && !navigation.willUnload && navigation.to?.url.pathname !== $page.url.pathname) {
@@ -75,8 +79,15 @@
     if (isNew) {
       saveNewLog!({ date, content })
     } else {
-      log.date = date
-      log.content = content
+      $data = $data.map((s: Student) => {
+        if (s.name === decodeURIComponent($page.params.name)) {
+          return {
+            ...s,
+            logs: s.logs.map((l) => (l === log ? { date: date!, content } : l))
+          }
+        }
+        return s
+      })
       editing = false
       editorExpanded = false
     }
@@ -119,17 +130,31 @@
     <div class="flex items-center gap-2">
       {#if editing}
         <div class="relative">
-          <input
-            type="date"
-            value={date?.toISOString().slice(0, 10)}
-            class="rounded-lg bg-stone-100 px-2 py-1 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:opacity-0"
+          <button
+            bind:this={datePickerButton}
+            class="flex items-center gap-2 rounded-lg bg-stone-100 px-2 py-1 outline-none duration-150 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-800"
             class:ring-2={!date}
             class:ring-red-500={!date}
-            oninput={(e) => (date = e.currentTarget.value ? new Date(e.currentTarget.value) : null)}
+            onclick={() => (datePickerOpen = !datePickerOpen)}
+          >
+            <CalendarToday class="h-5 w-5" />
+            <span>
+              {date
+                ? date.toLocaleString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })
+                : '날짜 선택'}
+            </span>
+          </button>
+          <DatePicker
+            show={datePickerOpen}
+            {date}
+            button={datePickerButton}
+            closeMenu={() => (datePickerOpen = false)}
+            onSelect={(newDate) => {
+              date = newDate
+              datePickerOpen = false
+            }}
+            class="mt-1"
           />
-          {#if navigator.userAgent.includes('Chrome')}
-            <CalendarToday class="absolute right-2 top-1/2 z-0 h-5 w-5 -translate-y-1/2" />
-          {/if}
         </div>
       {:else}
         <span class="text-stone-500">
