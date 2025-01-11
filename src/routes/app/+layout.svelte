@@ -420,8 +420,9 @@
               </button>
 
               <button
-                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
+                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
                 onclick={saveDataToFile}
+                disabled={$dataStore.length === 0}
               >
                 <Download class="h-5 w-5" />
                 데이터 다운로드
