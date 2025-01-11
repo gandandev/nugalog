@@ -9,7 +9,6 @@
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
-  import IconButton from '$lib/components/IconButton.svelte'
   import DragPreviewLine from '$lib/components/DragPreviewLine.svelte'
 
   import Add from '~icons/material-symbols/add-rounded'
@@ -21,7 +20,6 @@
     createDragState,
     handleDragStart,
     handleDragEnd,
-    handleDrag,
     handleDragOver,
     handleDragLeave,
     handleDrop

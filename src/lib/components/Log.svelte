@@ -24,9 +24,9 @@
   const {
     log,
     isNew = false,
+    deleteLog,
     saveNewLog,
     cancelNewLog,
-    deleteLog,
     dragged = false,
     ondragstart,
     ondragend

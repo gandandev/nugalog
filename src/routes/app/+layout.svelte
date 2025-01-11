@@ -3,7 +3,7 @@
   import { page } from '$app/stores'
   import type { PageData } from './$types'
   import { type User } from '@supabase/supabase-js'
-  import { scale, fly, slide, blur } from 'svelte/transition'
+  import { scale, fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
   import {
