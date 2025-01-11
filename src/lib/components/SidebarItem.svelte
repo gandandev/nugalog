@@ -136,7 +136,13 @@
         onclick: togglePin,
         closeMenuOnClick: true
       },
-      { Icon: Delete, label: '학생 삭제', onclick: confirmdelete, closeMenuOnClick: true }
+      {
+        Icon: Delete,
+        label: '학생 삭제',
+        danger: true,
+        onclick: confirmdelete,
+        closeMenuOnClick: true
+      }
     ]}
     button={optionsButton}
     closeMenu={() => (showOptions = false)}
