@@ -6,8 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Pretendard Variable', 'sans-serif'],
-        monasans: ['Mona-Sans', 'sans-serif']
+        sans: ['Pretendard Variable', 'sans-serif']
       },
       width: {
         screen: '100dvw'
