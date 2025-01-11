@@ -10,6 +10,7 @@
   import Delete from '~icons/material-symbols/delete-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
   import Keep from '~icons/material-symbols/keep-rounded'
+  import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
   const {
     student,
@@ -129,7 +130,12 @@
         onclick: () => (newName = student.name),
         closeMenuOnClick: true
       },
-      { Icon: Keep, label: '상단 고정', onclick: togglePin, closeMenuOnClick: true },
+      {
+        Icon: student.pinned ? KeepOff : Keep,
+        label: student.pinned ? '고정 해제' : '상단 고정',
+        onclick: togglePin,
+        closeMenuOnClick: true
+      },
       { Icon: Delete, label: '학생 삭제', onclick: confirmdelete, closeMenuOnClick: true }
     ]}
     button={optionsButton}
