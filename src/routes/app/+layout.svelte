@@ -36,6 +36,7 @@
 
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
+  import OptionMenu from '$lib/components/OptionMenu.svelte'
 
   import Assignment from '~icons/material-symbols/assignment-rounded'
   import ContentCopy from '~icons/material-symbols/content-copy-rounded'
@@ -373,80 +374,50 @@
             <Settings class="h-5 w-5" />
           </button>
           {#if showSettings}
-            <div
-              class="absolute -right-2 top-11 z-50 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
-              transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-              use:onClickOutside={{
-                callback: () => (showSettings = false),
-                exclude: settingsButton ? [settingsButton] : []
-              }}
-            >
-              <button
-                class="flex h-8 items-center gap-2 rounded-md px-3 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
-                onclick={() => {
-                  if (!navigator.clipboard) return
-                  const text = formatAllStudentLogs($dataStore)
-                  navigator.clipboard.writeText(text)
-                  handleAllCopy()
-                }}
-                disabled={!$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard}
-              >
-                <div class="relative h-5 w-5">
-                  {#if allCopied}
-                    <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-                      <Check class="h-5 w-5" />
-                    </div>
-                  {:else}
-                    <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
-                      <ContentCopy class="h-5 w-5" />
-                    </div>
-                  {/if}
-                </div>
-                {#key allCopied}
-                  <span
-                    class="absolute left-11"
-                    in:fly={{ duration: 150, x: -10 }}
-                    out:fly={{ duration: 150, x: 10 }}
-                  >
-                    {navigator.clipboard
-                      ? $dataStore.some((s) => s.logs.length > 0)
-                        ? allCopied
-                          ? '복사됨'
-                          : '모든 기록 복사'
-                        : '복사할 기록 없음'
-                      : '복사 지원 안 됨'}
-                  </span>
-                {/key}
-              </button>
-
-              <button
-                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
-                onclick={saveDataToFile}
-                disabled={$dataStore.length === 0}
-              >
-                <Download class="h-5 w-5" />
-                데이터 다운로드
-              </button>
-
-              <button
-                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
-                onclick={loadDataFromFile}
-              >
-                <FileOpen class="h-5 w-5" />
-                데이터 불러오기
-              </button>
-
-              <button
-                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 active:bg-stone-200 dark:hover:bg-stone-700 dark:hover:text-red-500 dark:active:bg-stone-600"
-                onclick={() => {
-                  eraseDataConfirmationInput = ''
-                  showEraseDataDialogState = 'confirm'
-                }}
-              >
-                <DeleteForever class="h-5 w-5" />
-                데이터 삭제
-              </button>
-            </div>
+            <OptionMenu
+              class="-right-2 top-10 origin-top-right"
+              options={[
+                {
+                  Icon: allCopied ? Check : ContentCopy,
+                  label: navigator.clipboard
+                    ? $dataStore.some((s) => s.logs.length > 0)
+                      ? allCopied
+                        ? '복사됨'
+                        : '모든 기록 복사'
+                      : '복사할 기록 없음'
+                    : '복사 지원 안 됨',
+                  onclick: () => {
+                    if (!navigator.clipboard) return
+                    const text = formatAllStudentLogs($dataStore)
+                    navigator.clipboard.writeText(text)
+                    handleAllCopy()
+                  },
+                  disabled: !$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard
+                },
+                {
+                  Icon: Download,
+                  label: '데이터 다운로드',
+                  onclick: saveDataToFile,
+                  disabled: $dataStore.length === 0
+                },
+                {
+                  Icon: FileOpen,
+                  label: '데이터 불러오기',
+                  onclick: loadDataFromFile
+                },
+                {
+                  Icon: DeleteForever,
+                  label: '데이터 삭제',
+                  danger: true,
+                  onclick: () => {
+                    eraseDataConfirmationInput = ''
+                    showEraseDataDialogState = 'confirm'
+                  }
+                }
+              ]}
+              button={settingsButton}
+              closeMenu={() => (showSettings = false)}
+            />
           {/if}
         </div>
 
@@ -459,13 +430,6 @@
               class:ring-stone-100={showAccountOptions}
               class:dark:ring-stone-800={showAccountOptions}
               onclick={() => (showAccountOptions = !showAccountOptions)}
-              onkeydown={(e) => {
-                if (e.key === 'ArrowDown' && !showAccountOptions) {
-                  e.preventDefault()
-                  showAccountOptions = true
-                  logoutButton?.focus()
-                }
-              }}
               aria-expanded={showAccountOptions}
               aria-haspopup="true"
             >
@@ -493,16 +457,17 @@
         </div>
 
         {#if showAccountOptions && currentUser}
-          <div
-            class="absolute top-14 z-50 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
-            transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-            use:onClickOutside={{
-              callback: closeAccountOptions,
-              exclude: accountButton ? [accountButton] : []
-            }}
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="account-menu-button"
+          <OptionMenu
+            class="top-14 origin-top-right"
+            options={[
+              {
+                Icon: Logout,
+                label: '로그아웃',
+                onclick: signOut
+              }
+            ]}
+            button={accountButton}
+            closeMenu={() => (showAccountOptions = false)}
           >
             <div class="h-14 px-3 pt-2 leading-tight">
               <span class="font-medium">
@@ -512,23 +477,7 @@
                 {currentUser.email}
               </span>
             </div>
-            <button
-              bind:this={logoutButton}
-              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
-              onclick={signOut}
-              onkeydown={(e) => {
-                if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
-                  e.preventDefault()
-                  closeAccountOptions()
-                  accountButton?.focus()
-                }
-              }}
-              role="menuitem"
-            >
-              <Logout class="h-5 w-5" />
-              로그아웃
-            </button>
-          </div>
+          </OptionMenu>
         {/if}
       </div>
     </div>
