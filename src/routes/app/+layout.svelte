@@ -414,7 +414,8 @@
                 onclick: () => {
                   eraseDataConfirmationInput = ''
                   showEraseDataDialogState = 'confirm'
-                }
+                },
+                closeMenuOnClick: true
               }
             ]}
             button={settingsButton}
