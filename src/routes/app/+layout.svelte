@@ -794,7 +794,7 @@
   />
 {:else if loadDataResultDialogState === 'success'}
   <Dialog
-    title="완료"
+    title="완료되었습니다."
     description="데이터를 성공적으로 불러왔습니다."
     actions={[
       {
@@ -807,7 +807,7 @@
   />
 {:else if loadDataResultDialogState === 'error'}
   <Dialog
-    title="불러오기 실패"
+    title="실패했습니다."
     description="데이터를 불러오는 데 실패했습니다. 데이터가 올바른 형식인지 확인해주세요."
     actions={[
       {
@@ -924,7 +924,7 @@
   />
 {:else if showEraseDataDialogState === 'complete'}
   <Dialog
-    title="완료"
+    title="완료되었습니다."
     description="모든 데이터가 삭제되었습니다."
     actions={[
       {
@@ -937,7 +937,7 @@
   />
 {:else if showEraseDataDialogState === 'error'}
   <Dialog
-    title="삭제 실패"
+    title="실패했습니다."
     description="데이터 삭제에 실패했습니다."
     actions={[
       {
