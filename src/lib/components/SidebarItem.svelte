@@ -117,18 +117,17 @@
     </button>
   {/if}
 
-  {#if showOptions}
-    <OptionMenu
-      class="right-0 top-full mt-1 origin-top-right"
-      options={[
-        { Icon: Edit, label: '이름 변경', onclick: () => (newName = student.name) },
-        { Icon: Keep, label: '상단 고정', onclick: togglePin },
-        { Icon: Delete, label: '학생 삭제', onclick: confirmdelete }
-      ]}
-      button={optionsButton}
-      closeMenu={() => (showOptions = false)}
-    />
-  {/if}
+  <OptionMenu
+    show={showOptions}
+    class="right-0 top-full mt-1 origin-top-right"
+    options={[
+      { Icon: Edit, label: '이름 변경', onclick: () => (newName = student.name) },
+      { Icon: Keep, label: '상단 고정', onclick: togglePin },
+      { Icon: Delete, label: '학생 삭제', onclick: confirmdelete }
+    ]}
+    button={optionsButton}
+    closeMenu={() => (showOptions = false)}
+  />
 </li>
 
 {#if duplicateStudentName}

@@ -375,52 +375,51 @@
           >
             <Settings class="h-5 w-5" />
           </button>
-          {#if showSettings}
-            <OptionMenu
-              class="-right-2 top-10 origin-top-right"
-              options={[
-                {
-                  Icon: allCopied ? Check : ContentCopy,
-                  label: navigator.clipboard
-                    ? $dataStore.some((s) => s.logs.length > 0)
-                      ? allCopied
-                        ? '복사됨'
-                        : '모든 기록 복사'
-                      : '복사할 기록 없음'
-                    : '복사 지원 안 됨',
-                  onclick: () => {
-                    if (!navigator.clipboard) return
-                    const text = formatAllStudentLogs($dataStore)
-                    navigator.clipboard.writeText(text)
-                    handleAllCopy()
-                  },
-                  disabled: !$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard
+          <OptionMenu
+            show={showSettings}
+            class="-right-2 top-10 origin-top-right"
+            options={[
+              {
+                Icon: allCopied ? Check : ContentCopy,
+                label: navigator.clipboard
+                  ? $dataStore.some((s) => s.logs.length > 0)
+                    ? allCopied
+                      ? '복사됨'
+                      : '모든 기록 복사'
+                    : '복사할 기록 없음'
+                  : '복사 지원 안 됨',
+                onclick: () => {
+                  if (!navigator.clipboard) return
+                  const text = formatAllStudentLogs($dataStore)
+                  navigator.clipboard.writeText(text)
+                  handleAllCopy()
                 },
-                {
-                  Icon: Download,
-                  label: '데이터 다운로드',
-                  onclick: saveDataToFile,
-                  disabled: $dataStore.length === 0
-                },
-                {
-                  Icon: FileOpen,
-                  label: '데이터 불러오기',
-                  onclick: loadDataFromFile
-                },
-                {
-                  Icon: DeleteForever,
-                  label: '데이터 삭제',
-                  danger: true,
-                  onclick: () => {
-                    eraseDataConfirmationInput = ''
-                    showEraseDataDialogState = 'confirm'
-                  }
+                disabled: !$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard
+              },
+              {
+                Icon: Download,
+                label: '데이터 다운로드',
+                onclick: saveDataToFile,
+                disabled: $dataStore.length === 0
+              },
+              {
+                Icon: FileOpen,
+                label: '데이터 불러오기',
+                onclick: loadDataFromFile
+              },
+              {
+                Icon: DeleteForever,
+                label: '데이터 삭제',
+                danger: true,
+                onclick: () => {
+                  eraseDataConfirmationInput = ''
+                  showEraseDataDialogState = 'confirm'
                 }
-              ]}
-              button={settingsButton}
-              closeMenu={() => (showSettings = false)}
-            />
-          {/if}
+              }
+            ]}
+            button={settingsButton}
+            closeMenu={() => (showSettings = false)}
+          />
         </div>
 
         <div class="relative z-50 ml-2 h-8">
@@ -458,29 +457,28 @@
           {/if}
         </div>
 
-        {#if showAccountOptions && currentUser}
-          <OptionMenu
-            class="top-14 origin-top-right"
-            options={[
-              {
-                Icon: Logout,
-                label: '로그아웃',
-                onclick: signOut
-              }
-            ]}
-            button={accountButton}
-            closeMenu={() => (showAccountOptions = false)}
-          >
-            <div class="h-14 px-3 pt-2 leading-tight">
-              <span class="font-medium">
-                {currentUser.identities?.[0]?.identity_data?.full_name}
-              </span>
-              <span class="text-sm text-stone-500">
-                {currentUser.email}
-              </span>
-            </div>
-          </OptionMenu>
-        {/if}
+        <OptionMenu
+          show={showAccountOptions && !!currentUser}
+          class="top-14 origin-top-right"
+          options={[
+            {
+              Icon: Logout,
+              label: '로그아웃',
+              onclick: signOut
+            }
+          ]}
+          button={accountButton}
+          closeMenu={() => (showAccountOptions = false)}
+        >
+          <div class="h-14 px-3 pt-2 leading-tight">
+            <span class="font-medium">
+              {currentUser!.identities?.[0]?.identity_data?.full_name}
+            </span>
+            <span class="text-sm text-stone-500">
+              {currentUser!.email}
+            </span>
+          </div>
+        </OptionMenu>
       </div>
     </div>
     <div class="flex-1 overflow-hidden pt-16">
@@ -620,247 +618,287 @@
   </div>
 {/if}
 
-{#if showConflictDialog && conflictData}
-  <Dialog
-    title="다른 곳에서 데이터가 변경되었습니다."
-    description="어떻게 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다."
-    actions={[
-      {
-        label: '내 변경 사항 취소',
-        variant: 'secondary',
-        onclick: async () => {
-          if (!conflictData) return
-          await handleCancelChanges(conflictData, (data) => ($dataStore = data))
-          showConflictDialog = false
-          conflictData = null
-        }
-      },
-      {
-        label: '덮어쓰기',
-        variant: 'danger',
-        onclick: async () => {
-          if (!conflictData) return
-          await handleOverwrite(data.supabase, conflictData)
-          showConflictDialog = false
-          conflictData = null
-        }
-      },
-      {
-        label: '병합',
-        variant: 'primary',
-        onclick: async () => {
-          if (!conflictData) return
-          await handleMerge(conflictData, (data) => ($dataStore = data))
-          showConflictDialog = false
-          conflictData = null
-        }
+<Dialog
+  show={showConflictDialog && !!conflictData}
+  title="다른 곳에서 데이터가 변경되었습니다."
+  description="어떻게 처리하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+  actions={[
+    {
+      label: '내 변경 사항 취소',
+      variant: 'secondary',
+      onclick: async () => {
+        if (!conflictData) return
+        await handleCancelChanges(conflictData, (data) => ($dataStore = data))
+        showConflictDialog = false
+        conflictData = null
       }
-    ]}
-  />
-{/if}
+    },
+    {
+      label: '덮어쓰기',
+      variant: 'danger',
+      onclick: async () => {
+        if (!conflictData) return
+        await handleOverwrite(data.supabase, conflictData)
+        showConflictDialog = false
+        conflictData = null
+      }
+    },
+    {
+      label: '병합',
+      variant: 'primary',
+      onclick: async () => {
+        if (!conflictData) return
+        await handleMerge(conflictData, (data) => ($dataStore = data))
+        showConflictDialog = false
+        conflictData = null
+      }
+    }
+  ]}
+/>
 
-{#if showInitialConflictDialog && initialConflictData}
-  {#if !selectedInitialOption}
-    <Dialog
-      title="서버에 이미 저장된 데이터가 있습니다."
-      description="어떤 데이터를 사용하시겠습니까? 이 작업은 되돌릴 수 없습니다."
-      actions={[
-        {
-          label: '로그인 전 데이터 사용',
-          variant: 'secondary',
-          onclick: () => {
-            selectedInitialOption = 'useLocal'
-          }
-        },
-        {
-          label: '서버에 저장된 데이터 사용',
-          variant: 'secondary',
-          onclick: () => {
-            selectedInitialOption = 'useDB'
-          }
-        },
-        {
-          label: '데이터 병합',
-          variant: 'primary',
-          onclick: () => {
-            window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
-            showInitialConflictDialog = false
-            initialConflictData = null
-          }
-        }
-      ]}
-    />
-  {:else}
-    <Dialog
-      title="계속하시겠습니까?"
-      description={selectedInitialOption === 'useLocal'
-        ? '서버에 저장된 데이터가 로그인 전 작성한 데이터로 대체됩니다.'
-        : '로그인 전 작성한 데이터가 삭제되고 서버에 저장된 데이터를 사용합니다.'}
-      actions={[
-        {
-          label: '취소',
-          variant: 'secondary',
-          onclick: () => {
-            selectedInitialOption = null
-          }
-        },
-        {
-          label: '계속',
-          variant: 'primary',
-          onclick: () => {
-            window.dispatchEvent(
-              new CustomEvent('initialDataConflict', { detail: selectedInitialOption })
-            )
-            showInitialConflictDialog = false
-            initialConflictData = null
-            selectedInitialOption = null
-          }
-        }
-      ]}
-    />
-  {/if}
-{/if}
+<Dialog
+  show={showInitialConflictDialog && !!initialConflictData}
+  title="서버에 이미 저장된 데이터가 있습니다."
+  description="어떤 데이터를 사용하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+  actions={[
+    {
+      label: '로그인 전 데이터 사용',
+      variant: 'secondary',
+      onclick: () => {
+        selectedInitialOption = 'useLocal'
+      }
+    },
+    {
+      label: '서버에 저장된 데이터 사용',
+      variant: 'secondary',
+      onclick: () => {
+        selectedInitialOption = 'useDB'
+      }
+    },
+    {
+      label: '데이터 병합',
+      variant: 'primary',
+      onclick: () => {
+        window.dispatchEvent(new CustomEvent('initialDataConflict', { detail: 'merge' }))
+        showInitialConflictDialog = false
+        initialConflictData = null
+      }
+    }
+  ]}
+/>
 
-{#if loadDataResultDialogState === 'conflict'}
-  <Dialog
-    title="데이터를 덮어쓰시겠습니까?"
-    description="데이터를 불러오면 현재 데이터가 사라집니다. 이 작업은 되돌릴 수 없습니다."
-    actions={[
-      {
-        label: '취소',
-        variant: 'secondary',
-        cancel: true
+<Dialog
+  show={!!selectedInitialOption}
+  title="계속하시겠습니까?"
+  description={selectedInitialOption === 'useLocal'
+    ? '서버에 저장된 데이터가 로그인 전 작성한 데이터로 대체됩니다.'
+    : '로그인 전 작성한 데이터가 삭제되고 서버에 저장된 데이터를 사용합니다.'}
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      onclick: () => {
+        selectedInitialOption = null
+      }
+    },
+    {
+      label: '계속',
+      variant: 'primary',
+      onclick: () => {
+        window.dispatchEvent(
+          new CustomEvent('initialDataConflict', { detail: selectedInitialOption })
+        )
+        showInitialConflictDialog = false
+        initialConflictData = null
+        selectedInitialOption = null
+      }
+    }
+  ]}
+/>
+
+<Dialog
+  show={loadDataResultDialogState === 'conflict'}
+  title="데이터를 덮어쓰시겠습니까?"
+  description="데이터를 불러오면 현재 데이터가 사라집니다. 이 작업은 되돌릴 수 없습니다."
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      cancel: true
+    },
+    {
+      label: '덮어쓰기',
+      variant: 'primary',
+      onclick: () => {
+        if (!dataFromFile) return
+        $dataStore = dataFromFile
+        loadDataResultDialogState = 'success'
+      }
+    }
+  ]}
+  cancel={() => (loadDataResultDialogState = 'closed')}
+/>
+
+<Dialog
+  show={loadDataResultDialogState === 'success'}
+  title="완료되었습니다."
+  description="데이터를 성공적으로 불러왔습니다."
+  actions={[
+    {
+      label: '닫기',
+      variant: 'primary',
+      cancel: true
+    }
+  ]}
+  cancel={() => (loadDataResultDialogState = 'closed')}
+/>
+
+<Dialog
+  show={loadDataResultDialogState === 'error'}
+  title="실패했습니다."
+  description="데이터를 불러오는 데 실패했습니다. 데이터가 올바른 형식인지 확인해주세요."
+  actions={[
+    {
+      label: '닫기',
+      variant: 'primary',
+      cancel: true
+    }
+  ]}
+  cancel={() => (loadDataResultDialogState = 'closed')}
+/>
+
+<Dialog
+  show={showEraseDataDialogState === 'confirm'}
+  title="모든 데이터를 삭제하시겠습니까?"
+  description="{currentUser
+    ? '서버 및 이 기기'
+    : '이 기기'}에 저장된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.{!currentUser
+    ? '\n서버에 저장된 정보를 삭제하려면 로그인하세요.'
+    : ''}"
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      cancel: true
+    },
+    {
+      label: '삭제',
+      variant: 'danger',
+      onclick: () => {
+        if (eraseDataConfirmationInput !== '데이터 모두 삭제') return
+        showEraseDataDialogState = 'reconfirm'
       },
-      {
-        label: '덮어쓰기',
-        variant: 'primary',
-        onclick: () => {
-          if (!dataFromFile) return
-          $dataStore = dataFromFile
-          loadDataResultDialogState = 'success'
+      onenter: true,
+      disabled: eraseDataConfirmationInput !== '데이터 모두 삭제'
+    }
+  ]}
+  cancel={() => (showEraseDataDialogState = 'closed')}
+>
+  <p class=" text-sm text-stone-500 dark:text-stone-400">
+    데이터를 삭제하려면 <span class="select-none font-semibold">데이터 모두 삭제</span>를
+    입력하세요.
+  </p>
+  <input
+    type="text"
+    bind:value={eraseDataConfirmationInput}
+    class="mt-1 w-full rounded-lg bg-stone-100 px-3 py-2 outline-none placeholder:text-stone-400 dark:bg-stone-700"
+    placeholder="데이터 모두 삭제"
+  />
+</Dialog>
+
+<Dialog
+  show={showEraseDataDialogState === 'reconfirm'}
+  title="정말로 계속하시겠습니까?"
+  description="모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      cancel: true
+    },
+    {
+      label: '계속',
+      variant: 'danger',
+      onclick: async () => {
+        if (currentUser) {
+          showEraseDataDialogState = 'confirmLogout'
+        } else {
+          await eraseAllData(data.supabase)
+          showEraseDataDialogState = 'complete'
         }
       }
-    ]}
-    cancel={() => (loadDataResultDialogState = 'closed')}
-  />
-{:else if loadDataResultDialogState === 'success'}
-  <Dialog
-    title="완료되었습니다."
-    description="데이터를 성공적으로 불러왔습니다."
-    actions={[
-      {
-        label: '닫기',
-        variant: 'primary',
-        cancel: true
-      }
-    ]}
-    cancel={() => (loadDataResultDialogState = 'closed')}
-  />
-{:else if loadDataResultDialogState === 'error'}
-  <Dialog
-    title="실패했습니다."
-    description="데이터를 불러오는 데 실패했습니다. 데이터가 올바른 형식인지 확인해주세요."
-    actions={[
-      {
-        label: '닫기',
-        variant: 'primary',
-        cancel: true
-      }
-    ]}
-    cancel={() => (loadDataResultDialogState = 'closed')}
-  />
-{/if}
+    }
+  ]}
+  cancel={() => (showEraseDataDialogState = 'closed')}
+/>
 
-{#if showEraseDataDialogState === 'confirm'}
-  <Dialog
-    title="모든 데이터를 삭제하시겠습니까?"
-    description="{currentUser
-      ? '서버 및 이 기기'
-      : '이 기기'}에 저장된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.{!currentUser
-      ? '\n서버에 저장된 정보를 삭제하려면 로그인하세요.'
-      : ''}"
-    actions={[
-      {
-        label: '취소',
-        variant: 'secondary',
-        cancel: true
-      },
-      {
-        label: '삭제',
-        variant: 'danger',
-        onclick: () => {
-          if (eraseDataConfirmationInput !== '데이터 모두 삭제') return
-          showEraseDataDialogState = 'reconfirm'
-        },
-        onenter: true,
-        disabled: eraseDataConfirmationInput !== '데이터 모두 삭제'
-      }
-    ]}
-    cancel={() => (showEraseDataDialogState = 'closed')}
-  >
-    <p class=" text-sm text-stone-500 dark:text-stone-400">
-      데이터를 삭제하려면 <span class="select-none font-semibold">데이터 모두 삭제</span>를
-      입력하세요.
-    </p>
-    <input
-      type="text"
-      bind:value={eraseDataConfirmationInput}
-      class="mt-1 w-full rounded-lg bg-stone-100 px-3 py-2 outline-none placeholder:text-stone-400 dark:bg-stone-700"
-      placeholder="데이터 모두 삭제"
-    />
-  </Dialog>
-{:else if showEraseDataDialogState === 'reconfirm'}
-  <Dialog
-    title="정말로 계속하시겠습니까?"
-    description="모든 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
-    actions={[
-      {
-        label: '취소',
-        variant: 'secondary',
-        cancel: true
-      },
-      {
-        label: '계속',
-        variant: 'danger',
-        onclick: async () => {
-          if (currentUser) {
-            showEraseDataDialogState = 'confirmLogout'
-          } else {
-            await eraseAllData(data.supabase)
+<Dialog
+  show={showEraseDataDialogState === 'confirmLogout'}
+  title="로그아웃하시겠습니까?"
+  description="데이터가 모두 삭제되고 로그아웃됩니다."
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      cancel: true
+    },
+    {
+      label: '데이터만 삭제',
+      variant: 'danger',
+      onclick: () => {
+        eraseAllData(data.supabase)
+          .then(() => {
             showEraseDataDialogState = 'complete'
-          }
-        }
+          })
+          .catch(() => {
+            showEraseDataDialogState = 'error'
+          })
       }
-    ]}
-    cancel={() => (showEraseDataDialogState = 'closed')}
-  />
-{:else if showEraseDataDialogState === 'confirmLogout'}
-  <Dialog
-    title="로그아웃하시겠습니까?"
-    description="데이터가 모두 삭제되고 로그아웃됩니다."
-    actions={[
-      {
-        label: '취소',
-        variant: 'secondary',
-        cancel: true
-      },
-      {
-        label: '데이터만 삭제',
-        variant: 'danger',
-        onclick: () => {
-          eraseAllData(data.supabase)
-            .then(() => {
-              showEraseDataDialogState = 'complete'
-            })
-            .catch(() => {
-              showEraseDataDialogState = 'error'
-            })
-        }
-      },
-      {
-        label: '삭제 및 로그아웃',
-        variant: 'danger',
-        onclick: () => {
+    },
+    {
+      label: '삭제 및 로그아웃',
+      variant: 'danger',
+      onclick: () => {
+        eraseAllData(data.supabase, true)
+          .then(() => {
+            showEraseDataDialogState = 'complete'
+          })
+          .catch(() => {
+            showEraseDataDialogState = 'error'
+          })
+      }
+    }
+  ]}
+  cancel={() => (showEraseDataDialogState = 'closed')}
+/>
+
+<Dialog
+  show={showEraseDataDialogState === 'complete'}
+  title="완료되었습니다."
+  description="모든 데이터가 삭제되었습니다."
+  actions={[
+    {
+      label: '닫기',
+      variant: 'primary',
+      cancel: true
+    }
+  ]}
+  cancel={() => (showEraseDataDialogState = 'closed')}
+/>
+
+<Dialog
+  show={showEraseDataDialogState === 'error'}
+  title="실패했습니다."
+  description="데이터 삭제에 실패했습니다."
+  actions={[
+    {
+      label: '다시 시도',
+      variant: 'primary',
+      onclick: () => {
+        showEraseDataDialogState = 'closed'
+
+        // 재시도되는 효과를 위해 다이얼로그가 닫히고 조금 후 결과 표시
+        setTimeout(() => {
           eraseAllData(data.supabase, true)
             .then(() => {
               showEraseDataDialogState = 'complete'
@@ -868,53 +906,14 @@
             .catch(() => {
               showEraseDataDialogState = 'error'
             })
-        }
+        }, 200)
       }
-    ]}
-    cancel={() => (showEraseDataDialogState = 'closed')}
-  />
-{:else if showEraseDataDialogState === 'complete'}
-  <Dialog
-    title="완료되었습니다."
-    description="모든 데이터가 삭제되었습니다."
-    actions={[
-      {
-        label: '닫기',
-        variant: 'primary',
-        cancel: true
-      }
-    ]}
-    cancel={() => (showEraseDataDialogState = 'closed')}
-  />
-{:else if showEraseDataDialogState === 'error'}
-  <Dialog
-    title="실패했습니다."
-    description="데이터 삭제에 실패했습니다."
-    actions={[
-      {
-        label: '다시 시도',
-        variant: 'primary',
-        onclick: () => {
-          showEraseDataDialogState = 'closed'
-
-          // 재시도되는 효과를 위해 다이얼로그가 닫히고 조금 후 결과 표시
-          setTimeout(() => {
-            eraseAllData(data.supabase, true)
-              .then(() => {
-                showEraseDataDialogState = 'complete'
-              })
-              .catch(() => {
-                showEraseDataDialogState = 'error'
-              })
-          }, 200)
-        }
-      },
-      {
-        label: '닫기',
-        variant: 'secondary',
-        cancel: true
-      }
-    ]}
-    cancel={() => (showEraseDataDialogState = 'closed')}
-  />
-{/if}
+    },
+    {
+      label: '닫기',
+      variant: 'secondary',
+      cancel: true
+    }
+  ]}
+  cancel={() => (showEraseDataDialogState = 'closed')}
+/>
