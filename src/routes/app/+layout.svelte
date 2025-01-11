@@ -741,7 +741,7 @@
     />
   {:else}
     <Dialog
-      title="계속하시겠습니니까?"
+      title="계속하시겠습니까?"
       description={selectedInitialOption === 'useLocal'
         ? '서버에 저장된 데이터가 로그인 전 작성한 데이터로 대체됩니다.'
         : '로그인 전 작성한 데이터가 삭제되고 서버에 저장된 데이터를 사용합니다.'}
