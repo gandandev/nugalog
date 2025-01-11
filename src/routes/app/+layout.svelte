@@ -43,6 +43,7 @@
   import Logout from '~icons/material-symbols/logout-rounded'
   import Download from '~icons/material-symbols/download-rounded'
   import FileOpen from '~icons/material-symbols/file-open-rounded'
+  import Group from '~icons/material-symbols/group-rounded'
   import DeleteForever from '~icons/material-symbols/delete-forever-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
@@ -379,12 +380,12 @@
             class="-right-2 top-10 origin-top-right"
             options={[
               {
-                Icon: allCopied ? Check : ContentCopy,
+                Icon: allCopied ? Check : Group,
                 label: navigator.clipboard
                   ? $dataStore.some((s) => s.logs.length > 0)
                     ? allCopied
                       ? '복사됨'
-                      : '모든 기록 복사'
+                      : '모든 학생 기록 복사'
                     : '복사할 기록 없음'
                   : '복사 지원 안 됨',
                 onclick: () => {
