@@ -215,7 +215,13 @@
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'data.json'
+
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    a.download = `누가로그 백업 ${year}-${month}-${day}.json`
+
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
