@@ -9,6 +9,7 @@
     danger?: boolean
     onclick: () => void
     disabled?: boolean
+    closeMenuOnClick?: boolean
   }
 
   const {
@@ -43,7 +44,10 @@
         class="flex h-8 items-center gap-2 rounded-md px-3 py-1 duration-150 enabled:hover:bg-stone-100 enabled:active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 enabled:dark:hover:bg-stone-700 enabled:dark:active:bg-stone-600 {option.danger
           ? 'enabled:hover:text-red-600 enabled:dark:hover:text-red-500'
           : ''}"
-        onclick={option.onclick}
+        onclick={() => {
+          option.onclick()
+          if (option.closeMenuOnClick) closeMenu()
+        }}
         disabled={option.disabled}
         onkeydown={(e) => {
           if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
