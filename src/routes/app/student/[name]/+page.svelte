@@ -112,8 +112,8 @@
                 )
               }}
               role="listitem"
-              in:fly={{ y: 10 }}
-              out:slide={{ axis: 'y' }}
+              in:fly={{ y: 10, duration: 300 }}
+              out:slide={{ axis: 'y', duration: 300 }}
             >
               <!-- 순서 변경 위치 미리보기 -->
               <DragPreviewLine
