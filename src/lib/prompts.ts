@@ -75,8 +75,8 @@ export const getHangbalPrompt = (
   # 기록
 
   ${formatStudentLogs(student.name, student.logs, {
-  markdown: true,
-  includeName: false
-})}
+    markdown: true,
+    includeName: false
+  })}
   ${extraInfo ? `\n**추가 정보**: ${extraInfo}\n` : ''}
 `

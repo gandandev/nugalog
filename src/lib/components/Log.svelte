@@ -24,9 +24,9 @@
   const {
     log,
     isNew = false,
+    deleteLog,
     saveNewLog,
     cancelNewLog,
-    deleteLog,
     dragged = false,
     ondragstart,
     ondragend
@@ -265,17 +265,16 @@
   {/if}
 </div>
 
-{#if editorExpanded}
-  <EditorPanel
-    title={isNew ? '새 기록' : '기록 편집'}
-    {content}
-    {date}
-    close={cancel}
-    minimizeEditor={() => (editorExpanded = false)}
-    save={(newContent, newDate) => {
-      content = newContent
-      date = newDate
-      save()
-    }}
-  />
-{/if}
+<EditorPanel
+  show={editorExpanded}
+  title={isNew ? '새 기록' : '기록 편집'}
+  {content}
+  {date}
+  close={cancel}
+  minimizeEditor={() => (editorExpanded = false)}
+  save={(newContent, newDate) => {
+    content = newContent
+    date = newDate
+    save()
+  }}
+/>

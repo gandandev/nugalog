@@ -5,10 +5,12 @@
   import { focusOnElement } from '$lib/utils/focus'
 
   import PillButton from './PillButton.svelte'
+  import Panel from './Panel.svelte'
 
   import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
-  const {
+  let {
+    show,
     title,
     content,
     date,
@@ -16,6 +18,7 @@
     save,
     minimizeEditor
   }: {
+    show: boolean
     title: string
     content: string
     date: Date | null
@@ -34,11 +37,8 @@
   }}
 />
 
-<div
-  class="fixed inset-y-0 left-64 right-0 z-10 hidden items-center justify-center bg-white md:flex dark:bg-stone-950"
-  transition:fly={{ y: 100, duration: 400, easing: expoOut }}
->
-  <div class="flex max-h-full min-h-[50%] w-1/2 flex-col justify-between p-5">
+<Panel {show}>
+  <div class="flex max-h-full min-h-[50%] w-full flex-col justify-between p-5 lg:w-2/3">
     <div class="mb-3 flex flex-col gap-4">
       <h2 class="flex items-center text-2xl font-semibold">{title}</h2>
       <div class="flex items-center justify-between">
@@ -81,4 +81,4 @@
       }}
     ></textarea>
   </div>
-</div>
+</Panel>

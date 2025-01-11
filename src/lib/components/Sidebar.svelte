@@ -52,6 +52,9 @@
 
   // 학생 삭제
   let studentToDeleteIndex: number | null = $state(null)
+  const studentToDelete = $derived(
+    studentToDeleteIndex !== null ? sortedStudents[studentToDeleteIndex] : null
+  )
   function handleDelete() {
     $data = $data.filter((_, i) => i !== studentToDeleteIndex)
     studentToDeleteIndex = null
@@ -188,16 +191,14 @@
 
 <svelte:window ondrag={(e) => handleDrag(e)} />
 
-{#if studentToDeleteIndex !== null}
-  <!-- 학생 삭제 확인 -->
-  {@const student = $data[studentToDeleteIndex]}
-  <Dialog
-    title={`학생 "${student.name}"${josa.pick(student.name, '을/를')} 삭제할까요?`}
-    description="삭제된 학생은 복구할 수 없습니다."
-    actions={[
-      { label: '취소', variant: 'secondary', cancel: true },
-      { label: '삭제', onclick: handleDelete, variant: 'danger', onenter: true }
-    ]}
-    cancel={() => (studentToDeleteIndex = null)}
-  />
-{/if}
+<!-- 학생 삭제 확인 -->
+<Dialog
+  show={studentToDeleteIndex !== null}
+  title={`학생 "${studentToDelete?.name}"${josa.pick(studentToDelete?.name ?? '', '을/를')} 삭제할까요?`}
+  description="삭제된 학생은 복구할 수 없습니다."
+  actions={[
+    { label: '취소', variant: 'secondary', cancel: true },
+    { label: '삭제', onclick: handleDelete, variant: 'danger', onenter: true }
+  ]}
+  cancel={() => (studentToDeleteIndex = null)}
+/>

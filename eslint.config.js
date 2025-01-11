@@ -16,15 +16,41 @@ export default ts.config(
         ...globals.browser,
         ...globals.node
       }
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true
+        }
+      ],
+      'no-unused-private-class-members': 'error',
+      '@typescript-eslint/no-explicit-any': [
+        'warn',
+        {
+          ignoreRestArgs: true
+        }
+      ],
+      'no-case-declarations': 'warn'
     }
   },
   {
     files: ['**/*.svelte'],
-
     languageOptions: {
       parserOptions: {
         parser: ts.parser
       }
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^\\$\\$Props$'
+        }
+      ]
     }
   },
   {

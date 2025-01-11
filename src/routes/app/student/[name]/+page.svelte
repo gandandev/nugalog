@@ -9,7 +9,6 @@
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
-  import IconButton from '$lib/components/IconButton.svelte'
   import DragPreviewLine from '$lib/components/DragPreviewLine.svelte'
 
   import Add from '~icons/material-symbols/add-rounded'
@@ -21,7 +20,6 @@
     createDragState,
     handleDragStart,
     handleDragEnd,
-    handleDrag,
     handleDragOver,
     handleDragLeave,
     handleDrop
@@ -178,33 +176,32 @@
   {/if}
 </div>
 
-{#if showNavigationDialog && pendingNavigation}
-  <Dialog
-    title="저장하지 않은 변경 사항이 있습니다."
-    description="저장 후 이동하시겠습니까?"
-    actions={[
-      {
-        label: '취소',
-        variant: 'secondary',
-        cancel: true
+<Dialog
+  show={showNavigationDialog && !!pendingNavigation}
+  title="저장하지 않은 변경 사항이 있습니다."
+  description="저장 후 이동하시겠습니까?"
+  actions={[
+    {
+      label: '취소',
+      variant: 'secondary',
+      cancel: true
+    },
+    {
+      label: '저장하고 이동',
+      variant: 'primary',
+      onclick: async () => {
+        if (!pendingNavigation) return
+        const to = pendingNavigation.to
+        pendingNavigation.save()
+        showNavigationDialog = false
+        pendingNavigation = null
+        goto(to)
       },
-      {
-        label: '저장하고 이동',
-        variant: 'primary',
-        onclick: async () => {
-          if (!pendingNavigation) return
-          const to = pendingNavigation.to
-          pendingNavigation.save()
-          showNavigationDialog = false
-          pendingNavigation = null
-          goto(to)
-        },
-        onenter: true
-      }
-    ]}
-    cancel={() => {
-      showNavigationDialog = false
-      pendingNavigation = null
-    }}
-  />
-{/if}
+      onenter: true
+    }
+  ]}
+  cancel={() => {
+    showNavigationDialog = false
+    pendingNavigation = null
+  }}
+/>

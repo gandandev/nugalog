@@ -1,16 +1,14 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { focusOnElement } from '$lib/utils/focus'
-  import { onClickOutside } from '$lib/utils/clickOutside'
-  import { scale } from 'svelte/transition'
-  import { expoOut } from 'svelte/easing'
   import { data, type Student } from '$lib/stores'
+
+  import OptionMenu from './OptionMenu.svelte'
 
   import MoreHoriz from '~icons/material-symbols/more-horiz'
   import Delete from '~icons/material-symbols/delete-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
   import Keep from '~icons/material-symbols/keep-rounded'
-  import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
   const {
     student,
@@ -119,46 +117,17 @@
     </button>
   {/if}
 
-  {#if showOptions}
-    <div
-      bind:this={optionsMenu}
-      class="absolute right-0 top-full z-10 mt-1 flex w-48 origin-top-right flex-col rounded-xl border border-stone-200 bg-white p-1 shadow-lg dark:border-stone-700 dark:bg-stone-800"
-      transition:scale={{ duration: 200, start: 0.9, easing: expoOut }}
-      use:onClickOutside={{
-        callback: () => (showOptions = false),
-        exclude: [optionsButton]
-      }}
-    >
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
-        onclick={() => {
-          newName = student.name
-        }}
-      >
-        <Edit class="h-5 w-5" />
-        이름 변경
-      </button>
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 dark:hover:bg-stone-700"
-        onclick={togglePin}
-      >
-        {#if student.pinned}
-          <KeepOff class="h-5 w-5" />
-          고정 해제
-        {:else}
-          <Keep class="h-5 w-5" />
-          상단 고정
-        {/if}
-      </button>
-      <button
-        class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
-        onclick={confirmdelete}
-      >
-        <Delete class="h-5 w-5" />
-        학생 삭제
-      </button>
-    </div>
-  {/if}
+  <OptionMenu
+    show={showOptions}
+    class="right-0 top-full mt-1 origin-top-right"
+    options={[
+      { Icon: Edit, label: '이름 변경', onclick: () => (newName = student.name) },
+      { Icon: Keep, label: '상단 고정', onclick: togglePin },
+      { Icon: Delete, label: '학생 삭제', onclick: confirmdelete }
+    ]}
+    button={optionsButton}
+    closeMenu={() => (showOptions = false)}
+  />
 </li>
 
 {#if duplicateStudentName}
