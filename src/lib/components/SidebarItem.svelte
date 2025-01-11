@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation'
   import { focusOnElement } from '$lib/utils/focus'
   import { data, type Student } from '$lib/stores'
+  import { tooltip } from '$lib/utils/tooltip'
 
   import OptionMenu from './OptionMenu.svelte'
 
@@ -106,6 +107,7 @@
         e.stopPropagation()
         showOptions = !showOptions
       }}
+      use:tooltip={{ text: '더보기', position: 'right' }}
     >
       <div
         class="flex h-6 w-6 items-center justify-center rounded duration-150 group-hover/options:bg-stone-300 dark:group-hover/options:bg-stone-700"
