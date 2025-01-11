@@ -77,7 +77,7 @@
 >
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
-    <Logo />
+    <Logo class="h-6" />
     <IconButton
       Icon={PersonAdd}
       tooltip="새 학생 추가"
