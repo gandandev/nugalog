@@ -2,7 +2,10 @@ import { writable } from 'svelte/store'
 import { z } from 'zod'
 
 export const LogSchema = z.object({
-  id: z.string().min(1).default(() => crypto.randomUUID()),
+  id: z
+    .string()
+    .min(1)
+    .default(() => crypto.randomUUID()),
   date: z.coerce.date(),
   content: z.string().min(1).trim()
 })
