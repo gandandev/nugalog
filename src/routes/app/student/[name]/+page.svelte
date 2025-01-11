@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { scale, fade, fly } from 'svelte/transition'
+  import { scale, fade, fly, slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { josa } from 'es-hangul'
   import { goto } from '$app/navigation'
@@ -90,44 +90,48 @@
         ondragleave={(e: DragEvent) => handleDragLeave(e, dragState, 'div[role="list"]')}
         ondragover={(e: DragEvent) => e.preventDefault()}
       >
-        {#each student.logs as log, i (log.date.getTime())}
-          <div
-            ondragover={(e: DragEvent) =>
-              handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
-            ondrop={() => {
-              handleDrop(
-                dragState,
-                student.logs,
-                (newLogs) => {
-                  $data = $data.map((s) => {
-                    if (s.name === student.name) {
-                      return {
-                        ...s,
-                        logs: newLogs
+        {#key student.name}
+          {#each student.logs as log, i (log.date.getTime())}
+            <div
+              ondragover={(e: DragEvent) =>
+                handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
+              ondrop={() => {
+                handleDrop(
+                  dragState,
+                  student.logs,
+                  (newLogs) => {
+                    $data = $data.map((s) => {
+                      if (s.name === student.name) {
+                        return {
+                          ...s,
+                          logs: newLogs
+                        }
                       }
-                    }
-                    return s
-                  })
-                },
-                (log) => log.date.getTime()
-              )
-            }}
-            role="listitem"
-          >
-            <!-- 순서 변경 위치 미리보기 -->
-            <DragPreviewLine
-              class={dragState.dropPreviewIndex === i ? 'opacity-100' : 'opacity-0'}
-            />
+                      return s
+                    })
+                  },
+                  (log) => log.date.getTime()
+                )
+              }}
+              role="listitem"
+              in:fly={{ y: 10 }}
+              out:slide={{ axis: 'y' }}
+            >
+              <!-- 순서 변경 위치 미리보기 -->
+              <DragPreviewLine
+                class={dragState.dropPreviewIndex === i ? 'opacity-100' : 'opacity-0'}
+              />
 
-            <Log
-              {log}
-              deleteLog={() => deleteLog(i)}
-              dragged={dragState.draggedItem === log}
-              ondragstart={(e: DragEvent) => handleDragStart(e, log, dragState)}
-              ondragend={() => handleDragEnd(dragState)}
-            />
-          </div>
-        {/each}
+              <Log
+                {log}
+                deleteLog={() => deleteLog(i)}
+                dragged={dragState.draggedItem === log}
+                ondragstart={(e: DragEvent) => handleDragStart(e, log, dragState)}
+                ondragend={() => handleDragEnd(dragState)}
+              />
+            </div>
+          {/each}
+        {/key}
         <div class="h-0.5">
           {#if dragState.dropPreviewIndex === student.logs.length}
             <DragPreviewLine class="relative -top-0.5" />

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
-  import { tooltip as useTooltip } from '$lib/utils'
+  import { tooltip as useTooltip } from '$lib/utils/tooltip'
 
   const {
     Icon,

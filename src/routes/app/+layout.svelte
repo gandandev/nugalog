@@ -14,13 +14,10 @@
     showTooltip,
     hangbalOutputExample as hangbalStore
   } from '$lib/stores'
-  import {
-    onClickOutside,
-    tooltip,
-    formatStudentLogs,
-    formatAllStudentLogs,
-    useCopyFeedback
-  } from '$lib/utils'
+  import { onClickOutside } from '$lib/utils/clickOutside'
+  import { tooltip } from '$lib/utils/tooltip'
+  import { formatStudentLogs, formatAllStudentLogs } from '$lib/utils/formatLogs'
+  import { useCopyFeedback } from '$lib/utils/copyFeedback'
   import {
     loadDataFromDb,
     saveDataToDb,
@@ -78,10 +75,9 @@
 
   // 행발 작성 패널
   let showHangbalPanel = $state(false)
-  let hangbalOutputExample = $state('')
   let hangbalExtraInfo = $state('')
   const hangbalPrompt = $derived(
-    student ? getHangbalPrompt(student, hangbalOutputExample, hangbalExtraInfo) : ''
+    student ? getHangbalPrompt(student, $hangbalStore, hangbalExtraInfo) : ''
   )
 
   let saveDebounceTimer: ReturnType<typeof setTimeout> | null = $state(null)
@@ -219,7 +215,13 @@
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'data.json'
+
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    a.download = `누가로그 백업 ${year}-${month}-${day}.json`
+
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -293,18 +295,23 @@
     <div
       class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
     >
-      <button
-        class="flex h-8 items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
-        onclick={() => (showSidebar = !showSidebar)}
-      >
-        {student?.name}
-        {#if student}
-          <ChevronRight class="h-5 w-5" />
-        {:else}
-          <ThumbnailBar class="h-5 w-5" />
-        {/if}
-      </button>
-      <div class="flex items-center justify-end gap-1">
+      <div class="min-w-0">
+        <button
+          class="flex h-8 w-full items-center rounded-lg px-2 text-lg font-semibold duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 md:invisible md:size-0 dark:hover:bg-stone-800 dark:active:bg-stone-700"
+          class:pr-0.5={student}
+          onclick={() => (showSidebar = !showSidebar)}
+        >
+          <div class="min-w-0 flex-1 truncate">
+            {student?.name}
+          </div>
+          {#if student}
+            <ChevronRight class="h-5 w-5 flex-shrink-0" />
+          {:else}
+            <ThumbnailBar class="h-5 w-5 flex-shrink-0" />
+          {/if}
+        </button>
+      </div>
+      <div class="flex shrink-0 items-center justify-end gap-1">
         {#if !currentUser && $dataStore.reduce((acc, student) => acc + student.logs.length, 0) >= 3 && $showTooltip}
           <button
             class="hidden origin-right text-stone-500 hover:text-stone-600 sm:block dark:hover:text-stone-400"
@@ -413,8 +420,9 @@
               </button>
 
               <button
-                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-700 dark:active:bg-stone-600"
+                class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-700 dark:active:bg-stone-600"
                 onclick={saveDataToFile}
+                disabled={$dataStore.length === 0}
               >
                 <Download class="h-5 w-5" />
                 데이터 다운로드
@@ -446,7 +454,10 @@
           {#if currentUser}
             <button
               bind:this={accountButton}
-              class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 dark:hover:ring-stone-800"
+              class="rounded-full duration-150 hover:ring-4 hover:ring-stone-100 active:scale-95 dark:hover:ring-stone-800"
+              class:ring-4={showAccountOptions}
+              class:ring-stone-100={showAccountOptions}
+              class:dark:ring-stone-800={showAccountOptions}
               onclick={() => (showAccountOptions = !showAccountOptions)}
               onkeydown={(e) => {
                 if (e.key === 'ArrowDown' && !showAccountOptions) {
@@ -503,7 +514,7 @@
             </div>
             <button
               bind:this={logoutButton}
-              class="flex items-center gap-2 rounded-md px-3 py-1 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
+              class="flex items-center gap-2 rounded-md px-3 py-1 duration-150 hover:bg-stone-100 hover:text-red-600 dark:hover:bg-stone-700 dark:hover:text-red-500"
               onclick={signOut}
               onkeydown={(e) => {
                 if (e.key === 'Escape' || (e.key === 'Tab' && !e.shiftKey)) {
@@ -572,13 +583,16 @@
 
         <div class="flex flex-wrap justify-end gap-2 pt-2">
           <button
-            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               handleHangbalPromptCopy()
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '다른 AI 서비스에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '다른 AI 서비스에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
@@ -597,13 +611,16 @@
             복사
           </button>
           <button
-            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 hover:bg-stone-200 active:scale-95 dark:bg-stone-800 dark:hover:bg-stone-700"
+            class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               window.open('https://claude.ai', '_blank')
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '입력 창에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '입력 창에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
@@ -620,13 +637,16 @@
             복사 후 Claude로 계속
           </button>
           <button
-            class="flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 hover:bg-stone-800 active:scale-95 active:bg-stone-900 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
+            class="enabled:active:(scale-95 bg-stone-900) flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 enabled:hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
             onclick={() => {
               navigator.clipboard.writeText(hangbalPrompt)
               window.open('https://chatgpt.com', '_blank')
             }}
+            disabled={!student?.logs.length}
             use:tooltip={{
-              text: '입력 창에 붙여넣어 사용하세요',
+              text: student?.logs.length
+                ? '입력 창에 붙여넣어 사용하세요'
+                : '복사할 기록이 없습니다',
               position: 'bottom',
               delay: 0
             }}
@@ -774,7 +794,7 @@
   />
 {:else if loadDataResultDialogState === 'success'}
   <Dialog
-    title="완료"
+    title="완료되었습니다."
     description="데이터를 성공적으로 불러왔습니다."
     actions={[
       {
@@ -787,7 +807,7 @@
   />
 {:else if loadDataResultDialogState === 'error'}
   <Dialog
-    title="불러오기 실패"
+    title="실패했습니다."
     description="데이터를 불러오는 데 실패했습니다. 데이터가 올바른 형식인지 확인해주세요."
     actions={[
       {
@@ -904,7 +924,7 @@
   />
 {:else if showEraseDataDialogState === 'complete'}
   <Dialog
-    title="완료"
+    title="완료되었습니다."
     description="모든 데이터가 삭제되었습니다."
     actions={[
       {
@@ -917,7 +937,7 @@
   />
 {:else if showEraseDataDialogState === 'error'}
   <Dialog
-    title="삭제 실패"
+    title="실패했습니다."
     description="데이터 삭제에 실패했습니다."
     actions={[
       {

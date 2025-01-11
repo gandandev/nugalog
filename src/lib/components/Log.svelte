@@ -3,7 +3,9 @@
   import { slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
-  import { focusOnElement, onClickOutside, useCopyFeedback } from '$lib/utils'
+  import { focusOnElement } from '$lib/utils/focus'
+  import { onClickOutside } from '$lib/utils/clickOutside'
+  import { useCopyFeedback } from '$lib/utils/copyFeedback'
   import { page } from '$app/stores'
 
   import IconButton from './IconButton.svelte'
@@ -236,7 +238,7 @@
         {/if}
       </div>
       {#if !editing && !confirmingDelete}
-        <div class="pointer:hidden flex items-center gap-2">
+        <div class="flex items-center gap-2 pointer:hidden">
           <IconButton
             Icon={actionButtonExpanded ? ChevronRight : MoreHoriz}
             onclick={() => (actionButtonExpanded = !actionButtonExpanded)}

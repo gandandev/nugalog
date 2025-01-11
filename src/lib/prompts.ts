@@ -1,4 +1,4 @@
-import { formatStudentLogs } from './utils'
+import { formatStudentLogs } from './utils/formatLogs'
 import dedent from 'dedent'
 import type { Student } from './stores'
 
@@ -27,19 +27,16 @@ export const getHangbalPrompt = (
 
   다음 형식을 따라 답변하세요.
   
-  > 작성된 행발
+  > [행발을 작성하세요]
 
   ### 다른 표현 제안
 
-  - 사용할 수 있는 다른 표현들 몇 가지 (따옴표 없이)
+  - [사용할 수 있는 다른 표현들 몇 가지를 따옴표 없이 작성하세요]
 
-  # 기록
+  행발을 작성하기에 정보가 부족하다면 다음을 따라 그대로 답변하세요.
 
-  ${formatStudentLogs(student.name, student.logs, {
-  markdown: true,
-  includeName: false
-})}
-  ${extraInfo ? `\n**추가 정보**: ${extraInfo}\n` : ''}
+  *행발을 작성하기에 정보가 부족합니다. 기록을 더 추가한 후 다시 시도해 주세요.*
+
   # 행발 예시
 
   ## 예시 1
@@ -74,6 +71,12 @@ export const getHangbalPrompt = (
   - 유쾌하고 친화력 있는 성격으로 학급의 즐거운 분위기를 조성함
   - 미술에 대한 관심과 재능이 있어 창의적인 작품 활동을 통해 예술적 감각을 드러냄
   - 활발하고 적극적인 성격으로 다양한 활동에 참여하며 주변 친구들과 원만한 관계를 유지함
+  ${outputExample ? `\n## 추가 사용자 예시\n\n다음은 사용자가 직접 입력한 행발 예시입니다. 예시의 문장 흐름 및 형식, 스타일을 참고해 작성하되 표현을 그대로 따라 사용하지 마세요.\n\n${outputExample}\n` : ''}
+  # 기록
 
-  ${outputExample ? `## 추가 사용자 예시\n\n다음은 사용자가 직접 입력한 행발 예시입니다. 예시의 문장 흐름 및 형식, 스타일을 참고해 작성하되 표현을 그대로 따라 사용하지 마세요.\n\n${outputExample}` : ''}
+  ${formatStudentLogs(student.name, student.logs, {
+  markdown: true,
+  includeName: false
+})}
+  ${extraInfo ? `\n**추가 정보**: ${extraInfo}\n` : ''}
 `

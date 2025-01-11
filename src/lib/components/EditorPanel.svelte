@@ -2,7 +2,7 @@
   import { fly } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import autosize from 'svelte-autosize'
-  import { focusOnElement } from '$lib/utils'
+  import { focusOnElement } from '$lib/utils/focus'
 
   import PillButton from './PillButton.svelte'
 

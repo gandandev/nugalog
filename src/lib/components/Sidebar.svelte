@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { josa } from 'es-hangul'
   import { data } from '$lib/stores'
-  import { focusOnElement } from '$lib/utils'
+  import { focusOnElement } from '$lib/utils/focus'
   import {
     type DragState,
     createDragState,
