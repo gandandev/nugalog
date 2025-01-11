@@ -89,7 +89,7 @@
         ondragover={(e: DragEvent) => e.preventDefault()}
       >
         {#key student.name}
-          {#each student.logs as log, i (log.date.getTime())}
+          {#each student.logs as log, i (log)}
             <div
               ondragover={(e: DragEvent) =>
                 handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
