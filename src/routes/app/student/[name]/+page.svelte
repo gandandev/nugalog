@@ -41,14 +41,14 @@
   }
 
   // 새 기록 추가
-  let newLog: { date: Date | null; content: string } | null = $state(null)
+  let newLog: { id: string; date: Date | null; content: string } | null = $state(null)
   let addedNewLog = $state(false)
   function saveNewLog(savedLog: { date: Date; content: string }) {
     $data = $data.map((s) => {
       if (s.name === student.name) {
         return {
           ...s,
-          logs: [...s.logs, savedLog]
+          logs: [...s.logs, { id: crypto.randomUUID(), ...savedLog }]
         }
       }
       return s
@@ -60,7 +60,7 @@
   }
 
   // 드래그 상태
-  let dragState: DragState<{ date: Date; content: string }> = $state(createDragState())
+  let dragState: DragState<{ id: string; date: Date; content: string }> = $state(createDragState())
 
   // 페이지 이동 확인
   let showNavigationDialog = $state(false)
@@ -89,10 +89,10 @@
         ondragover={(e: DragEvent) => e.preventDefault()}
       >
         {#key student.name}
-          {#each student.logs as log, i (log.date.getTime())}
+          {#each student.logs as log, i (log.id)}
             <div
               ondragover={(e: DragEvent) =>
-                handleDragOver(e, i, true, dragState, student.logs, (log) => log.date.getTime())}
+                handleDragOver(e, i, true, dragState, student.logs, (log) => log.id)}
               ondrop={() => {
                 handleDrop(
                   dragState,
@@ -108,12 +108,12 @@
                       return s
                     })
                   },
-                  (log) => log.date.getTime()
+                  (log) => log.id
                 )
               }}
               role="listitem"
-              in:fly={{ y: 10 }}
-              out:slide={{ axis: 'y' }}
+              in:fly={{ y: 10, duration: 300 }}
+              out:slide={{ axis: 'y', duration: 300 }}
             >
               <!-- 순서 변경 위치 미리보기 -->
               <DragPreviewLine
@@ -155,7 +155,7 @@
           >
             <button
               class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
-              onclick={() => (newLog = { date: new Date(), content: '' })}
+              onclick={() => (newLog = { id: crypto.randomUUID(), date: new Date(), content: '' })}
             >
               <Add class="h-6 w-6" />
               새 기록
