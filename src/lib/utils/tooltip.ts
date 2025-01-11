@@ -6,14 +6,14 @@ type TooltipOptions = {
 
 export function tooltip(node: HTMLElement, options: TooltipOptions | null) {
   // 터치 기기에서 툴팁 비활성화
-  if ('ontouchstart' in window) return { destroy() {} }
+  if ('ontouchstart' in window) return { destroy() { } }
 
-  if (!options) return { destroy() {} }
+  if (!options) return { destroy() { } }
 
   let tooltipElement: HTMLDivElement | null = null
   let showTimeout: NodeJS.Timeout | null = null
   let hideTimeout: NodeJS.Timeout | null = null
-  const { text, position = 'top', delay = 500 } = options
+  const { text, position = 'top', delay = 250 } = options
 
   function createTooltip() {
     if (showTimeout) clearTimeout(showTimeout)

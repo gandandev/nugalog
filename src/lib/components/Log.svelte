@@ -160,7 +160,6 @@
             <IconButton
               Icon={copied ? Check : ContentCopy}
               text={navigator.clipboard ? (copied ? '복사됨' : undefined) : '복사 지원 안 됨'}
-              tooltip="내용 복사"
               onclick={() => {
                 if (!navigator.clipboard) return
                 navigator.clipboard.writeText(log.content)
@@ -197,7 +196,6 @@
             <IconButton
               Icon={editing ? Check : Edit}
               text={editing ? '저장' : undefined}
-              tooltip={!editing ? '편집' : undefined}
               onclick={() => {
                 if (editing) save()
                 else editing = true
@@ -218,7 +216,6 @@
             <IconButton
               Icon={Delete}
               text={confirmingDelete ? '삭제' : undefined}
-              tooltip="삭제"
               onclick={() => {
                 if (confirmingDelete) deleteLog!()
                 else confirmingDelete = true
