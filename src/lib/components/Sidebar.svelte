@@ -35,7 +35,14 @@
   )
   function addStudent() {
     if (duplicateStudentName || !newStudentName?.trim()) return
-    $data = [...$data, { name: newStudentName.trim(), logs: [], pinned: false }]
+    $data = [
+      ...$data,
+      {
+        name: newStudentName.trim(),
+        logs: [] as { id: string; date: Date; content: string }[],
+        pinned: false
+      }
+    ]
     newStudentName = ''
   }
 

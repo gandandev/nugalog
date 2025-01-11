@@ -10,22 +10,22 @@
 
   import CalendarToday from '~icons/material-symbols/calendar-today-rounded'
 
-  let {
-    show,
-    title,
-    content,
-    date,
+  const {
+    show = false,
+    title = '',
+    content = '',
+    date = null,
     close,
-    save,
-    minimizeEditor
+    minimizeEditor,
+    save
   }: {
     show: boolean
     title: string
     content: string
     date: Date | null
     close: () => void
-    save: (content: string, date: Date) => void
     minimizeEditor: () => void
+    save: (content: string, date: Date) => void
   } = $props()
 
   let editedContent = $state(content)

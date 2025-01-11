@@ -33,7 +33,7 @@
     ondragstart,
     ondragend
   }: {
-    log: { date: Date | null; content: string }
+    log: { id: string; date: Date | null; content: string }
     isNew?: boolean
     deleteLog?: () => void
     saveNewLog?: (log: { date: Date; content: string }) => void
@@ -83,7 +83,7 @@
         if (s.name === decodeURIComponent($page.params.name)) {
           return {
             ...s,
-            logs: s.logs.map((l) => (l === log ? { date: date!, content } : l))
+            logs: s.logs.map((l) => (l.id === log.id ? { ...l, date: date!, content } : l))
           }
         }
         return s
