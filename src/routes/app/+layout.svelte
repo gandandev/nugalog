@@ -251,7 +251,15 @@
             return
           }
 
-          dataFromFile = result.data
+          // id가 없는 로그에 랜덤 id 부여
+          dataFromFile = result.data.map((student) => ({
+            ...student,
+            logs: student.logs.map((log) => ({
+              id: log.id || crypto.randomUUID(),
+              date: log.date,
+              content: log.content
+            }))
+          }))
 
           if ($dataStore.length > 0) {
             loadDataResultDialogState = 'conflict'
