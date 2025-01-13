@@ -31,6 +31,7 @@
     checkForConflicts as checkForDataConflicts
   } from '$lib/utils/handleConflict'
   import { getHangbalPrompt } from '$lib/prompts'
+  import { v4 as uuidv4 } from 'uuid'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
@@ -251,7 +252,15 @@
             return
           }
 
-          dataFromFile = result.data
+          // id가 없는 로그에 랜덤 id 부여
+          dataFromFile = result.data.map((student) => ({
+            ...student,
+            logs: student.logs.map((log) => ({
+              id: log.id || uuidv4(),
+              date: log.date,
+              content: log.content
+            }))
+          }))
 
           if ($dataStore.length > 0) {
             loadDataResultDialogState = 'conflict'
@@ -289,12 +298,12 @@
   })
 </script>
 
-<div class="flex h-screen overflow-hidden">
+<div class="h-dscreen pr-safe-right flex">
   <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
   <div class="flex flex-1 flex-col overflow-hidden">
     <div
-      class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 dark:bg-stone-950"
+      class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 pr-[calc(1rem+var(--sar))] pt-[calc(1rem+var(--sat))] dark:bg-stone-950"
     >
       <div class="min-w-0">
         <button
@@ -482,7 +491,7 @@
         </OptionMenu>
       </div>
     </div>
-    <div class="flex-1 overflow-hidden pt-16">
+    <div class="flex-1 pt-[calc(4rem+var(--sat))]">
       {@render children()}
     </div>
   </div>

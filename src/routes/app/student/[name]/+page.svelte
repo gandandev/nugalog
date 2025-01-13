@@ -5,6 +5,7 @@
   import { josa } from 'es-hangul'
   import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
+  import { v4 as uuidv4 } from 'uuid'
 
   import Log from '$lib/components/Log.svelte'
   import InfoDisplay from '$lib/components/InfoDisplay.svelte'
@@ -48,7 +49,7 @@
       if (s.name === student.name) {
         return {
           ...s,
-          logs: [...s.logs, { id: crypto.randomUUID(), ...savedLog }]
+          logs: [...s.logs, { id: uuidv4(), ...savedLog }]
         }
       }
       return s
@@ -155,7 +156,7 @@
           >
             <button
               class="flex items-center gap-2 rounded-full px-4 py-2 text-stone-500 duration-150 hover:bg-stone-100 active:scale-95 active:bg-stone-200 dark:text-stone-400 dark:hover:bg-stone-900 dark:active:bg-stone-800"
-              onclick={() => (newLog = { id: crypto.randomUUID(), date: new Date(), content: '' })}
+              onclick={() => (newLog = { id: uuidv4(), date: new Date(), content: '' })}
             >
               <Add class="h-6 w-6" />
               새 기록

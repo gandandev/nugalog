@@ -66,18 +66,16 @@
     $data = $data.filter((_, i) => i !== studentToDeleteIndex)
     studentToDeleteIndex = null
   }
-
-  let newStudentNameInput: HTMLInputElement | null = $state(null)
 </script>
 
 <aside
-  class="absolute -left-64 z-50 flex h-full w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
+  class="pt-safe-top pb-safe-bottom pl-safe-left fixed -left-64 z-50 flex h-screen w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
   class:left-0={showOnMobile}
   class:shadow-lg={showOnMobile}
 >
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
-    <Logo />
+    <Logo class="h-6" />
     <IconButton
       Icon={PersonAdd}
       tooltip="새 학생 추가"
@@ -131,7 +129,6 @@
       <li class="pt-1" transition:fly={{ duration: 150, y: -10 }}>
         <div class="flex w-full">
           <input
-            bind:this={newStudentNameInput}
             type="text"
             bind:value={newStudentName}
             class="block w-full grow rounded-lg bg-white px-3 py-1 outline-none ring-2 duration-150 placeholder:text-stone-400 dark:bg-stone-800"
@@ -189,7 +186,7 @@
 
 {#if showOnMobile}
   <div
-    class="fixed inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-sm md:hidden"
+    class="fixed inset-0 z-40 flex touch-none items-center justify-center bg-black/20 backdrop-blur-sm md:hidden"
     onclick={closeSidebar}
     role="presentation"
     transition:fade={{ duration: 150 }}
