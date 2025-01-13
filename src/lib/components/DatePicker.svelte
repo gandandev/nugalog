@@ -103,7 +103,7 @@
 
 {#if show}
   <div
-    class="absolute left-0 top-full z-50 flex w-72 origin-top-left flex-col rounded-xl border border-stone-200 bg-white p-3 shadow-lg dark:border-stone-700 dark:bg-stone-800 {className}"
+    class="absolute left-0 top-full z-50 flex w-72 origin-top-left flex-col rounded-lg border border-stone-200 bg-white p-3 shadow-lg dark:border-stone-700 dark:bg-stone-800 {className}"
     transition:scale|local={{ duration: 200, start: 0.9, easing: expoOut }}
     use:onClickOutside={{
       callback: closeMenu,
