@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition'
+  import { scale, slide } from 'svelte/transition'
   import { expoOut } from 'svelte/easing'
   import { tooltip as useTooltip } from '$lib/utils/tooltip'
 
@@ -31,7 +31,13 @@
   {disabled}
   use:useTooltip={tooltip ? { text: tooltip, position: tooltipPosition } : null}
 >
-  <Icon class="m-1.5 h-5 w-5" />
+  <div class="relative h-8 w-8">
+    {#key Icon}
+      <div class="absolute left-0 top-0" transition:scale={{ duration: 150, start: 0.5 }}>
+        <Icon class="m-1.5 h-5 w-5" />
+      </div>
+    {/key}
+  </div>
   {#if text}
     <span
       class="whitespace-nowrap"
