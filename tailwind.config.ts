@@ -9,10 +9,17 @@ export default {
         sans: ['Pretendard Variable', 'sans-serif']
       },
       width: {
-        screen: '100dvw'
+        dscreen: '100dvw'
       },
       height: {
-        screen: '100dvh'
+        dscreen: '100dvh'
+      },
+      spacing: {
+        safe: 'var(--sat) var(--sar) var(--sab) var(--sal)',
+        'safe-top': 'var(--sat)',
+        'safe-bottom': 'var(--sab)',
+        'safe-left': 'var(--sal)',
+        'safe-right': 'var(--sar)'
       }
     }
   },
