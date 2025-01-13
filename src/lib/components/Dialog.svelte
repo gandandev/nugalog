@@ -39,7 +39,7 @@
 <svelte:window
   onkeydown={(e) => {
     if (e.key === 'Escape' && show) cancel?.()
-    if (e.key == 'Enter' && show)
+    if (e.key === 'Enter' && show)
       actions.find((action: DialogAction) => action.onenter)?.onclick?.()
   }}
 />
