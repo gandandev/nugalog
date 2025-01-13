@@ -31,6 +31,7 @@
     checkForConflicts as checkForDataConflicts
   } from '$lib/utils/handleConflict'
   import { getHangbalPrompt } from '$lib/prompts'
+  import { v4 as uuidv4 } from 'uuid'
 
   import Sidebar from '$lib/components/Sidebar.svelte'
   import Dialog from '$lib/components/Dialog.svelte'
@@ -255,7 +256,7 @@
           dataFromFile = result.data.map((student) => ({
             ...student,
             logs: student.logs.map((log) => ({
-              id: log.id || crypto.randomUUID(),
+              id: log.id || uuidv4(),
               date: log.date,
               content: log.content
             }))
