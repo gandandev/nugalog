@@ -186,7 +186,7 @@
 
 {#if showOnMobile}
   <div
-    class="fixed inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-sm md:hidden"
+    class="fixed inset-0 z-40 flex touch-none items-center justify-center bg-black/20 backdrop-blur-sm md:hidden"
     onclick={closeSidebar}
     role="presentation"
     transition:fade={{ duration: 150 }}

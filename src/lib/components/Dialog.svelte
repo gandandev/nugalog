@@ -46,7 +46,7 @@
 
 {#if show}
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-2 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex touch-none items-center justify-center bg-black/20 px-2 backdrop-blur-sm"
     transition:fade|global={{ duration: 100 }}
     onclick={(e) => {
       if (e.target === e.currentTarget) cancel?.()
