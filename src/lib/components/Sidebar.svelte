@@ -69,13 +69,13 @@
 </script>
 
 <aside
-  class="pt-safe-top pb-safe-bottom pl-safe-left fixed -left-64 z-50 flex h-screen w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
+  class="fixed -left-64 z-50 flex h-screen w-64 shrink-0 flex-col gap-2 border-r border-stone-200 bg-stone-100 pb-safe-bottom pl-safe-left pt-safe-top duration-150 md:static md:left-0 md:shadow-none dark:border-stone-800 dark:bg-stone-900"
   class:left-0={showOnMobile}
   class:shadow-lg={showOnMobile}
 >
   <!-- 헤더 -->
   <div class="flex items-center justify-between pl-5 pr-3 pt-3">
-    <Logo class="h-6" />
+    <Logo class="h-6 fill-black dark:fill-white" />
     <IconButton
       Icon={PersonAdd}
       tooltip="새 학생 추가"
