@@ -254,24 +254,26 @@
             />
           </div>
         {/if}
-        <div
-          class="opacity-0 duration-150 pointer:hidden"
-          class:opacity-100={actionButtonExpanded}
-          class:scale-75={!actionButtonExpanded}
-          class:delay-[75ms]={actionButtonExpanded}
-          transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
-        >
-          <IconButton Icon={ArrowUpward} onclick={() => moveLog(-1)} />
-        </div>
-        <div
-          class="opacity-0 duration-150 pointer:hidden"
-          class:opacity-100={actionButtonExpanded}
-          class:scale-75={!actionButtonExpanded}
-          class:delay-[50ms]={actionButtonExpanded}
-          transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
-        >
-          <IconButton Icon={ArrowDownward} onclick={() => moveLog(1)} />
-        </div>
+        {#if !editing && !confirmingDelete}
+          <div
+            class="opacity-0 duration-150 pointer:hidden"
+            class:opacity-100={actionButtonExpanded}
+            class:scale-75={!actionButtonExpanded}
+            class:delay-[75ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
+          >
+            <IconButton Icon={ArrowUpward} onclick={() => moveLog(-1)} />
+          </div>
+          <div
+            class="opacity-0 duration-150 pointer:hidden"
+            class:opacity-100={actionButtonExpanded}
+            class:scale-75={!actionButtonExpanded}
+            class:delay-[50ms]={actionButtonExpanded}
+            transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
+          >
+            <IconButton Icon={ArrowDownward} onclick={() => moveLog(1)} />
+          </div>
+        {/if}
         {#if !editing}
           <div
             class="opacity-0 duration-150 group-hover:opacity-100"
