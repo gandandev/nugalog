@@ -9,6 +9,8 @@
   import MoreHoriz from '~icons/material-symbols/more-horiz'
   import Delete from '~icons/material-symbols/delete-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
+  import ArrowUpward from '~icons/material-symbols/arrow-upward-rounded'
+  import ArrowDownward from '~icons/material-symbols/arrow-downward-rounded'
   import Keep from '~icons/material-symbols/keep-rounded'
   import KeepOff from '~icons/material-symbols/keep-off-rounded'
 
@@ -32,7 +34,6 @@
 
   let showOptions = $state(false)
   let optionsButton: HTMLButtonElement | null = $state(null)
-  let optionsMenu: HTMLDivElement | null = $state(null)
 
   let newName: string | null = $state(null)
   const duplicateStudentName = $derived(
@@ -52,6 +53,22 @@
   function togglePin() {
     $data = $data.map((s) => (s === student ? { ...s, pinned: !s.pinned } : s))
     showOptions = false
+  }
+
+  function moveStudent(direction: number) {
+    // 현재 학생의 위치를 찾아서 위/아래로 이동
+    const currentIndex = $data.findIndex((s) => s === student)
+    const newIndex = currentIndex + direction
+
+    // 범위를 벗어나면 이동하지 않음
+    if (newIndex < 0 || newIndex >= $data.length) return
+
+    // 학생 순서 변경
+    $data = $data.map((s, index) => {
+      if (index === currentIndex) return $data[newIndex]
+      if (index === newIndex) return student
+      return s
+    })
   }
 </script>
 
@@ -135,6 +152,23 @@
         label: student.pinned ? '고정 해제' : '상단 고정',
         onclick: togglePin,
         closeMenuOnClick: true
+      },
+      {
+        Icon: ArrowUpward,
+        label: '위로 이동',
+        onclick: () => moveStudent(-1),
+        className: 'pointer:hidden',
+        disabled: $data.length <= 1 || student.pinned || $data.findIndex((s) => s === student) === 0
+      },
+      {
+        Icon: ArrowDownward,
+        label: '아래로 이동',
+        onclick: () => moveStudent(1),
+        className: 'pointer:hidden',
+        disabled:
+          $data.length <= 1 ||
+          student.pinned ||
+          $data.length - 1 === $data.findIndex((s) => s === student)
       },
       {
         Icon: Delete,
