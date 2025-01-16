@@ -8,6 +8,7 @@
     label: string
     danger?: boolean
     onclick: () => void
+    className?: string
     disabled?: boolean
     closeMenuOnClick?: boolean
   }
@@ -43,7 +44,7 @@
       <button
         class="flex h-8 items-center gap-2 rounded-md px-3 py-1 duration-150 enabled:hover:bg-stone-100 enabled:active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 enabled:dark:hover:bg-stone-700 enabled:dark:active:bg-stone-600 {option.danger
           ? 'enabled:hover:text-red-600 enabled:dark:hover:text-red-500'
-          : ''}"
+          : ''} {option.className}"
         onclick={() => {
           option.onclick()
           if (option.closeMenuOnClick) closeMenu()
