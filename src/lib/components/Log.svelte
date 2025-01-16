@@ -15,6 +15,8 @@
 
   import ContentCopy from '~icons/material-symbols/content-copy-rounded'
   import Edit from '~icons/material-symbols/edit-rounded'
+  import ArrowUpward from '~icons/material-symbols/arrow-upward-rounded'
+  import ArrowDownward from '~icons/material-symbols/arrow-downward-rounded'
   import Delete from '~icons/material-symbols/delete-rounded'
   import Check from '~icons/material-symbols/check-rounded'
   import Close from '~icons/material-symbols/close-rounded'
@@ -73,6 +75,29 @@
       )
     }
   })
+
+  function moveLog(direction: number) {
+    // 현재 학생의 로그 목록에서 이 로그의 위치를 찾아서 위/아래로 이동
+    const student = $data.find((s) => s.name === decodeURIComponent($page.params.name))
+    if (!student) return
+
+    const currentIndex = student.logs.findIndex((l) => l.id === log.id)
+    const newIndex = currentIndex + direction
+
+    // 범위를 벗어나면 이동하지 않음
+    if (newIndex < 0 || newIndex >= student.logs.length) return
+
+    // 로그 순서 변경
+    $data = $data.map((s) => {
+      if (s.name === student.name) {
+        const logs = [...s.logs]
+        const [movedLog] = logs.splice(currentIndex, 1)
+        logs.splice(newIndex, 0, movedLog)
+        return { ...s, logs }
+      }
+      return s
+    })
+  }
 
   function save() {
     if (date === null) return
@@ -179,7 +204,7 @@
             class:opacity-100={editing}
             class:touch:opacity-100={actionButtonExpanded}
             class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
-            class:touch:delay-[100ms]={actionButtonExpanded}
+            class:touch:delay-[150ms]={actionButtonExpanded}
             transition:slide={{ axis: 'x', duration: 100, easing: expoOut }}
           >
             <IconButton
@@ -200,7 +225,7 @@
             class:opacity-100={editing}
             class:touch:opacity-100={actionButtonExpanded}
             class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
-            class:touch:delay-[75ms]={actionButtonExpanded}
+            class:touch:delay-[125ms]={actionButtonExpanded}
             transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
           >
             <IconButton Icon={Close} text="취소" onclick={cancel} />
@@ -215,7 +240,7 @@
             class:opacity-100={editing}
             class:touch:opacity-100={actionButtonExpanded}
             class:touch:scale-75={!actionButtonExpanded && !editing && !confirmingDelete}
-            class:touch:delay-[50ms]={actionButtonExpanded}
+            class:touch:delay-[100ms]={actionButtonExpanded}
             transition:slide={{ axis: 'x', duration: 200, easing: expoOut }}
           >
             <IconButton
@@ -229,6 +254,24 @@
             />
           </div>
         {/if}
+        <div
+          class="opacity-0 duration-150 pointer:hidden"
+          class:opacity-100={actionButtonExpanded}
+          class:scale-75={!actionButtonExpanded}
+          class:delay-[75ms]={actionButtonExpanded}
+          transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
+        >
+          <IconButton Icon={ArrowUpward} onclick={() => moveLog(-1)} />
+        </div>
+        <div
+          class="opacity-0 duration-150 pointer:hidden"
+          class:opacity-100={actionButtonExpanded}
+          class:scale-75={!actionButtonExpanded}
+          class:delay-[50ms]={actionButtonExpanded}
+          transition:slide={{ axis: 'x', duration: 150, easing: expoOut }}
+        >
+          <IconButton Icon={ArrowDownward} onclick={() => moveLog(1)} />
+        </div>
         {#if !editing}
           <div
             class="opacity-0 duration-150 group-hover:opacity-100"
