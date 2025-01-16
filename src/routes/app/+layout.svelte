@@ -303,7 +303,7 @@
 <div class="h-dscreen pr-safe-right flex">
   <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
-  <div class="flex flex-1 flex-col overflow-hidden">
+  <div class="flex flex-1 flex-col">
     <div
       class="fixed inset-x-0 top-0 z-20 flex items-center justify-between gap-1 bg-white p-4 pr-[calc(1rem+var(--sar))] pt-[calc(1rem+var(--sat))] dark:bg-stone-950"
     >
