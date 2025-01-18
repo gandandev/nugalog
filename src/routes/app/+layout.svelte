@@ -483,7 +483,7 @@
         </OptionMenu>
       </div>
     </div>
-    <div class="flex-1 pt-[calc(4rem+var(--sat))]">
+    <div class="flex-1 overflow-y-auto pt-[calc(4rem+var(--sat))]">
       {@render children()}
     </div>
   </div>
