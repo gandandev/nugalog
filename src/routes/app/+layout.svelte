@@ -197,10 +197,6 @@
   // 계정 옵션
   let showAccountOptions = $state(false)
   let accountButton: HTMLButtonElement | null = $state(null)
-  let logoutButton: HTMLButtonElement | null = $state(null)
-  function closeAccountOptions() {
-    showAccountOptions = false
-  }
 
   // 설정
   let showSettings = $state(false)
@@ -294,7 +290,7 @@
   })
 </script>
 
-<div class="h-dscreen pr-safe-right flex">
+<div class="flex h-dscreen pr-safe-right">
   <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
   <div class="flex flex-1 flex-col">
