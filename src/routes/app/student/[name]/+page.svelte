@@ -78,7 +78,7 @@
   })
 </script>
 
-<div class="h-full space-y-1 overflow-y-auto">
+<div class="h-full space-y-1">
   {#if student}
     <div
       class="mx-auto w-full max-w-[600px] px-3 pb-32 pt-0.5 md:px-6 lg:w-1/2 lg:min-w-[600px] lg:px-12"
