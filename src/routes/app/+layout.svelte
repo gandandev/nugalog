@@ -84,7 +84,8 @@
     student ? getHangbalPrompt(student, $hangbalStore, hangbalExtraInfo) : ''
   )
 
-  let saveDebounceTimer: ReturnType<typeof setTimeout> | null = $state(null)
+  let isSaving = $state(false)
+  let lastSavedValue: Student[] | null = $state(null)
 
   onMount(async () => {
     const {
@@ -130,42 +131,35 @@
     $dataLoaded = true
     showSidebar = $dataStore.length == 0 || !student
 
-    dataStore.subscribe((value) => {
-      // 대기 중인 저장 작업 취소
-      if (saveDebounceTimer) {
-        clearTimeout(saveDebounceTimer)
+    dataStore.subscribe(async (value) => {
+      if (currentUser) {
+        // 이전 저장이 진행 중이면 마지막으로 저장된 값 업데이트만 하고 리턴
+        if (isSaving) {
+          lastSavedValue = value
+          return
+        }
+
+        isSaving = true
+        const dbData = await loadDataFromDb(data.supabase)
+
+        // 마지막으로 저장된 값이 있고, 현재 값과 다르다면 그 값으로 저장
+        if (lastSavedValue && JSON.stringify(lastSavedValue) !== JSON.stringify(value)) {
+          value = lastSavedValue
+        }
+
+        // 실제 변경 사항이 있을 때만 저장
+        if (JSON.stringify(dbData) !== JSON.stringify(value)) {
+          await saveDataToDb(data.supabase, value)
+        }
+
+        isSaving = false
+        lastSavedValue = null
       }
 
-      // 3초 기다린 후 저장
-      saveDebounceTimer = setTimeout(async () => {
-        if (currentUser) {
-          const dbData = await loadDataFromDb(data.supabase)
-          const { data: localData } = loadDataFromLocalStorage()
-
-          // 데이터 충돌 체크
-          if (dbData && localData) {
-            const hasConflicts = checkForDataConflicts(localData, dbData, value)
-            if (hasConflicts) {
-              showConflictDialog = true
-              conflictData = {
-                previousLocal: localData,
-                database: dbData,
-                newLocal: value
-              }
-            }
-          }
-
-          // 실제 변경 사항이 있을 때만 저장
-          if (JSON.stringify(dbData) !== JSON.stringify(value)) {
-            await saveDataToDb(data.supabase, value)
-          }
-        }
-
-        // localStorage는 언제나 저장
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('data', JSON.stringify(value))
-        }
-      }, 3000)
+      // localStorage는 언제나 저장
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('data', JSON.stringify(value))
+      }
     })
   })
 
@@ -203,10 +197,6 @@
   // 계정 옵션
   let showAccountOptions = $state(false)
   let accountButton: HTMLButtonElement | null = $state(null)
-  let logoutButton: HTMLButtonElement | null = $state(null)
-  function closeAccountOptions() {
-    showAccountOptions = false
-  }
 
   // 설정
   let showSettings = $state(false)
@@ -300,7 +290,7 @@
   })
 </script>
 
-<div class="h-dscreen pr-safe-right flex">
+<div class="flex h-dscreen pr-safe-right">
   <Sidebar showOnMobile={showSidebar} closeSidebar={() => (showSidebar = false)} />
 
   <div class="flex flex-1 flex-col">
