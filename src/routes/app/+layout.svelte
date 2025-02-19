@@ -87,6 +87,14 @@
   let isSaving = $state(false)
   let lastSavedValue: Student[] | null = $state(null)
 
+  // 브라우저 관련 변수 (SSR 방지용)
+  let hasClipboard = $state(false)
+  let isSecure = $state(false)
+  onMount(() => {
+    hasClipboard = typeof navigator !== 'undefined' && !!navigator.clipboard
+    isSecure = typeof window !== 'undefined' && window.isSecureContext
+  })
+
   onMount(async () => {
     const {
       data: { session }
@@ -204,8 +212,8 @@
 
   // 데이터 다운로드
   function saveDataToFile() {
-    const data = JSON.stringify($dataStore, null, 2)
-    const blob = new Blob([data], { type: 'application/json' })
+    const dataStr = JSON.stringify($dataStore, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -226,6 +234,7 @@
   let loadDataResultDialogState: 'closed' | 'conflict' | 'success' | 'error' = $state('closed')
   let dataFromFile: Student[] | null = $state(null)
   function loadDataFromFile() {
+    if (typeof document === 'undefined') return
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = '.json'
@@ -329,30 +338,15 @@
 
         <button
           class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
-          disabled={!student?.logs.length}
           onclick={() => {
-            hangbalExtraInfo = ''
-            showHangbalPanel = !showHangbalPanel
+            if (hasClipboard) {
+              const text = formatStudentLogs(student.name, student.logs)
+              navigator.clipboard.writeText(text)
+              handleSingleCopy()
+            }
           }}
-          use:tooltip={{ text: '행발 작성', position: 'bottom' }}
-        >
-          <Assignment class="h-5 w-5" />
-        </button>
-
-        <button
-          bind:this={settingsButton}
-          class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent dark:hover:bg-stone-800 dark:active:bg-stone-700"
-          onclick={() => {
-            if (!navigator.clipboard) return
-            const text = formatStudentLogs(student.name, student.logs)
-            navigator.clipboard.writeText(text)
-            handleSingleCopy()
-          }}
-          disabled={!student?.logs.length || !navigator.clipboard}
-          use:tooltip={{
-            text: singleCopied ? '복사됨' : '기록 전체 복사',
-            position: 'bottom'
-          }}
+          disabled={!student?.logs.length || !hasClipboard}
+          use:tooltip={{ text: singleCopied ? '복사됨' : '기록 전체 복사', position: 'bottom' }}
         >
           {#if singleCopied}
             <div class="absolute h-5 w-5" transition:scale={{ duration: 150, start: 0.5 }}>
@@ -368,9 +362,7 @@
         <div class="relative">
           <button
             bind:this={settingsButton}
-            class="flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 dark:hover:bg-stone-800 dark:active:bg-stone-700"
-            class:bg-stone-100={showSettings}
-            class:dark:bg-stone-800={showSettings}
+            class="relative flex h-8 w-8 items-center justify-center rounded-full duration-150 hover:bg-stone-100 active:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-stone-800 dark:active:bg-stone-700"
             onclick={() => (showSettings = !showSettings)}
             use:tooltip={{ text: '설정', position: 'bottom' }}
           >
@@ -382,7 +374,7 @@
             options={[
               {
                 Icon: allCopied ? Check : Group,
-                label: navigator.clipboard
+                label: hasClipboard
                   ? $dataStore.some((s) => s.logs.length > 0)
                     ? allCopied
                       ? '복사됨'
@@ -390,12 +382,12 @@
                     : '복사할 기록 없음'
                   : '복사 지원 안 됨',
                 onclick: () => {
-                  if (!navigator.clipboard) return
+                  if (!hasClipboard) return
                   const text = formatAllStudentLogs($dataStore)
                   navigator.clipboard.writeText(text)
                   handleAllCopy()
                 },
-                disabled: !$dataStore.some((s) => s.logs.length > 0) || !navigator.clipboard
+                disabled: !$dataStore.some((s) => s.logs.length > 0) || !hasClipboard
               },
               {
                 Icon: Download,
@@ -523,7 +515,7 @@
         use:autosize
       />
 
-      {#if isSecureContext && navigator.clipboard}
+      {#if isSecure && hasClipboard}
         <p class="text-sm text-stone-500">
           서비스 로그인 후 사용 시 더욱 나은 결과를 얻을 수 있습니다.
         </p>
@@ -532,10 +524,12 @@
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
-              navigator.clipboard.writeText(hangbalPrompt)
-              handleHangbalPromptCopy()
+              if (hasClipboard) {
+                navigator.clipboard.writeText(hangbalPrompt)
+                handleHangbalPromptCopy()
+              }
             }}
-            disabled={!student?.logs.length}
+            disabled={!student?.logs.length || !hasClipboard}
             use:tooltip={{
               text: student?.logs.length
                 ? '다른 AI 서비스에 붙여넣어 사용하세요'
@@ -555,15 +549,17 @@
                 </div>
               {/if}
             </div>
-            {navigator.clipboard ? '프롬프트 복사' : '복사 지원 안 됨'}
+            {hasClipboard ? '프롬프트 복사' : '복사 지원 안 됨'}
           </button>
           <button
             class="flex items-center gap-2 rounded-xl bg-stone-100 px-3 py-2 duration-150 enabled:hover:bg-stone-200 enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-800 dark:enabled:hover:bg-stone-700 dark:enabled:active:bg-stone-600"
             onclick={() => {
-              navigator.clipboard.writeText(hangbalPrompt)
-              window.open('https://claude.ai', '_blank')
+              if (hasClipboard) {
+                navigator.clipboard.writeText(hangbalPrompt)
+                window.open('https://claude.ai', '_blank')
+              }
             }}
-            disabled={!student?.logs.length}
+            disabled={!student?.logs.length || !hasClipboard}
             use:tooltip={{
               text: student?.logs.length
                 ? '입력 창에 붙여넣어 사용하세요'
@@ -586,10 +582,12 @@
           <button
             class="enabled:active:(scale-95 bg-stone-900) flex items-center gap-2 rounded-xl bg-black px-3 py-2 text-white duration-150 enabled:hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-stone-100 dark:text-stone-800 dark:enabled:hover:bg-stone-300 dark:enabled:active:bg-stone-400"
             onclick={() => {
-              navigator.clipboard.writeText(hangbalPrompt)
-              window.open('https://chatgpt.com', '_blank')
+              if (hasClipboard) {
+                navigator.clipboard.writeText(hangbalPrompt)
+                window.open('https://chatgpt.com', '_blank')
+              }
             }}
-            disabled={!student?.logs.length}
+            disabled={!student?.logs.length || !hasClipboard}
             use:tooltip={{
               text: student?.logs.length
                 ? '입력 창에 붙여넣어 사용하세요'
